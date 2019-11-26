@@ -1,6 +1,8 @@
 package com.java.adds.service;
 
 import com.java.adds.dao.QADao;
+import com.java.adds.entity.ChoiceAnswerEntity;
+import com.java.adds.entity.QAAnswerEntity;
 import com.java.adds.entity.QAEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,26 +26,27 @@ public class QAService {
      *根据问题id查找答案
      * @return
      */
-    public Integer searchAnswerById(Long qid)
+    public ChoiceAnswerEntity searchChoiceAnswerById(Long qid)
     {
-        return qaDao.searchAnswerById(qid);
+        return qaDao.searchChoiceAnswerById(qid);
+    }
+
+
+    /**ljy
+     *根据id删除question
+     * @return
+     */
+    public boolean deleteQuestion(Long qid)
+    {
+        return qaDao.deleteQuestion(qid);
     }
 
     /**ljy
-     *查找自己提交的所有问题
+     *根据问题id查找所有的详细回答
      * @return
      */
-    public ArrayList<QAEntity> searchMyQuestion(Long uid)
+    public ArrayList<QAAnswerEntity> searchDetailAnswerById(Long qid)
     {
-        return qaDao.searchMyQuestion(uid);
-    }
-
-    /**ljy
-     *获取所有问题
-     * @return
-     */
-    public ArrayList<QAEntity> getAllQuestions()
-    {
-        return qaDao.getAllQuestions();
+        return qaDao.searchDetailAnswerById(qid);
     }
 }

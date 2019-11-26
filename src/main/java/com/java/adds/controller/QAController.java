@@ -1,6 +1,8 @@
 package com.java.adds.controller;
 
 
+import com.java.adds.entity.ChoiceAnswerEntity;
+import com.java.adds.entity.QAAnswerEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.service.QAService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,39 +21,39 @@ public class QAController {
      *新增question
      * @return
      */
-    @PutMapping("question")
+    @PutMapping("")
     public boolean addQuestion(@RequestBody QAEntity qaEntity)
     {
         return qaService.addQuestion(qaEntity);
     }
 
     /**ljy
-     *根据问题id查找答案
+     *根据id删除question
      * @return
      */
-    @GetMapping("{qid}/answer")
-    public Integer searchAnswerById(@PathVariable Long qid)
+    @DeleteMapping("{qid}")
+    public boolean deleteQuestion(@PathVariable Long qid)
     {
-        return qaService.searchAnswerById(qid);
+        return qaService.deleteQuestion(qid);
     }
 
     /**ljy
-     *查找自己提交的所有问题
+     *根据问题id查找选择题答案
      * @return
      */
-    @GetMapping("{uid}/question")
-    public ArrayList<QAEntity> searchMyQuestion(@PathVariable Long uid)
+    @GetMapping("{qid}/simpleAnswer")
+    public ChoiceAnswerEntity searchChoiceAnswerById(@PathVariable Long qid)
     {
-        return qaService.searchMyQuestion(uid);
+        return qaService.searchChoiceAnswerById(qid);
     }
 
     /**ljy
-     *获取所有问题
+     *根据问题id查找所有的详细回答
      * @return
      */
-    @GetMapping("question")
-    public ArrayList<QAEntity> getAllQuestions()
+    @GetMapping("{qid}/detailAnswer")
+    public ArrayList<QAAnswerEntity> searchDetailAnswerById(@PathVariable Long qid)
     {
-        return qaService.getAllQuestions();
+        return qaService.searchDetailAnswerById(qid);
     }
 }

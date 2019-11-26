@@ -1,10 +1,11 @@
 package com.java.adds.dao;
 
+import com.java.adds.entity.ChoiceAnswerEntity;
+import com.java.adds.entity.QAAnswerEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.mapper.QAMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 
@@ -24,14 +25,26 @@ public class QADao {
     }
 
     /**ljy
+     *根据id删除question
+     * @return
+     */
+    public boolean deleteQuestion(Long qid)
+    {
+        qaMapper.deleteQuestion(qid);  //删除问题
+        //qaMapper.deleteAnswersByQid(qid); //删除问题所对应的回答
+
+        return true;
+    }
+
+    /**ljy
      *根据问题id查找答案
      * @return
      */
-    public Integer searchAnswerById(Long qid)
+    public ChoiceAnswerEntity searchChoiceAnswerById(Long qid)
     {
-        ArrayList<Integer> answerList=qaMapper.searchAnswerById(qid);
-        if(answerList==null)
-            return 401;  //该问题还没有人回答
+        ChoiceAnswerEntity choiceAnswerEntity=new ChoiceAnswerEntity();
+        choiceAnswerEntity.setQid(qid);
+        ArrayList<Integer> answerList=qaMapper.searchChoiceAnswerById(qid);
         int yesA=0,noA=0;
         for(int i=0;i<answerList.size();i++)  //1:yes 2:no
         {
@@ -40,27 +53,18 @@ public class QADao {
             else
                 noA++;
         }
-        if(yesA>=noA)
-            return 1;
-        else
-            return 2;
+        choiceAnswerEntity.setYesCount(yesA);
+        choiceAnswerEntity.setNoCount(noA);
+        return choiceAnswerEntity;
     }
 
     /**ljy
-     *查找自己提交的所有问题
+     *根据问题id查找所有的详细回答
      * @return
      */
-    public ArrayList<QAEntity> searchMyQuestion(Long uid)
+    public ArrayList<QAAnswerEntity> searchDetailAnswerById(Long qid)
     {
-        return qaMapper.searchMyQuestion(uid);
+        return qaMapper.searchDetailAnswerById(qid);
     }
 
-    /**ljy
-     *获取所有问题
-     * @return
-     */
-    public ArrayList<QAEntity> getAllQuestions()
-    {
-        return qaMapper.getAllQuestions();
-    }
 }

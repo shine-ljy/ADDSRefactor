@@ -9,13 +9,20 @@
         <result column="type" property="type"/>
         <result column="remark" property="remark"/>
     </resultMap>
+    <resultMap id="QAAnswerList" type="com.java.adds.entity.QAAnswerEntity">
+        <id column="qrid" property="qrid"/>
+        <result column="questionid" property="questionid"/>
+        <result column="userid" property="userid"/>
+        <result column="detailedAnswer" property="detailedAnswer"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
 
     <insert id="addQuestion" useGeneratedKeys="true" keyProperty="qid" parameterType="com.java.adds.entity.QAEntity">
         insert into question(content,hospitalDepartmentId,type,userid,remark)
         values (#{content},#{hospitalDepartmentId},#{type},#{userid},#{remark})
     </insert>
 
-    <select id="searchAnswerById" resultType="java.lang.Integer">
+    <select id="searchChoiceAnswerById" resultType="java.lang.Integer">
         select resultType from questionresult where questionid=#{qid}
     </select>
 
@@ -26,4 +33,21 @@
     <select id="getAllQuestions" resultMap="QAList">
         select * from question
     </select>
+
+    <select id="getQuestionAnswered" resultMap="QAList">
+        select * from question where qid in(select questionid from questionresult where userid=#{uid})
+    </select>
+
+    <delete id="deleteQuestion">
+        delete from question where qid=#{qid}
+    </delete>
+
+    <delete id="deleteAnswersByQid">
+        delete from questionresult where questionid=#{qid}
+    </delete>
+
+    <select id="searchDetailAnswerById" resultMap="QAAnswerList">
+        select qrid,questionid,userid,detailedAnswer,remark from questionresult where questionid=#{qid} and detailedAnswer is not null
+    </select>
+
 </mapper>
