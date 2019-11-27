@@ -2,6 +2,7 @@ package com.java.adds.mapper;
 
 import com.java.adds.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public interface UserMapper {
      * @param
      * @return
      */
-    UserEntity login(String login_name);
+    UserEntity login(@Param("loginName") String login_name);
 
 
     /**ljy

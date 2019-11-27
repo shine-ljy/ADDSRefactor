@@ -22,8 +22,7 @@
     </resultMap>
 
     <select id="login" resultMap="userList">
-        select *
-        from sys_user where login_name=#{param1}
+       select * from sys_user where login_name=#{loginName};
     </select>
 
     <insert id="userRegister" useGeneratedKeys="true" keyProperty="uid" parameterType="com.java.adds.entity.UserEntity">
