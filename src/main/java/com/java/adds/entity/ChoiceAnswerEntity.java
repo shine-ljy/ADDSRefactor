@@ -3,8 +3,17 @@ package com.java.adds.entity;
 
 public class ChoiceAnswerEntity {
     private Long qid;
+    private String content;
     private Integer yesCount;
     private Integer noCount;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public Long getQid() {
         return qid;

@@ -66,4 +66,10 @@ public interface QAMapper {
      * @return
      */
     public ArrayList<QAAnswerEntity> searchDetailAnswerById(@Param("qid") Long qid);
+
+    /**ljy
+     *根据问题id查找QAEntity
+     * @return
+     */
+    public QAEntity getQuestionById(@Param("qid") Long qid);
 }

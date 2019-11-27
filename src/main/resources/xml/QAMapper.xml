@@ -50,4 +50,7 @@
         select qrid,questionid,userid,detailedAnswer,remark from questionresult where questionid=#{qid} and detailedAnswer is not null
     </select>
 
+    <select id="getQuestionById" resultMap="QAList">
+        select * from question where qid=#{qid}
+    </select>
 </mapper>

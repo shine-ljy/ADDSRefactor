@@ -44,6 +44,7 @@ public class QADao {
     {
         ChoiceAnswerEntity choiceAnswerEntity=new ChoiceAnswerEntity();
         choiceAnswerEntity.setQid(qid);
+        choiceAnswerEntity.setContent(qaMapper.getQuestionById(qid).getContent());
         ArrayList<Integer> answerList=qaMapper.searchChoiceAnswerById(qid);
         int yesA=0,noA=0;
         for(int i=0;i<answerList.size();i++)  //1:yes 2:no
