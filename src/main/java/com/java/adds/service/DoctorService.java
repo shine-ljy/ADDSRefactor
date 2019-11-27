@@ -1,5 +1,6 @@
 package com.java.adds.service;
 
+import com.java.adds.controller.vo.SetPage;
 import com.java.adds.dao.DoctorDao;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
@@ -25,9 +26,9 @@ public class DoctorService {
      *获取所有还没回答的问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid)
+    public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid, SetPage setPage)
     {
-        return doctorDao.getQuestionsNotAnswered(uid);
+        return doctorDao.getQuestionsNotAnswered(uid,setPage);
     }
 
     /**ljy

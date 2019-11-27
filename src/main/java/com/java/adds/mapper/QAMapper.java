@@ -47,7 +47,7 @@ public interface QAMapper {
      *获取所有问题
      * @return
      */
-    public ArrayList<QAEntity> getAllQuestions();
+    public ArrayList<QAEntity> getAllQuestions(@Param("start") Integer start, @Param("limitRecord") Integer limit);
 
     /**ljy
      *获取已经回答的问题

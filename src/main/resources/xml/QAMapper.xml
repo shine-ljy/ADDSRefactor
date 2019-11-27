@@ -31,7 +31,7 @@
     </select>
 
     <select id="getAllQuestions" resultMap="QAList">
-        select * from question
+        select * from question limit (#{start}-1)*limitRecord, limitRecord
     </select>
 
     <select id="getQuestionAnswered" resultMap="QAList">

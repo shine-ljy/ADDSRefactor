@@ -1,13 +1,11 @@
 package com.java.adds.controller;
 
+import com.java.adds.controller.vo.SetPage;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -31,9 +29,9 @@ public class DoctorController {
      * @return
      */
     @GetMapping("{doctorId}/question")
-    public ArrayList<QAEntity> getQuestionsNotAnswered(@PathVariable Long doctorId)
+    public ArrayList<QAEntity> getQuestionsNotAnswered(@RequestBody SetPage setPage, @PathVariable Long doctorId)
     {
-        return doctorService.getQuestionsNotAnswered(doctorId);
+        return doctorService.getQuestionsNotAnswered(doctorId,setPage);
     }
 
     /**ljy

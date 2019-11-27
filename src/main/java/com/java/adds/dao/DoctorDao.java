@@ -1,5 +1,6 @@
 package com.java.adds.dao;
 
+import com.java.adds.controller.vo.SetPage;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.mapper.DoctorMapper;
@@ -29,9 +30,9 @@ public class DoctorDao {
      *获取所有问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid)
+    public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid, SetPage setPage)
     {
-        ArrayList<QAEntity> allQuestions=qaMapper.getAllQuestions();
+        ArrayList<QAEntity> allQuestions=qaMapper.getAllQuestions(setPage.getStart(),setPage.getLimit());
         ArrayList<QAEntity> questionsAnswered=qaMapper.getQuestionAnswered(uid);
         for(int i=0;i<allQuestions.size();i++) {
             allQuestions.get(i).setAnswered(2);  //初始全部设为未回答
