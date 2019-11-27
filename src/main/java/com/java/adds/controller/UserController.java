@@ -7,6 +7,7 @@ import com.java.adds.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
 @RestController
@@ -20,13 +21,13 @@ public class UserController {
      * @return
      */
     @PostMapping("login")
-    public Integer login(@RequestBody LoginVO loginVO)
+    public Integer login(HttpServletResponse httpServletResponse, @RequestBody LoginVO loginVO)
     {
         UserEntity userEntity = userService.login(loginVO.getLogin_name());
         if(userEntity==null)
-            return 401;  //用户不存在
+            httpServletResponse.setStatus(401);  //用户不存在
         else if(!userEntity.getPassword().equals(loginVO.getPassword()))
-            return 402;  //密码错误
+            httpServletResponse.setStatus(402);  //密码错误
         else
             return userEntity.getType(); //返回登录角色
     }
