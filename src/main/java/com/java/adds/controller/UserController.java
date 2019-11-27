@@ -28,8 +28,8 @@ public class UserController {
             httpServletResponse.setStatus(401);  //用户不存在
         else if(!userEntity.getPassword().equals(loginVO.getPassword()))
             httpServletResponse.setStatus(402);  //密码错误
-        else
-            return userEntity.getType(); //返回登录角色
+
+        return userEntity.getType(); //返回登录角色
     }
 
     /**ljy

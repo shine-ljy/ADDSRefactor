@@ -8,6 +8,15 @@ public class QAEntity {
     private Integer type;     //问题类型  1：单选    2：详细回答问题
     private Long userid;   //问题提出者
     private String remark;//备注
+    private Integer answered;  //当前用户有没有回答过，1，回答了，2，未回答
+
+    public Integer getAnswered() {
+        return answered;
+    }
+
+    public void setAnswered(Integer answered) {
+        this.answered = answered;
+    }
 
     public Long getQid() {
         return qid;

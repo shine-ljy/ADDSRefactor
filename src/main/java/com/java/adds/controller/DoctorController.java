@@ -27,10 +27,10 @@ public class DoctorController {
     }
 
     /**ljy
-     *医生获取所有自己还未回答的问题
+     *医生获取所有问题
      * @return
      */
-    @GetMapping("{doctorId}/questionNotAnswered")
+    @GetMapping("{doctorId}/question")
     public ArrayList<QAEntity> getQuestionsNotAnswered(@PathVariable Long doctorId)
     {
         return doctorService.getQuestionsNotAnswered(doctorId);

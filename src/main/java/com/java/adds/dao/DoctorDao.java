@@ -34,10 +34,11 @@ public class DoctorDao {
         ArrayList<QAEntity> allQuestions=qaMapper.getAllQuestions();
         ArrayList<QAEntity> questionsAnswered=qaMapper.getQuestionAnswered(uid);
         for(int i=0;i<allQuestions.size();i++) {
+            allQuestions.get(i).setAnswered(2);  //初始全部设为未回答
             for (int j = 0; j < questionsAnswered.size(); j++) {
                 if (allQuestions.get(i).getQid() == questionsAnswered.get(j).getQid()) {
-                    allQuestions.remove(i);
-                    i--;
+                    //allQuestions.remove(i);
+                    allQuestions.get(i).setAnswered(1);  //已回答的修改未已回答
                     break;
                 }
             }
