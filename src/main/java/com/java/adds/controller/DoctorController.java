@@ -25,7 +25,7 @@ public class DoctorController {
     }
 
     /**ljy
-     *医生获取所有问题
+     * 医生获取所有问题
      * @return
      */
     @GetMapping("{doctorId}/question")
@@ -35,7 +35,7 @@ public class DoctorController {
     }
 
     /**ljy
-     *医生获取所有已经回答的问题
+     * 医生获取所有已经回答的问题
      * @return
      */
     @GetMapping("{doctorId}/questionAnswered")
@@ -45,7 +45,7 @@ public class DoctorController {
     }
 
     /**ljy
-     *医生获取某一个科室下的未回答问题
+     * 医生获取某一个科室下的未回答问题
      * @return
      */
     @GetMapping("{uid}/question/hospitalDepartment/{hdId}")
