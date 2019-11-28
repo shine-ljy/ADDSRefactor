@@ -32,7 +32,7 @@ public class DoctorDao {
      */
     public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid, SetPage setPage)
     {
-        ArrayList<QAEntity> allQuestions=qaMapper.getAllQuestions(setPage.getStart(),setPage.getLimit());
+        ArrayList<QAEntity> allQuestions=qaMapper.getAllQuestions((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit());
         ArrayList<QAEntity> questionsAnswered=qaMapper.getQuestionAnswered(uid);
         for(int i=0;i<allQuestions.size();i++) {
             allQuestions.get(i).setAnswered(2);  //初始全部设为未回答
