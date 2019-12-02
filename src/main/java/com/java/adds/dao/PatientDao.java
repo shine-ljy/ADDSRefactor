@@ -3,7 +3,7 @@ package com.java.adds.dao;
 import com.java.adds.entity.PatientEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.mapper.PatientMapper;
-import com.java.adds.mapper.QAMapper;
+import com.java.adds.mapper.QuestionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,8 @@ public class PatientDao {
     PatientMapper patientMapper;
 
     @Autowired
-    QAMapper qaMapper;
+    QuestionMapper questionMapper;
+
     /**ljy
      * 管理员获取所有病人信息
      */
@@ -30,6 +31,6 @@ public class PatientDao {
      */
     public ArrayList<QAEntity> searchMyQuestion(Long uid)
     {
-        return qaMapper.searchMyQuestion(uid);
+        return questionMapper.searchMyQuestion(uid);
     }
 }

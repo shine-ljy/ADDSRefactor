@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class PatientController {
     @Autowired
     PatientService patientService;
+
     /**ljy
      * 管理员获取所有病人信息
      */

@@ -4,7 +4,7 @@ import com.java.adds.controller.vo.SetPage;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.mapper.DoctorMapper;
-import com.java.adds.mapper.QAMapper;
+import com.java.adds.mapper.QuestionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ public class DoctorDao {
     DoctorMapper doctorMapper;
 
     @Autowired
-    QAMapper qaMapper;
+    QuestionMapper questionMapper;
 
     /**ljy
      * 管理员获取所有医生信息
@@ -32,8 +32,8 @@ public class DoctorDao {
      */
     public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid, SetPage setPage)
     {
-        ArrayList<QAEntity> allQuestions=qaMapper.getAllQuestions((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit());
-        ArrayList<QAEntity> questionsAnswered=qaMapper.getQuestionAnswered(uid);
+        ArrayList<QAEntity> allQuestions=questionMapper.getAllQuestions((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit());
+        ArrayList<QAEntity> questionsAnswered=questionMapper.getQuestionAnswered(uid);
         for(int i=0;i<allQuestions.size();i++) {
             allQuestions.get(i).setAnswered(2);  //初始全部设为未回答
             for (int j = 0; j < questionsAnswered.size(); j++) {
@@ -54,7 +54,7 @@ public class DoctorDao {
      */
     public ArrayList<QAEntity> getQuestionsAnswered(Long uid)
     {
-        return qaMapper.getQuestionAnswered(uid);
+        return questionMapper.getQuestionAnswered(uid);
     }
 
     /**ljy
@@ -63,8 +63,8 @@ public class DoctorDao {
      */
     public ArrayList<QAEntity> getQuestionsInHosDepartment(Long uid,Long hdId)
     {
-        ArrayList<QAEntity> questions=qaMapper.getQuestionsInHosDepartment(hdId);
-        ArrayList<QAEntity> questionsAnswered=qaMapper.getQuestionAnswered(uid);
+        ArrayList<QAEntity> questions=questionMapper.getQuestionsInHosDepartment(hdId);
+        ArrayList<QAEntity> questionsAnswered=questionMapper.getQuestionAnswered(uid);
         for(int i=0;i<questions.size();i++) {
             for (int j = 0; j < questionsAnswered.size(); j++) {
                 if (questions.get(i).getQid() == questionsAnswered.get(j).getQid()) {

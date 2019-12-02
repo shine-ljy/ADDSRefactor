@@ -15,4 +15,9 @@ public interface DoctorMapper {
      * 管理员获取所有医生信息
      */
     public ArrayList<DoctorEntity> getAllDoctors();
+
+    /**ljy
+     * 根据科室id获取科室下所有医生
+     */
+    public ArrayList<DoctorEntity> getDoctorsByDepartment(Long did);
 }

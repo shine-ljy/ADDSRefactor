@@ -23,4 +23,7 @@
         select * from doctor;
     </select>
 
+    <select id="getDoctorsByDepartment" resultMap="doctorList">
+
+    </select>
 </mapper>
