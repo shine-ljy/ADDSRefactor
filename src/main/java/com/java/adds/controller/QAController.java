@@ -3,10 +3,10 @@ package com.java.adds.controller;
 
 import com.java.adds.entity.ChoiceAnswerEntity;
 import com.java.adds.entity.QAAnswerEntity;
-import com.java.adds.entity.QAEntity;
 import com.java.adds.service.QAService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 
 @RestController
@@ -14,17 +14,6 @@ import java.util.ArrayList;
 public class QAController {
     @Autowired
     QAService qaService;
-
-
-    /**ljy
-     *新增question
-     * @return
-     */
-    @PutMapping("")
-    public boolean addQuestion(@RequestBody QAEntity qaEntity)
-    {
-        return qaService.addQuestion(qaEntity);
-    }
 
     /**ljy
      *根据id删除question

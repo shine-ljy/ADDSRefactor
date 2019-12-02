@@ -3,6 +3,7 @@ package com.java.adds.mapper;
 
 import com.java.adds.entity.DoctorEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -19,5 +20,5 @@ public interface DoctorMapper {
     /**ljy
      * 根据科室id获取科室下所有医生
      */
-    public ArrayList<DoctorEntity> getDoctorsByDepartment(Long did);
+    public ArrayList<DoctorEntity> getDoctorsByDepartment(@Param("did") Long did);
 }

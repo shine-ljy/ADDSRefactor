@@ -14,4 +14,8 @@
         select * from question_detail_answer where qid=#{qid} and detail_answer is not null
     </select>
 
+    <insert id="insertDetailAnswer" useGeneratedKeys="true" keyProperty="qrid">
+        insert into question_detail_answer (qid,user_id,detail_answer,remark) values (#{qid},#{uid},#{answer},#{remark});
+    </insert>
+
 </mapper>

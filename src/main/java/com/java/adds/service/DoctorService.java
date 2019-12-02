@@ -1,5 +1,6 @@
 package com.java.adds.service;
 
+import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.controller.vo.SetPage;
 import com.java.adds.dao.DoctorDao;
 import com.java.adds.entity.DoctorEntity;
@@ -47,5 +48,14 @@ public class DoctorService {
     public ArrayList<QAEntity> getQuestionsInHosDepartment(Long uid,Long hdId)
     {
         return doctorDao.getQuestionsInHosDepartment(uid,hdId);
+    }
+
+    /**ljy
+     * 医生回答某个问题
+     * @return
+     */
+    public boolean insertAnswer(Long uid, Long qid, QuestionAnswerVO questionAnswerVO)
+    {
+        return doctorDao.insertAnswer(uid,qid, questionAnswerVO);
     }
 }

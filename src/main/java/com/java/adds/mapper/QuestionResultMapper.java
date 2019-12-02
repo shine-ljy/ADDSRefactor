@@ -22,4 +22,11 @@ public interface QuestionResultMapper {
      * @return
      */
     public ArrayList<Integer> searchChoiceAnswerById(@Param("qid") Long qid);
+
+    /**ljy
+     * 医生回答某个问题
+     * @return
+     */
+    public boolean insertChoiceAnswer(@Param("uid") Long uid, @Param("qid")Long qid, @Param("answer")Integer answer,@Param("remark")String remark);
+
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.java.adds.mapper.QuestionDetailAnswerMapper">
+<mapper namespace="com.java.adds.mapper.QuestionResultMapper">
 
     <select id="searchChoiceAnswerById" resultType="java.lang.Integer">
         select resultType from questionresult where questionid=#{qid}
@@ -11,5 +11,8 @@
     <delete id="deleteAnswersByQid">
         delete from questionresult where questionid=#{qid}
     </delete>
-    
+
+    <insert id="insertChoiceAnswer" useGeneratedKeys="true" keyProperty="qrid">
+        insert into questionresult(questionid,userid,resultType,remark) values (#{qid},#{uid},#{answer},#{remark});
+    </insert>
 </mapper>

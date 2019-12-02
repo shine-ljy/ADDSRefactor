@@ -33,4 +33,14 @@ public class PatientDao {
     {
         return questionMapper.searchMyQuestion(uid);
     }
+
+    /**ljy
+     *新增question
+     * @return
+     */
+    public boolean addQuestion(QAEntity qaEntity)
+    {
+        questionMapper.addQuestion(qaEntity);
+        return true;
+    }
 }

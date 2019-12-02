@@ -1,5 +1,6 @@
 package com.java.adds.controller;
 
+import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.controller.vo.SetPage;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
@@ -52,5 +53,15 @@ public class DoctorController {
     public ArrayList<QAEntity> getQuestionsInHosDepartment(@PathVariable Long uid,@PathVariable Long hdId)
     {
         return doctorService.getQuestionsInHosDepartment(uid,hdId);
+    }
+
+    /**ljy
+     * 医生回答某个问题
+     * @return
+     */
+    @PutMapping("{uid}/question/{qid}/answer")
+    public boolean insertAnswer(@PathVariable Long uid, @PathVariable Long qid, @RequestBody QuestionAnswerVO questionAnswerVO)
+    {
+        return doctorService.insertAnswer(uid,qid, questionAnswerVO);
     }
 }

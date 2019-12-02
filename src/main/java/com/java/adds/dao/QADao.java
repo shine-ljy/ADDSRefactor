@@ -2,7 +2,6 @@ package com.java.adds.dao;
 
 import com.java.adds.entity.ChoiceAnswerEntity;
 import com.java.adds.entity.QAAnswerEntity;
-import com.java.adds.entity.QAEntity;
 import com.java.adds.mapper.QuestionDetailAnswerMapper;
 import com.java.adds.mapper.QuestionMapper;
 import com.java.adds.mapper.QuestionResultMapper;
@@ -21,15 +20,7 @@ public class QADao {
 
     @Autowired
     QuestionResultMapper questionResultMapper;
-    /**ljy
-     *新增question
-     * @return
-     */
-    public boolean addQuestion(QAEntity qaEntity)
-    {
-        questionMapper.addQuestion(qaEntity);
-        return true;
-    }
+
 
     /**ljy
      *根据id删除question

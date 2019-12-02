@@ -29,6 +29,7 @@ public class UserDao {
     public boolean userRegister(UserEntity userEntity)
     {
         userMapper.userRegister(userEntity);
+
         return true;
     }
 

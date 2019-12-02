@@ -15,6 +15,15 @@ public class PatientService {
     PatientDao patientDao;
 
     /**ljy
+     *新增question
+     * @return
+     */
+    public boolean addQuestion(QAEntity qaEntity)
+    {
+        return patientDao.addQuestion(qaEntity);
+    }
+
+    /**ljy
      * 管理员获取所有病人信息
      */
     public ArrayList<PatientEntity> getAllPatients()

@@ -18,4 +18,10 @@ public interface QuestionDetailAnswerMapper {
      */
     public ArrayList<QAAnswerEntity> searchDetailAnswerById(@Param("qid") Long qid);
 
+    /**ljy
+     * 医生回答某个问题
+     * @return
+     */
+    public boolean insertDetailAnswer(@Param("uid") Long uid, @Param("qid") Long qid, @Param("answer") String answer,@Param("remark") String remark);
+
 }

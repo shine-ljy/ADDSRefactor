@@ -1,10 +1,13 @@
 package com.java.adds.dao;
 
+import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.controller.vo.SetPage;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.mapper.DoctorMapper;
+import com.java.adds.mapper.QuestionDetailAnswerMapper;
 import com.java.adds.mapper.QuestionMapper;
+import com.java.adds.mapper.QuestionResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +20,12 @@ public class DoctorDao {
 
     @Autowired
     QuestionMapper questionMapper;
+
+    @Autowired
+    QuestionResultMapper questionResultMapper;
+
+    @Autowired
+    QuestionDetailAnswerMapper questionDetailAnswerMapper;
 
     /**ljy
      * 管理员获取所有医生信息
@@ -75,5 +84,26 @@ public class DoctorDao {
             }
         }
         return questions;
+    }
+
+    /**ljy
+     * 医生回答某个问题
+     * @return
+     */
+    public boolean insertAnswer(Long uid, Long qid, QuestionAnswerVO questionAnswerVO)
+    {
+        if(questionAnswerVO.getType()==1)  //选择题
+        {
+            int answer=0;
+            if(questionAnswerVO.getAnswer().equals("yes"))  //1:yes,2:no
+                answer=1;
+            else
+                answer=2;
+            questionResultMapper.insertChoiceAnswer(uid,qid,answer, questionAnswerVO.getRemark());
+        }
+        else
+            questionDetailAnswerMapper.insertDetailAnswer(uid,qid, questionAnswerVO.getAnswer(), questionAnswerVO.getRemark());
+
+        return true;
     }
 }

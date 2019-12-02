@@ -4,10 +4,7 @@ import com.java.adds.entity.PatientEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -34,5 +31,15 @@ public class PatientController {
     public ArrayList<QAEntity> searchMyQuestion(@PathVariable Long patientId)
     {
         return patientService.searchMyQuestion(patientId);
+    }
+
+    /**ljy
+     *新增question
+     * @return
+     */
+    @PutMapping("")
+    public boolean addQuestion(@RequestBody QAEntity qaEntity)
+    {
+        return patientService.addQuestion(qaEntity);
     }
 }

@@ -24,6 +24,6 @@
     </select>
 
     <select id="getDoctorsByDepartment" resultMap="doctorList">
-
+        select * from doctor where department=#{did};
     </select>
 </mapper>
