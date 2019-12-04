@@ -26,13 +26,23 @@ public class DoctorController {
     }
 
     /**ljy
-     * 医生获取所有问题
+     * 医生获取所有还未回答的选择题
      * @return
      */
-    @GetMapping("{doctorId}/question")
-    public ArrayList<QAEntity> getQuestionsNotAnswered(@RequestBody SetPage setPage, @PathVariable Long doctorId)
+    @PostMapping("{doctorId}/choiceQuestion")
+    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(@RequestBody SetPage setPage, @PathVariable Long doctorId)
     {
-        return doctorService.getQuestionsNotAnswered(doctorId,setPage);
+        return doctorService.getChoiceQuestionsNotAnswered(doctorId,setPage);
+    }
+
+    /**ljy
+     * 医生获取所有还未回答的详细解答题
+     * @return
+     */
+    @PostMapping("{doctorId}/detailQuestion")
+    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(@RequestBody SetPage setPage, @PathVariable Long doctorId)
+    {
+        return doctorService.getDetailQuestionsNotAnswered(setPage,doctorId);
     }
 
     /**ljy

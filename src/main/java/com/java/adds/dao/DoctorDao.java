@@ -36,23 +36,23 @@ public class DoctorDao {
     }
 
     /**ljy
-     *获取所有问题
+     *获取所有还没回答的选择题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid, SetPage setPage)
+    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, SetPage setPage)
     {
-        ArrayList<QAEntity> allQuestions=questionMapper.getAllQuestions((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit());
-        ArrayList<QAEntity> questionsAnswered=questionMapper.getQuestionAnswered(uid);
-        for(int i=0;i<allQuestions.size();i++) {
-            allQuestions.get(i).setAnswered(2);  //初始全部设为未回答
-            for (int j = 0; j < questionsAnswered.size(); j++) {
-                if (allQuestions.get(i).getQid() == questionsAnswered.get(j).getQid()) {
-                    //allQuestions.remove(i);
-                    allQuestions.get(i).setAnswered(1);  //已回答的修改未已回答
-                    break;
-                }
-            }
-        }
+        ArrayList<QAEntity> allQuestions=questionMapper.getChoiceQuestionsNotAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),uid);
+//        ArrayList<QAEntity> questionsAnswered=questionMapper.getQuestionAnswered(uid);
+////        for(int i=0;i<allQuestions.size();i++) {
+////            allQuestions.get(i).setAnswered(2);  //初始全部设为未回答
+////            for (int j = 0; j < questionsAnswered.size(); j++) {
+////                if (allQuestions.get(i).getQid() == questionsAnswered.get(j).getQid()) {
+////                    //allQuestions.remove(i);
+////                    allQuestions.get(i).setAnswered(1);  //已回答的修改未已回答
+////                    break;
+////                }
+////            }
+////        }
         return allQuestions;
     }
 
@@ -105,5 +105,15 @@ public class DoctorDao {
             questionDetailAnswerMapper.insertDetailAnswer(uid,qid, questionAnswerVO.getAnswer(), questionAnswerVO.getRemark());
 
         return true;
+    }
+
+
+    /**ljy
+     * 医生获取所有还未回答的详细解答题
+     * @return
+     */
+    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(SetPage setPage, Long doctorId)
+    {
+        return questionMapper.getDetailQuestionsNotAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),doctorId);
     }
 }

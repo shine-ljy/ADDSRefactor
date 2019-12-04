@@ -24,12 +24,12 @@ public class DoctorService {
     }
 
     /**ljy
-     *获取所有还没回答的问题
+     *获取所有还没回答的选择题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsNotAnswered(Long uid, SetPage setPage)
+    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, SetPage setPage)
     {
-        return doctorDao.getQuestionsNotAnswered(uid,setPage);
+        return doctorDao.getChoiceQuestionsNotAnswered(uid,setPage);
     }
 
     /**ljy
@@ -57,5 +57,14 @@ public class DoctorService {
     public boolean insertAnswer(Long uid, Long qid, QuestionAnswerVO questionAnswerVO)
     {
         return doctorDao.insertAnswer(uid,qid, questionAnswerVO);
+    }
+
+    /**ljy
+     * 医生获取所有还未回答的详细解答题
+     * @return
+     */
+    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(SetPage setPage, Long doctorId)
+    {
+        return doctorDao.getDetailQuestionsNotAnswered(setPage,doctorId);
     }
 }

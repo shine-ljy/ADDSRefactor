@@ -19,8 +19,12 @@
         select * from question where userid=#{uid}
     </select>
 
-    <select id="getAllQuestions" resultMap="QAList">
-        select * from question limit #{start}, #{limitRecord}
+    <select id="getChoiceQuestionsNotAnswered" resultMap="QAList">
+        select * from question where type=1 and qid not in(select questionid from questionresult where userid=#{uid}) limit #{start}, #{limitRecord}
+    </select>
+
+    <select id="getDetailQuestionsNotAnswered" resultMap="QAList">
+        select * from question where type=2 and qid not in(select qid from question_detail_answer where user_id=#{uid}) limit #{start}, #{limitRecord}
     </select>
 
     <select id="getQuestionAnswered" resultMap="QAList">

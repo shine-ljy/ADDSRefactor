@@ -31,10 +31,10 @@ public interface QuestionMapper {
     public ArrayList<QAEntity> searchMyQuestion(@Param("uid") Long uid);
 
     /**ljy
-     *获取所有问题
+     *获取所有还没回答的选择题
      * @return
      */
-    public ArrayList<QAEntity> getAllQuestions(@Param("start") Integer start, @Param("limitRecord") Integer limit);
+    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit,@Param("uid") Long uid);
 
     /**ljy
      *获取已经回答的问题
@@ -53,4 +53,10 @@ public interface QuestionMapper {
      * @return
      */
     public ArrayList<QAEntity> getQuestionsInHosDepartment(@Param("hdId") Long hdId);
+
+    /**ljy
+     * 医生获取所有还未回答的详细解答题
+     * @return
+     */
+    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit,@Param("uid") Long doctorId);
 }
