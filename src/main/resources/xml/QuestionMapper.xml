@@ -27,8 +27,12 @@
         select * from question where type=2 and qid not in(select qid from question_detail_answer where user_id=#{uid}) limit #{start}, #{limitRecord}
     </select>
 
-    <select id="getQuestionAnswered" resultMap="QAList">
+    <select id="getAllQuestionAnswered" resultMap="QAList">
         select * from question where qid in(select questionid from questionresult where userid=#{uid})
+    </select>
+
+    <select id="getQuestionAnswered" resultMap="QAList">
+        select * from question where qid in(select questionid from questionresult where userid=#{uid}) limit #{start}, #{limitRecord}
     </select>
 
     <delete id="deleteQuestion">

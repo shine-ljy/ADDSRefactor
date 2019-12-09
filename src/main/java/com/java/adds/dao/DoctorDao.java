@@ -61,9 +61,9 @@ public class DoctorDao {
      *医生获取所有已经回答的问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsAnswered(Long uid)
+    public ArrayList<QAEntity> getQuestionsAnswered(SetPage setPage,Long uid)
     {
-        return questionMapper.getQuestionAnswered(uid);
+        return questionMapper.getQuestionAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),uid);
     }
 
     /**ljy
@@ -73,7 +73,7 @@ public class DoctorDao {
     public ArrayList<QAEntity> getQuestionsInHosDepartment(Long uid,Long hdId)
     {
         ArrayList<QAEntity> questions=questionMapper.getQuestionsInHosDepartment(hdId);
-        ArrayList<QAEntity> questionsAnswered=questionMapper.getQuestionAnswered(uid);
+        ArrayList<QAEntity> questionsAnswered=questionMapper.getAllQuestionAnswered(uid);
         for(int i=0;i<questions.size();i++) {
             for (int j = 0; j < questionsAnswered.size(); j++) {
                 if (questions.get(i).getQid() == questionsAnswered.get(j).getQid()) {

@@ -7,6 +7,8 @@ import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 
@@ -36,9 +38,9 @@ public class DoctorService {
      *医生获取所有已经回答的问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsAnswered(Long uid)
+    public ArrayList<QAEntity> getQuestionsAnswered(SetPage setPage,Long doctorId)
     {
-        return doctorDao.getQuestionsAnswered(uid);
+        return doctorDao.getQuestionsAnswered(setPage,doctorId);
     }
 
     /**ljy

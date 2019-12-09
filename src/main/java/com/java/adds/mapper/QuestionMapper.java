@@ -40,7 +40,13 @@ public interface QuestionMapper {
      *获取已经回答的问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionAnswered(@Param("uid") Long uid);
+    public ArrayList<QAEntity> getAllQuestionAnswered(@Param("uid") Long uid);
+
+    /**ljy
+     *获取已经回答的问题(分页查询)
+     * @return
+     */
+    public ArrayList<QAEntity> getQuestionAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit,@Param("uid") Long uid);
 
     /**ljy
      *根据问题id查找QAEntity

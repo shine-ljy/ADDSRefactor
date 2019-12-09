@@ -49,10 +49,10 @@ public class DoctorController {
      * 医生获取所有已经回答的问题
      * @return
      */
-    @GetMapping("{doctorId}/questionAnswered")
-    public ArrayList<QAEntity> getQuestionsAnswered(@PathVariable Long doctorId)
+    @PostMapping("{doctorId}/questionAnswered")
+    public ArrayList<QAEntity> getQuestionsAnswered(@RequestBody SetPage setPage,@PathVariable Long doctorId)
     {
-        return doctorService.getQuestionsAnswered(doctorId);
+        return doctorService.getQuestionsAnswered(setPage,doctorId);
     }
 
     /**ljy
