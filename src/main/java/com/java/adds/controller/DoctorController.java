@@ -46,13 +46,23 @@ public class DoctorController {
     }
 
     /**ljy
-     * 医生获取所有已经回答的问题
+     * 医生获取所有已经回答的选择题问题（分页查询）
      * @return
      */
-    @PostMapping("{doctorId}/questionAnswered")
+    @PostMapping("{doctorId}/choiceQuestionAnswered")
     public ArrayList<QAEntity> getQuestionsAnswered(@RequestBody SetPage setPage,@PathVariable Long doctorId)
     {
         return doctorService.getQuestionsAnswered(setPage,doctorId);
+    }
+
+    /**ljy
+     * 医生获取所有已经回答的详细解答问题（分页查询）
+     * @return
+     */
+    @PostMapping("{doctorId}/detailQuestionAnswered")
+    public ArrayList<QAEntity> getDetailQuestionsAnswered(@RequestBody SetPage setPage,@PathVariable Long doctorId)
+    {
+        return doctorService.getDetailQuestionsAnswered(setPage,doctorId);
     }
 
     /**ljy

@@ -32,7 +32,11 @@
     </select>
 
     <select id="getQuestionAnswered" resultMap="QAList">
-        select * from question where qid in(select questionid from questionresult where userid=#{uid}) limit #{start}, #{limitRecord}
+        select * from question where type=1 and qid in(select questionid from questionresult where userid=#{uid}) limit #{start}, #{limitRecord}
+    </select>
+
+    <select id="getDetailQuestionsAnswered" resultMap="QAList">
+        select * from question where type=2 and qid in(select qid from question_detail_answer where user_id=#{uid}) limit #{start}, #{limitRecord}
     </select>
 
     <delete id="deleteQuestion">

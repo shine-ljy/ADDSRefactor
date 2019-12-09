@@ -58,12 +58,21 @@ public class DoctorDao {
 
 
     /**ljy
-     *医生获取所有已经回答的问题
+     *医生获取所有已经回答的选择题问题（分页查询）
      * @return
      */
     public ArrayList<QAEntity> getQuestionsAnswered(SetPage setPage,Long uid)
     {
         return questionMapper.getQuestionAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),uid);
+    }
+
+    /**ljy
+     * 医生获取所有已经回答的详细解答问题（分页查询）
+     * @return
+     */
+    public ArrayList<QAEntity> getDetailQuestionsAnswered(SetPage setPage,Long doctorId)
+    {
+        return questionMapper.getDetailQuestionsAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),doctorId);
     }
 
     /**ljy
