@@ -1,7 +1,7 @@
 package com.java.adds.controller;
 
 import com.java.adds.controller.vo.QuestionAnswerVO;
-import com.java.adds.controller.vo.SetPage;
+import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.service.DoctorService;
@@ -25,45 +25,56 @@ public class DoctorController {
         return doctorService.getAllDoctors();
     }
 
-    /**ljy
-     * 医生获取所有还未回答的选择题
-     * @return
-     */
-    @PostMapping("{doctorId}/choiceQuestion")
-    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(@RequestBody SetPage setPage, @PathVariable Long doctorId)
-    {
-        return doctorService.getChoiceQuestionsNotAnswered(doctorId,setPage);
-    }
 
     /**ljy
-     * 医生获取所有还未回答的详细解答题
+     * 医生获取问题（回答与否，问题类型）
      * @return
      */
-    @PostMapping("{doctorId}/detailQuestion")
-    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(@RequestBody SetPage setPage, @PathVariable Long doctorId)
+    @PostMapping("{doctorId}/question")
+    public ArrayList<QAEntity> getFilterQuestion(@RequestBody FilterQuestionVO filterQuestionVO, @PathVariable Long doctorId)
     {
-        return doctorService.getDetailQuestionsNotAnswered(setPage,doctorId);
+        return doctorService.getFilterQuestion(filterQuestionVO,doctorId);
     }
 
-    /**ljy
-     * 医生获取所有已经回答的选择题问题（分页查询）
-     * @return
-     */
-    @PostMapping("{doctorId}/choiceQuestionAnswered")
-    public ArrayList<QAEntity> getQuestionsAnswered(@RequestBody SetPage setPage,@PathVariable Long doctorId)
-    {
-        return doctorService.getQuestionsAnswered(setPage,doctorId);
-    }
+//    /**ljy
+//     * 医生获取所有还未回答的选择题
+//     * @return
+//     */
+//    @PostMapping("{doctorId}/choiceQuestion")
+//    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(@RequestBody FilterQuestionVO filterQuestionVO, @PathVariable Long doctorId)
+//    {
+//        return doctorService.getChoiceQuestionsNotAnswered(doctorId, filterQuestionVO);
+//    }
 
-    /**ljy
-     * 医生获取所有已经回答的详细解答问题（分页查询）
-     * @return
-     */
-    @PostMapping("{doctorId}/detailQuestionAnswered")
-    public ArrayList<QAEntity> getDetailQuestionsAnswered(@RequestBody SetPage setPage,@PathVariable Long doctorId)
-    {
-        return doctorService.getDetailQuestionsAnswered(setPage,doctorId);
-    }
+//    /**ljy
+//     * 医生获取所有还未回答的详细解答题
+//     * @return
+//     */
+//    @PostMapping("{doctorId}/detailQuestion")
+//    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(@RequestBody FilterQuestionVO filterQuestionVO, @PathVariable Long doctorId)
+//    {
+//        return doctorService.getDetailQuestionsNotAnswered(filterQuestionVO,doctorId);
+//    }
+
+//    /**ljy
+//     * 医生获取所有已经回答的选择题问题（分页查询）
+//     * @return
+//     */
+//    @PostMapping("{doctorId}/choiceQuestionAnswered")
+//    public ArrayList<QAEntity> getQuestionsAnswered(@RequestBody FilterQuestionVO filterQuestionVO, @PathVariable Long doctorId)
+//    {
+//        return doctorService.getQuestionsAnswered(filterQuestionVO,doctorId);
+//    }
+
+//    /**ljy
+//     * 医生获取所有已经回答的详细解答问题（分页查询）
+//     * @return
+//     */
+//    @PostMapping("{doctorId}/detailQuestionAnswered")
+//    public ArrayList<QAEntity> getDetailQuestionsAnswered(@RequestBody FilterQuestionVO filterQuestionVO, @PathVariable Long doctorId)
+//    {
+//        return doctorService.getDetailQuestionsAnswered(filterQuestionVO,doctorId);
+//    }
 
     /**ljy
      * 医生获取某一个科室下的未回答问题

@@ -1,7 +1,7 @@
 package com.java.adds.dao;
 
 import com.java.adds.controller.vo.QuestionAnswerVO;
-import com.java.adds.controller.vo.SetPage;
+import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import com.java.adds.mapper.DoctorMapper;
@@ -35,45 +35,63 @@ public class DoctorDao {
         return doctorMapper.getAllDoctors();
     }
 
+//    /**ljy
+//     *获取所有还没回答的选择题
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, FilterQuestionVO filterQuestionVO)
+//    {
+//        ArrayList<QAEntity> allQuestions=questionMapper.getChoiceQuestionsNotAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),uid);
+//        return allQuestions;
+//    }
+
+
+//    /**ljy
+//     *医生获取所有已经回答的选择题问题（分页查询）
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long uid)
+//    {
+//        return questionMapper.getQuestionAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),uid);
+//    }
+
+//    /**ljy
+//     * 医生获取所有已经回答的详细解答问题（分页查询）
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getDetailQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
+//    {
+//        return questionMapper.getDetailQuestionsAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
+//    }
+
+//    /**ljy
+//     * 医生获取所有还未回答的详细解答题
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
+//    {
+//        return questionMapper.getDetailQuestionsNotAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
+//    }
+
     /**ljy
-     *获取所有还没回答的选择题
+     * 医生获取问题（回答与否，问题类型）
      * @return
      */
-    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, SetPage setPage)
+    public ArrayList<QAEntity> getFilterQuestion(FilterQuestionVO filterQuestionVO, Long doctorId)
     {
-        ArrayList<QAEntity> allQuestions=questionMapper.getChoiceQuestionsNotAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),uid);
-//        ArrayList<QAEntity> questionsAnswered=questionMapper.getQuestionAnswered(uid);
-////        for(int i=0;i<allQuestions.size();i++) {
-////            allQuestions.get(i).setAnswered(2);  //初始全部设为未回答
-////            for (int j = 0; j < questionsAnswered.size(); j++) {
-////                if (allQuestions.get(i).getQid() == questionsAnswered.get(j).getQid()) {
-////                    //allQuestions.remove(i);
-////                    allQuestions.get(i).setAnswered(1);  //已回答的修改未已回答
-////                    break;
-////                }
-////            }
-////        }
-        return allQuestions;
+        //1:已经回答，2：还未回答
+        //1:选择题，2：详细解答题
+        if(filterQuestionVO.getAnsweredOrNot()==1&&filterQuestionVO.getQuestionType()==1)//已经回答的选择题
+            return questionMapper.getQuestionAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
+        else if(filterQuestionVO.getAnsweredOrNot()==1&&filterQuestionVO.getQuestionType()==2)//已经回答的详细解答题
+            return questionMapper.getDetailQuestionsAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
+        else if(filterQuestionVO.getAnsweredOrNot()==2&&filterQuestionVO.getQuestionType()==1)//还未回答的选择题
+            return questionMapper.getChoiceQuestionsNotAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
+        else//还未回答的详细解答题
+            return questionMapper.getDetailQuestionsNotAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
     }
 
 
-    /**ljy
-     *医生获取所有已经回答的选择题问题（分页查询）
-     * @return
-     */
-    public ArrayList<QAEntity> getQuestionsAnswered(SetPage setPage,Long uid)
-    {
-        return questionMapper.getQuestionAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),uid);
-    }
-
-    /**ljy
-     * 医生获取所有已经回答的详细解答问题（分页查询）
-     * @return
-     */
-    public ArrayList<QAEntity> getDetailQuestionsAnswered(SetPage setPage,Long doctorId)
-    {
-        return questionMapper.getDetailQuestionsAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),doctorId);
-    }
 
     /**ljy
      *获取某一个科室下的未回答问题
@@ -116,13 +134,4 @@ public class DoctorDao {
         return true;
     }
 
-
-    /**ljy
-     * 医生获取所有还未回答的详细解答题
-     * @return
-     */
-    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(SetPage setPage, Long doctorId)
-    {
-        return questionMapper.getDetailQuestionsNotAnswered((setPage.getStart()-1)*setPage.getLimit(),setPage.getLimit(),doctorId);
-    }
 }

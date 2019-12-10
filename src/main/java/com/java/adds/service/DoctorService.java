@@ -1,15 +1,12 @@
 package com.java.adds.service;
 
+import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
-import com.java.adds.controller.vo.SetPage;
 import com.java.adds.dao.DoctorDao;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QAEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 
@@ -27,31 +24,49 @@ public class DoctorService {
     }
 
     /**ljy
-     *获取所有还没回答的选择题
+     * 医生获取问题（回答与否，问题类型）
      * @return
      */
-    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, SetPage setPage)
+    public ArrayList<QAEntity> getFilterQuestion(FilterQuestionVO filterQuestionVO, Long doctorId)
     {
-        return doctorDao.getChoiceQuestionsNotAnswered(uid,setPage);
+        return doctorDao.getFilterQuestion(filterQuestionVO,doctorId);
     }
 
-    /**ljy
-     *医生获取所有已经回答的选择题问题（分页查询）
-     * @return
-     */
-    public ArrayList<QAEntity> getQuestionsAnswered(SetPage setPage,Long doctorId)
-    {
-        return doctorDao.getQuestionsAnswered(setPage,doctorId);
-    }
+//    /**ljy
+//     *获取所有还没回答的选择题
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, FilterQuestionVO filterQuestionVO)
+//    {
+//        return doctorDao.getChoiceQuestionsNotAnswered(uid, filterQuestionVO);
+//    }
 
-    /**ljy
-     * 医生获取所有已经回答的详细解答问题（分页查询）
-     * @return
-     */
-    public ArrayList<QAEntity> getDetailQuestionsAnswered(SetPage setPage,Long doctorId)
-    {
-        return doctorDao.getDetailQuestionsAnswered(setPage,doctorId);
-    }
+//    /**ljy
+//     *医生获取所有已经回答的选择题问题（分页查询）
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
+//    {
+//        return doctorDao.getQuestionsAnswered(filterQuestionVO,doctorId);
+//    }
+
+//    /**ljy
+//     * 医生获取所有已经回答的详细解答问题（分页查询）
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getDetailQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
+//    {
+//        return doctorDao.getDetailQuestionsAnswered(filterQuestionVO,doctorId);
+//    }
+
+//    /**ljy
+//     * 医生获取所有还未回答的详细解答题
+//     * @return
+//     */
+//    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
+//    {
+//        return doctorDao.getDetailQuestionsNotAnswered(filterQuestionVO,doctorId);
+//    }
 
     /**ljy
      *获取某一个科室下的未回答问题
@@ -71,12 +86,5 @@ public class DoctorService {
         return doctorDao.insertAnswer(uid,qid, questionAnswerVO);
     }
 
-    /**ljy
-     * 医生获取所有还未回答的详细解答题
-     * @return
-     */
-    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(SetPage setPage, Long doctorId)
-    {
-        return doctorDao.getDetailQuestionsNotAnswered(setPage,doctorId);
-    }
+
 }
