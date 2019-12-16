@@ -1,7 +1,7 @@
 package com.java.adds.entity;
 
 
-public class QAEntity {
+public class QuestionEntity {
     private Long qid;//问题id
     private String content;  //问题内容
     private Long hospitalDepartmentId;  //属于哪个科室的问题

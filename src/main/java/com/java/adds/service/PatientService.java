@@ -3,7 +3,7 @@ package com.java.adds.service;
 
 import com.java.adds.dao.PatientDao;
 import com.java.adds.entity.PatientEntity;
-import com.java.adds.entity.QAEntity;
+import com.java.adds.entity.QuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +18,9 @@ public class PatientService {
      *新增question
      * @return
      */
-    public boolean addQuestion(QAEntity qaEntity)
+    public boolean addQuestion(QuestionEntity questionEntity)
     {
-        return patientDao.addQuestion(qaEntity);
+        return patientDao.addQuestion(questionEntity);
     }
 
     /**ljy
@@ -35,7 +35,7 @@ public class PatientService {
      *病人查找自己提交的所有问题
      * @return
      */
-    public ArrayList<QAEntity> searchMyQuestion(Long uid)
+    public ArrayList<QuestionEntity> searchMyQuestion(Long uid)
     {
         return patientDao.searchMyQuestion(uid);
     }

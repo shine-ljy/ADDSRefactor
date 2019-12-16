@@ -3,7 +3,7 @@ package com.java.adds.dao;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.entity.DoctorEntity;
-import com.java.adds.entity.QAEntity;
+import com.java.adds.entity.QuestionEntity;
 import com.java.adds.mapper.DoctorMapper;
 import com.java.adds.mapper.QuestionDetailAnswerMapper;
 import com.java.adds.mapper.QuestionMapper;
@@ -77,7 +77,7 @@ public class DoctorDao {
      * 医生获取问题（回答与否，问题类型）
      * @return
      */
-    public ArrayList<QAEntity> getFilterQuestion(FilterQuestionVO filterQuestionVO, Long doctorId)
+    public ArrayList<QuestionEntity> getFilterQuestion(FilterQuestionVO filterQuestionVO, Long doctorId)
     {
         //1:已经回答，2：还未回答
         //1:选择题，2：详细解答题
@@ -97,10 +97,10 @@ public class DoctorDao {
      *获取某一个科室下的未回答问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsInHosDepartment(Long uid,Long hdId)
+    public ArrayList<QuestionEntity> getQuestionsInHosDepartment(Long uid, Long hdId)
     {
-        ArrayList<QAEntity> questions=questionMapper.getQuestionsInHosDepartment(hdId);
-        ArrayList<QAEntity> questionsAnswered=questionMapper.getAllQuestionAnswered(uid);
+        ArrayList<QuestionEntity> questions=questionMapper.getQuestionsInHosDepartment(hdId);
+        ArrayList<QuestionEntity> questionsAnswered=questionMapper.getAllQuestionAnswered(uid);
         for(int i=0;i<questions.size();i++) {
             for (int j = 0; j < questionsAnswered.size(); j++) {
                 if (questions.get(i).getQid() == questionsAnswered.get(j).getQid()) {

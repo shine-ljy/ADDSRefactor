@@ -1,11 +1,12 @@
 package com.java.adds.service;
 
 
+import com.java.adds.dao.QADao;
 import com.java.adds.dao.UserDao;
+import com.java.adds.entity.QuestionEntity;
 import com.java.adds.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,9 @@ import java.util.ArrayList;
 public class UserService {
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    QADao qaDao;
 
     /**ljy
      * 用户登录
@@ -41,5 +45,14 @@ public class UserService {
     public ArrayList<UserEntity> getAllUsers()
     {
         return userDao.getAllUsers();
+    }
+
+    /**ljy
+     *QA检索
+     * @return
+     */
+    public ArrayList<QuestionEntity> searchSimpleQuestion(String question)
+    {
+        return qaDao.searchSimpleQuestion(question);
     }
 }

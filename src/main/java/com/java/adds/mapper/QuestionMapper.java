@@ -1,7 +1,7 @@
 package com.java.adds.mapper;
 
 
-import com.java.adds.entity.QAEntity;
+import com.java.adds.entity.QuestionEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +16,7 @@ public interface QuestionMapper {
      *新增question
      * @return
      */
-    public boolean addQuestion(QAEntity qaEntity);
+    public boolean addQuestion(QuestionEntity questionEntity);
 
     /**ljy
      *根据id删除question
@@ -28,48 +28,54 @@ public interface QuestionMapper {
      *查找自己提交的所有问题
      * @return
      */
-    public ArrayList<QAEntity> searchMyQuestion(@Param("uid") Long uid);
+    public ArrayList<QuestionEntity> searchMyQuestion(@Param("uid") Long uid);
 
     /**ljy
      *获取所有还没回答的选择题
      * @return
      */
-    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit,@Param("uid") Long uid);
+    public ArrayList<QuestionEntity> getChoiceQuestionsNotAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit, @Param("uid") Long uid);
 
     /**ljy
      *获取已经回答的问题
      * @return
      */
-    public ArrayList<QAEntity> getAllQuestionAnswered(@Param("uid") Long uid);
+    public ArrayList<QuestionEntity> getAllQuestionAnswered(@Param("uid") Long uid);
 
     /**ljy
      *获取所有已经回答的选择题问题（分页查询）
      * @return
      */
-    public ArrayList<QAEntity> getQuestionAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit,@Param("uid") Long uid);
+    public ArrayList<QuestionEntity> getQuestionAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit, @Param("uid") Long uid);
 
 
     /**ljy
      * 医生获取所有已经回答的详细解答问题（分页查询）
      * @return
      */
-    public ArrayList<QAEntity> getDetailQuestionsAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit,@Param("uid") Long uid);
+    public ArrayList<QuestionEntity> getDetailQuestionsAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit, @Param("uid") Long uid);
 
     /**ljy
      *根据问题id查找QAEntity
      * @return
      */
-    public QAEntity getQuestionById(@Param("qid") Long qid);
+    public QuestionEntity getQuestionById(@Param("qid") Long qid);
 
     /**ljy
      *获取某一个科室下的所有问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsInHosDepartment(@Param("hdId") Long hdId);
+    public ArrayList<QuestionEntity> getQuestionsInHosDepartment(@Param("hdId") Long hdId);
 
     /**ljy
      * 医生获取所有还未回答的详细解答题
      * @return
      */
-    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit,@Param("uid") Long doctorId);
+    public ArrayList<QuestionEntity> getDetailQuestionsNotAnswered(@Param("start") Integer start, @Param("limitRecord") Integer limit, @Param("uid") Long doctorId);
+
+    /**ljy
+     * 获取所有问题
+     * @return
+     */
+    public ArrayList<QuestionEntity> getAllQuestion();
 }

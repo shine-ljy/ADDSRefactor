@@ -1,7 +1,7 @@
 package com.java.adds.dao;
 
 import com.java.adds.entity.PatientEntity;
-import com.java.adds.entity.QAEntity;
+import com.java.adds.entity.QuestionEntity;
 import com.java.adds.mapper.PatientMapper;
 import com.java.adds.mapper.QuestionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class PatientDao {
      *病人查找自己提交的所有问题
      * @return
      */
-    public ArrayList<QAEntity> searchMyQuestion(Long uid)
+    public ArrayList<QuestionEntity> searchMyQuestion(Long uid)
     {
         return questionMapper.searchMyQuestion(uid);
     }
@@ -38,9 +38,9 @@ public class PatientDao {
      *新增question
      * @return
      */
-    public boolean addQuestion(QAEntity qaEntity)
+    public boolean addQuestion(QuestionEntity questionEntity)
     {
-        questionMapper.addQuestion(qaEntity);
+        questionMapper.addQuestion(questionEntity);
         return true;
     }
 }

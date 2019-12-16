@@ -2,6 +2,7 @@ package com.java.adds.controller;
 
 
 import com.java.adds.controller.vo.LoginVO;
+import com.java.adds.entity.QuestionEntity;
 import com.java.adds.entity.UserEntity;
 import com.java.adds.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,10 @@ public class UserController {
     {//HttpServletResponse httpServletResponse
         UserEntity userEntity = userService.login(loginVO.getLogin_name());
         if(userEntity==null)
-            //return 401;
             httpServletResponse.setStatus(401);  //用户不存在
         else if(!userEntity.getPassword().equals(loginVO.getPassword()))
-            //return 402;
             httpServletResponse.setStatus(402);  //密码错误
         else
-            //return userEntity.getType();
             httpServletResponse.setStatus(200);  //登录成功
         return userEntity;
     }
@@ -54,5 +52,16 @@ public class UserController {
     public ArrayList<UserEntity> getAllUsers()
     {
         return userService.getAllUsers();
+    }
+
+
+    /**ljy
+     *QA检索
+     * @return
+     */
+    @PostMapping("simpleQuestion")
+    public ArrayList<QuestionEntity> searchSimpleQuestion(@RequestBody String question)
+    {
+        return userService.searchSimpleQuestion(question);
     }
 }

@@ -4,7 +4,7 @@ import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.dao.DoctorDao;
 import com.java.adds.entity.DoctorEntity;
-import com.java.adds.entity.QAEntity;
+import com.java.adds.entity.QuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class DoctorService {
      * 医生获取问题（回答与否，问题类型）
      * @return
      */
-    public ArrayList<QAEntity> getFilterQuestion(FilterQuestionVO filterQuestionVO, Long doctorId)
+    public ArrayList<QuestionEntity> getFilterQuestion(FilterQuestionVO filterQuestionVO, Long doctorId)
     {
         return doctorDao.getFilterQuestion(filterQuestionVO,doctorId);
     }
@@ -72,7 +72,7 @@ public class DoctorService {
      *获取某一个科室下的未回答问题
      * @return
      */
-    public ArrayList<QAEntity> getQuestionsInHosDepartment(Long uid,Long hdId)
+    public ArrayList<QuestionEntity> getQuestionsInHosDepartment(Long uid, Long hdId)
     {
         return doctorDao.getQuestionsInHosDepartment(uid,hdId);
     }

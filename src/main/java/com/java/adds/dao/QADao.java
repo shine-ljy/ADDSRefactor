@@ -1,7 +1,8 @@
 package com.java.adds.dao;
 
 import com.java.adds.entity.ChoiceAnswerEntity;
-import com.java.adds.entity.QAAnswerEntity;
+import com.java.adds.entity.DetailAnswerEntity;
+import com.java.adds.entity.QuestionEntity;
 import com.java.adds.mapper.QuestionDetailAnswerMapper;
 import com.java.adds.mapper.QuestionMapper;
 import com.java.adds.mapper.QuestionResultMapper;
@@ -61,9 +62,19 @@ public class QADao {
      *根据问题id查找所有的详细回答
      * @return
      */
-    public ArrayList<QAAnswerEntity> searchDetailAnswerById(Long qid)
+    public ArrayList<DetailAnswerEntity> searchDetailAnswerById(Long qid)
     {
         return questionDetailAnswerMapper.searchDetailAnswerById(qid);
     }
 
+    /**ljy
+     *QA检索
+     * @return
+     */
+    public ArrayList<QuestionEntity> searchSimpleQuestion(String question)
+    {
+        ArrayList<QuestionEntity> allQuestion=questionMapper.getAllQuestion();
+
+        return allQuestion;
+    }
 }

@@ -2,7 +2,7 @@ package com.java.adds.controller;
 
 
 import com.java.adds.entity.ChoiceAnswerEntity;
-import com.java.adds.entity.QAAnswerEntity;
+import com.java.adds.entity.DetailAnswerEntity;
 import com.java.adds.service.QAService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +40,7 @@ public class QAController {
      * @return
      */
     @GetMapping("{qid}/detailAnswer")
-    public ArrayList<QAAnswerEntity> searchDetailAnswerById(@PathVariable Long qid)
+    public ArrayList<DetailAnswerEntity> searchDetailAnswerById(@PathVariable Long qid)
     {
         return qaService.searchDetailAnswerById(qid);
     }

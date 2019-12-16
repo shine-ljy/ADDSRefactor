@@ -1,7 +1,7 @@
 package com.java.adds.entity;
 
 
-public class QAAnswerEntity {
+public class DetailAnswerEntity {
     private Long qrid;
     private Long questionid;
     private Long userid;

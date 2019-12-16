@@ -2,7 +2,7 @@ package com.java.adds.service;
 
 import com.java.adds.dao.QADao;
 import com.java.adds.entity.ChoiceAnswerEntity;
-import com.java.adds.entity.QAAnswerEntity;
+import com.java.adds.entity.DetailAnswerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class QAService {
      *根据问题id查找所有的详细回答
      * @return
      */
-    public ArrayList<QAAnswerEntity> searchDetailAnswerById(Long qid)
+    public ArrayList<DetailAnswerEntity> searchDetailAnswerById(Long qid)
     {
         return qaDao.searchDetailAnswerById(qid);
     }

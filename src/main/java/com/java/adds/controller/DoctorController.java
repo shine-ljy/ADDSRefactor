@@ -3,7 +3,7 @@ package com.java.adds.controller;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.entity.DoctorEntity;
-import com.java.adds.entity.QAEntity;
+import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +31,7 @@ public class DoctorController {
      * @return
      */
     @PostMapping("{doctorId}/question")
-    public ArrayList<QAEntity> getFilterQuestion(@RequestBody FilterQuestionVO filterQuestionVO, @PathVariable Long doctorId)
+    public ArrayList<QuestionEntity> getFilterQuestion(@RequestBody FilterQuestionVO filterQuestionVO, @PathVariable Long doctorId)
     {
         return doctorService.getFilterQuestion(filterQuestionVO,doctorId);
     }
@@ -81,7 +81,7 @@ public class DoctorController {
      * @return
      */
     @GetMapping("{uid}/question/hospitalDepartment/{hdId}")
-    public ArrayList<QAEntity> getQuestionsInHosDepartment(@PathVariable Long uid,@PathVariable Long hdId)
+    public ArrayList<QuestionEntity> getQuestionsInHosDepartment(@PathVariable Long uid, @PathVariable Long hdId)
     {
         return doctorService.getQuestionsInHosDepartment(uid,hdId);
     }

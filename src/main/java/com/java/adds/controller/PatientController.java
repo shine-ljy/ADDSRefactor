@@ -1,7 +1,7 @@
 package com.java.adds.controller;
 
 import com.java.adds.entity.PatientEntity;
-import com.java.adds.entity.QAEntity;
+import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ public class PatientController {
      * @return
      */
     @GetMapping("{patientId}/question")
-    public ArrayList<QAEntity> searchMyQuestion(@PathVariable Long patientId)
+    public ArrayList<QuestionEntity> searchMyQuestion(@PathVariable Long patientId)
     {
         return patientService.searchMyQuestion(patientId);
     }
@@ -38,8 +38,8 @@ public class PatientController {
      * @return
      */
     @PutMapping("")
-    public boolean addQuestion(@RequestBody QAEntity qaEntity)
+    public boolean addQuestion(@RequestBody QuestionEntity questionEntity)
     {
-        return patientService.addQuestion(qaEntity);
+        return patientService.addQuestion(questionEntity);
     }
 }
