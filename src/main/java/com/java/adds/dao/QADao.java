@@ -74,6 +74,11 @@ public class QADao {
     public ArrayList<QuestionEntity> searchSimpleQuestion(String question)
     {
         ArrayList<QuestionEntity> allQuestion=questionMapper.getAllQuestion();
+        String[] doc=new String[allQuestion.size()];
+        for(int i=0;i<allQuestion.size();i++)
+            doc[i]=allQuestion.get(i).getContent();
+        //调用学姐的代码
+
 
         return allQuestion;
     }

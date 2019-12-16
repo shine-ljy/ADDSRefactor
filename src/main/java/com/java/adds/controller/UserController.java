@@ -5,6 +5,7 @@ import com.java.adds.controller.vo.LoginVO;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.entity.UserEntity;
 import com.java.adds.service.UserService;
+import com.java.adds.utils.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("user")
 public class UserController {
+
     @Autowired
     UserService userService;
 
@@ -22,7 +24,7 @@ public class UserController {
      * @return
      */
     @PostMapping("login")
-    public UserEntity login(@RequestBody LoginVO loginVO, HttpServletResponse httpServletResponse)
+    public UserEntity login(@RequestBody LoginVO loginVO, HttpServletResponse httpServletResponse, @CookieValue(value = "token", required = false) String token)
     {//HttpServletResponse httpServletResponse
         UserEntity userEntity = userService.login(loginVO.getLogin_name());
         if(userEntity==null)
@@ -30,7 +32,20 @@ public class UserController {
         else if(!userEntity.getPassword().equals(loginVO.getPassword()))
             httpServletResponse.setStatus(402);  //密码错误
         else
+        {
             httpServletResponse.setStatus(200);  //登录成功
+            if(token!=null)
+            {
+                CookieUtils cookieUtils=new CookieUtils();
+                cookieUtils.writeCookie(httpServletResponse,userEntity.getUsername(),userEntity.getPassword(),60*60);
+            }
+            else
+            {
+                CookieUtils cookieUtils=new CookieUtils();
+                cookieUtils.writeCookie(httpServletResponse,userEntity.getUsername(),userEntity.getPassword(),0);
+            }
+        }
+
         return userEntity;
     }
 
@@ -56,7 +71,7 @@ public class UserController {
 
 
     /**ljy
-     *QA检索
+     *QA检索（有待完善，等qa数据处理好还需要修改）
      * @return
      */
     @PostMapping("simpleQuestion")
