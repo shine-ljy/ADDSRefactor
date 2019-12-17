@@ -24,7 +24,7 @@ public class UserController {
      * @return
      */
     @PostMapping("login")
-    public UserEntity login(@RequestBody LoginVO loginVO, HttpServletResponse httpServletResponse, @CookieValue(value = "token", required = false) String token)
+    public UserEntity login(@RequestBody LoginVO loginVO, HttpServletResponse httpServletResponse)
     {//HttpServletResponse httpServletResponse
         UserEntity userEntity = userService.login(loginVO.getLogin_name());
         if(userEntity==null)
@@ -34,16 +34,6 @@ public class UserController {
         else
         {
             httpServletResponse.setStatus(200);  //登录成功
-            if(token!=null)
-            {
-                CookieUtils cookieUtils=new CookieUtils();
-                cookieUtils.writeCookie(httpServletResponse,userEntity.getUsername(),userEntity.getPassword(),60*60);
-            }
-            else
-            {
-                CookieUtils cookieUtils=new CookieUtils();
-                cookieUtils.writeCookie(httpServletResponse,userEntity.getUsername(),userEntity.getPassword(),0);
-            }
         }
 
         return userEntity;
