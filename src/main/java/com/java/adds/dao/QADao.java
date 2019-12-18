@@ -6,6 +6,7 @@ import com.java.adds.entity.QuestionEntity;
 import com.java.adds.mapper.QuestionDetailAnswerMapper;
 import com.java.adds.mapper.QuestionMapper;
 import com.java.adds.mapper.QuestionResultMapper;
+import com.java.adds.qaRearch.QA_score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,8 @@ public class QADao {
     @Autowired
     QuestionResultMapper questionResultMapper;
 
+    @Autowired
+    QA_score qa_score;
 
     /**ljy
      *根据id删除question
@@ -78,8 +81,14 @@ public class QADao {
         for(int i=0;i<allQuestion.size();i++)
             doc[i]=allQuestion.get(i).getContent();
         //调用学姐的代码
+        String[] que={question};
+        String temResult=qa_score.do_QA_research(que,doc);
+        String searchResult=temResult.substring(2,temResult.length()-3);
+        String[] index=searchResult.split(",");
+        ArrayList<QuestionEntity> result=new ArrayList<>();
+        for(int i=0;i<index.length;i++)
+            result.add(questionMapper.getQuestionById(allQuestion.get(Integer.parseInt(index[i])).getQid()));
 
-
-        return allQuestion;
+        return result;
     }
 }
