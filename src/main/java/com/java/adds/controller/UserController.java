@@ -5,7 +5,6 @@ import com.java.adds.controller.vo.LoginVO;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.entity.UserEntity;
 import com.java.adds.service.UserService;
-import com.java.adds.utils.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,7 +63,7 @@ public class UserController {
      *QA检索（有待完善，等qa数据处理好还需要修改）
      * @return
      */
-    @PostMapping("simpleQuestion")
+    @PostMapping("similarityQuestion")
     public ArrayList<QuestionEntity> searchSimpleQuestion(@RequestBody String question)
     {
         return userService.searchSimpleQuestion(question);
