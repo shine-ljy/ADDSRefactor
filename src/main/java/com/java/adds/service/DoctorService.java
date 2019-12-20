@@ -4,6 +4,7 @@ import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.dao.DoctorDao;
 import com.java.adds.entity.DoctorEntity;
+import com.java.adds.entity.FileEntity;
 import com.java.adds.entity.QuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,4 +88,21 @@ public class DoctorService {
     }
 
 
+    /**ljy
+     * 医生上传数据集
+     * @return
+     */
+    public Long uploadFile(Long doctorId, String fileName,String filePath,String fileType)
+    {
+        return doctorDao.uploadFile(doctorId,fileName,filePath,fileType);
+    }
+
+    /**ljy
+     * 医生获取数据集
+     * @return
+     */
+    public ArrayList<FileEntity> getFiles(Long doctorId,String fileType)
+    {
+        return doctorDao.getFiles(doctorId,"dataSet");
+    }
 }

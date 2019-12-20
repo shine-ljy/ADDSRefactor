@@ -1,13 +1,11 @@
 package com.java.adds.dao;
 
-import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.controller.vo.FilterQuestionVO;
+import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.entity.DoctorEntity;
+import com.java.adds.entity.FileEntity;
 import com.java.adds.entity.QuestionEntity;
-import com.java.adds.mapper.DoctorMapper;
-import com.java.adds.mapper.QuestionDetailAnswerMapper;
-import com.java.adds.mapper.QuestionMapper;
-import com.java.adds.mapper.QuestionResultMapper;
+import com.java.adds.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +24,9 @@ public class DoctorDao {
 
     @Autowired
     QuestionDetailAnswerMapper questionDetailAnswerMapper;
+
+    @Autowired
+    FileMapper fileMapper;
 
     /**ljy
      * 管理员获取所有医生信息
@@ -134,4 +135,22 @@ public class DoctorDao {
         return true;
     }
 
+
+    /**ljy
+     * 医生上传数据集
+     * @return
+     */
+    public Long uploadFile(Long doctorId, String fileName,String filePath,String fileType)
+    {
+        return fileMapper.uploadFile(doctorId,fileName,filePath,fileType);
+    }
+
+    /**ljy
+     * 医生获取数据集
+     * @return
+     */
+    public ArrayList<FileEntity> getFiles(Long doctorId,String fileType)
+    {
+        return fileMapper.getFiles(doctorId,"dataSet");
+    }
 }
