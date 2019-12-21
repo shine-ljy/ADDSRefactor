@@ -2,7 +2,7 @@ package com.java.adds.controller;
 
 import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
-import com.java.adds.entity.FileEntity;
+import com.java.adds.entity.DataSetsEntity;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.DoctorService;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -108,13 +109,22 @@ public class DoctorController {
     }
 
     /**ljy
+     * 医生新建一个数据集
+     * @return
+     */
+    @PostMapping("{doctorId}/dataSet")
+    public Integer newDataSet(@PathVariable Integer doctorId)
+    {
+        return doctorService.newDataSet(doctorId);
+    }
+
+    /**ljy
      * 医生上传数据集
      * @return
      */
     @PostMapping("{doctorId}/dataSets")
-    public Long uploadDataSet(HttpServletResponse httpServletResponse, @PathVariable Long doctorId, MultipartFile file)
-    {
-        Long fileId=null;
+    public void uploadDataSet(HttpServletResponse httpServletResponse, @PathVariable Integer doctorId, MultipartFile file, Integer dId, String type)
+    {//类型包括train，test，dev
         try {
             String fileName=file.getOriginalFilename();  //获取原始文件名
             fileName=doctorId.toString()+fileName;  //为了避免文件重名
@@ -123,12 +133,11 @@ public class DoctorController {
                 dest.getParentFile().mkdir();
             }
             file.transferTo(dest);  //将文件保存到服务器
-            fileId=doctorService.uploadFile(doctorId,fileName,dataSetsPath+fileName,"dataSet");
+            doctorService.uploadDataSet(dId,doctorId,fileName,dataSetsPath+fileName,type);
         } catch (IOException e) {
             httpServletResponse.setStatus(302,"文件上传失败");
         }
         httpServletResponse.setStatus(200,"文件上传成功");
-        return fileId;
     }
 
     /**ljy
@@ -147,7 +156,7 @@ public class DoctorController {
                 dest.getParentFile().mkdir();
             }
             file.transferTo(dest);  //将文件保存到服务器
-            fileId=doctorService.uploadFile(doctorId,fileName,dataSetsPath+fileName,"kg");
+            fileId=doctorService.uploadKG(doctorId,fileName,dataSetsPath+fileName);
             //此处还缺少知识图谱的整理和导入代码
         } catch (IOException e) {
             httpServletResponse.setStatus(302,"文件上传失败");
@@ -161,9 +170,9 @@ public class DoctorController {
      * @return
      */
     @GetMapping("{doctorId}/dataSets")
-    public ArrayList<FileEntity> getDataSets(@PathVariable Long doctorId)
+    public ArrayList<DataSetsEntity> getDataSets(@PathVariable Long doctorId)
     {
-        return doctorService.getFiles(doctorId,"dataSet");
+        return doctorService.getDataSets(doctorId);
     }
 
     /**ljy
@@ -171,8 +180,8 @@ public class DoctorController {
      * @return
      */
     @GetMapping("{doctorId}/kg")
-    public ArrayList<FileEntity> getKGS(@PathVariable Long doctorId)
+    public ArrayList<DataSetsEntity> getKGS(@PathVariable Long doctorId)
     {
-        return doctorService.getFiles(doctorId,"kg");
+        return doctorService.getKGS(doctorId);
     }
 }

@@ -3,11 +3,13 @@ package com.java.adds.service;
 import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.dao.DoctorDao;
+import com.java.adds.entity.DataSetsEntity;
 import com.java.adds.entity.DoctorEntity;
-import com.java.adds.entity.FileEntity;
 import com.java.adds.entity.QuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 
@@ -89,20 +91,48 @@ public class DoctorService {
 
 
     /**ljy
+     * 医生新建一个数据集
+     * @return
+     */
+    public Integer newDataSet(Integer doctorId)
+    {
+        return doctorDao.newDataSet(doctorId);
+    }
+
+    /**ljy
      * 医生上传数据集
      * @return
      */
-    public Long uploadFile(Long doctorId, String fileName,String filePath,String fileType)
+    public void uploadDataSet(Integer dId,Integer doctorId, String fileName,String filePath,String fileType)
     {
-        return doctorDao.uploadFile(doctorId,fileName,filePath,fileType);
+        doctorDao.uploadDataSet(dId,doctorId,fileName,filePath,fileType);
+    }
+
+
+    /**ljy
+     * 医生上传知识图谱
+     * @return
+     */
+    public Long uploadKG(Long doctorId,String fileName,String filePath)
+    {
+        return doctorDao.uploadKG(doctorId,fileName,filePath);
     }
 
     /**ljy
      * 医生获取数据集
      * @return
      */
-    public ArrayList<FileEntity> getFiles(Long doctorId,String fileType)
+    public ArrayList<DataSetsEntity> getDataSets(Long doctorId)
     {
-        return doctorDao.getFiles(doctorId,"dataSet");
+        return doctorDao.getDataSets(doctorId);
+    }
+
+    /**ljy
+     * 医生获获取知识图谱
+     * @return
+     */
+    public ArrayList<DataSetsEntity> getKGS(Long doctorId)
+    {
+        return doctorDao.getKGS(doctorId);
     }
 }

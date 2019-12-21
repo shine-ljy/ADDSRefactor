@@ -3,7 +3,7 @@ package com.java.adds.dao;
 import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.entity.DoctorEntity;
-import com.java.adds.entity.FileEntity;
+import com.java.adds.entity.DataSetsEntity;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,10 @@ public class DoctorDao {
     QuestionDetailAnswerMapper questionDetailAnswerMapper;
 
     @Autowired
-    FileMapper fileMapper;
+    DataSetsMapper dataSetsMapper;
+
+    @Autowired
+    KGMapper kgMapper;
 
     /**ljy
      * 管理员获取所有医生信息
@@ -137,20 +140,52 @@ public class DoctorDao {
 
 
     /**ljy
+     * 医生新建一个数据集
+     * @return
+     */
+    public Integer newDataSet(Integer doctorId)
+    {
+        return dataSetsMapper.newDataSet(doctorId);
+    }
+
+    /**ljy
      * 医生上传数据集
      * @return
      */
-    public Long uploadFile(Long doctorId, String fileName,String filePath,String fileType)
+    public void uploadDataSet(Integer dId,Integer doctorId, String fileName,String filePath,String fileType)
     {
-        return fileMapper.uploadFile(doctorId,fileName,filePath,fileType);
+        if(fileType.equals("train"))
+            dataSetsMapper.uploadTrainDataSet(dId,doctorId,filePath,fileName);
+        else if(fileType.equals("test"))
+            dataSetsMapper.uploadTestDataSet(dId,doctorId,filePath,fileName);
+        else
+            dataSetsMapper.uploadDevDataSet(dId,doctorId,filePath,fileName);
+    }
+
+    /**ljy
+     * 医生上传知识图谱
+     * @return
+     */
+    public Long uploadKG(Long doctorId,String fileName,String filePath)
+    {
+        return kgMapper.uploadKG(doctorId,fileName,filePath);
     }
 
     /**ljy
      * 医生获取数据集
      * @return
      */
-    public ArrayList<FileEntity> getFiles(Long doctorId,String fileType)
+    public ArrayList<DataSetsEntity> getDataSets(Long doctorId)
     {
-        return fileMapper.getFiles(doctorId,"dataSet");
+        return dataSetsMapper.getDataSets(doctorId);
+    }
+
+    /**ljy
+     * 医生获获取知识图谱
+     * @return
+     */
+    public ArrayList<DataSetsEntity> getKGS(Long doctorId)
+    {
+        return kgMapper.getKGS(doctorId);
     }
 }
