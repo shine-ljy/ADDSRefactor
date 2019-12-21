@@ -1,5 +1,6 @@
 package com.java.adds.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -11,12 +12,13 @@ import java.util.ArrayList;
  */
 @Component
 public class EmailUtil {
+    @Autowired
     JavaMailSender mailSender;
     public boolean sendSimpleEmail(String topic,String content,ArrayList<String> recepients)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("jiayincheer@163.com");
+            message.setFrom("addstest@163.com");
             message.setSubject(topic);
             message.setText(content);
             for (int i = 0; i < recepients.size(); i++) {
@@ -35,7 +37,7 @@ public class EmailUtil {
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("jiayincheer@163.com");
+            message.setFrom("addstest@163.com");
             message.setSubject(topic);
             message.setText(content);
             message.setTo(recepients);

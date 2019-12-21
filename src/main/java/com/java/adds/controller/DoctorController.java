@@ -117,6 +117,7 @@ public class DoctorController {
         Long fileId=null;
         try {
             String fileName=file.getOriginalFilename();  //获取原始文件名
+            fileName=doctorId.toString()+fileName;  //为了避免文件重名
             File dest=new File(dataSetsPathInServer+fileName);
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdir();
@@ -140,12 +141,14 @@ public class DoctorController {
         Long fileId=null;
         try {
             String fileName=file.getOriginalFilename();  //获取原始文件名
+            fileName=doctorId.toString()+fileName;  //为了避免文件重名
             File dest=new File(dataSetsPathInServer+fileName);
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdir();
             }
             file.transferTo(dest);  //将文件保存到服务器
             fileId=doctorService.uploadFile(doctorId,fileName,dataSetsPath+fileName,"kg");
+            //此处还缺少知识图谱的整理和导入代码
         } catch (IOException e) {
             httpServletResponse.setStatus(302,"文件上传失败");
         }
@@ -164,10 +167,10 @@ public class DoctorController {
     }
 
     /**ljy
-     * 医生获取数据集
+     * 医生获获取知识图谱
      * @return
      */
-    @GetMapping("{doctorId}/dataSets")
+    @GetMapping("{doctorId}/kg")
     public ArrayList<FileEntity> getKGS(@PathVariable Long doctorId)
     {
         return doctorService.getFiles(doctorId,"kg");

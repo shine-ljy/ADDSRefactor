@@ -2,11 +2,10 @@ package com.java.adds.service;
 
 
 import com.java.adds.dao.DeepModelCategoryDao;
-import com.java.adds.dao.DepartmentDao;
 import com.java.adds.entity.DeepModelCategoryEntity;
+import com.java.adds.entity.DeepModelEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 
@@ -22,5 +21,14 @@ public class DeepModelCategoryService {
     public ArrayList<DeepModelCategoryEntity> getAllModelCategory()
     {
         return deepModelCategoryDao.getAllModelCategory();
+    }
+
+    /**ljy
+     * 获取特定类型下的所有深度学习模型
+     * @return
+     */
+    public ArrayList<DeepModelEntity> getAllModelOfCategory(Integer mId)
+    {
+        return deepModelCategoryDao.getAllModelOfCategory(mId);
     }
 }

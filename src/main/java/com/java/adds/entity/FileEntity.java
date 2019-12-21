@@ -4,8 +4,9 @@ package com.java.adds.entity;
 public class FileEntity {
     private Long id;
     private Long user_id;
-    private String dataset_path;
-    private String dataset_name;
+    private String file_path;
+    private String file_name;
+    private String file_type;
 
     public Long getId() {
         return id;
@@ -23,19 +24,27 @@ public class FileEntity {
         this.user_id = user_id;
     }
 
-    public String getDataset_path() {
-        return dataset_path;
+    public String getFile_path() {
+        return file_path;
     }
 
-    public void setDataset_path(String dataset_path) {
-        this.dataset_path = dataset_path;
+    public void setFile_path(String file_path) {
+        this.file_path = file_path;
     }
 
-    public String getDataset_name() {
-        return dataset_name;
+    public String getFile_name() {
+        return file_name;
     }
 
-    public void setDataset_name(String dataset_name) {
-        this.dataset_name = dataset_name;
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public String getFile_type() {
+        return file_type;
+    }
+
+    public void setFile_type(String file_type) {
+        this.file_type = file_type;
     }
 }

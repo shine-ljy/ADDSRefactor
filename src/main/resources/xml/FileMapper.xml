@@ -5,8 +5,9 @@
     <resultMap id="fileList" type="com.java.adds.entity.FileEntity">
         <id column="id" property="id"/>
         <result column="user_id" property="user_id"/>
-        <result column="dataset_path" property="dataset_path"/>
-        <result column="dataset_name" property="dataset_name"/>
+        <result column="file_path" property="file_path"/>
+        <result column="file_name" property="file_name"/>
+        <result column="file_type" property="file_type"/>
     </resultMap>
 
     <insert id="uploadFile" useGeneratedKeys="true" keyProperty="id">

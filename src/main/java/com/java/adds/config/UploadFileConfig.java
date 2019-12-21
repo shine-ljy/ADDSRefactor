@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
+/**
+ * 上传文件相关配置
+ * @author ljy
+ */
 @Configuration
 public class UploadFileConfig extends WebMvcConfigurerAdapter {
     @Value("/ADDS/dataSets/**")
