@@ -1,4 +1,4 @@
-package com.java.adds.qaRearch;
+package com.java.adds.deepAlgorithm;
 
 
 import org.springframework.stereotype.Component;

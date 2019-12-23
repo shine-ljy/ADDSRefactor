@@ -6,7 +6,7 @@ import com.java.adds.entity.QuestionEntity;
 import com.java.adds.mapper.QuestionDetailAnswerMapper;
 import com.java.adds.mapper.QuestionMapper;
 import com.java.adds.mapper.QuestionResultMapper;
-import com.java.adds.qaRearch.QA_score;
+import com.java.adds.deepAlgorithm.QA_score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -87,7 +87,11 @@ public class QADao {
         String[] index=searchResult.split(",");
         ArrayList<QuestionEntity> result=new ArrayList<>();
         for(int i=0;i<index.length;i++)
-            result.add(questionMapper.getQuestionById(allQuestion.get(Integer.parseInt(index[i])).getQid()));
+        {
+            System.out.println(allQuestion.get(i).getContent());
+            result.add(allQuestion.get(Integer.parseInt(index[i])));
+        }
+
 
         return result;
     }
