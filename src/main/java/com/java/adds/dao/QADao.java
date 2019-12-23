@@ -76,7 +76,8 @@ public class QADao {
      */
     public ArrayList<QuestionEntity> searchSimpleQuestion(String question)
     {
-        ArrayList<QuestionEntity> allQuestion=questionMapper.getAllQuestion();
+        //ArrayList<QuestionEntity> allQuestion=questionMapper.getAllQuestion();
+        ArrayList<QuestionEntity> allQuestion=questionMapper.getAllQuestionTest();
         String[] doc=new String[allQuestion.size()];
         for(int i=0;i<allQuestion.size();i++)
             doc[i]=allQuestion.get(i).getContent();
@@ -84,13 +85,10 @@ public class QADao {
         String[] que={question};
         String temResult=qa_score.do_QA_research(que,doc);
         String searchResult=temResult.substring(2,temResult.length()-3);
-        String[] index=searchResult.split(",");
+        String[] index=searchResult.split(", ");
         ArrayList<QuestionEntity> result=new ArrayList<>();
         for(int i=0;i<index.length;i++)
-        {
-            System.out.println(allQuestion.get(i).getContent());
             result.add(allQuestion.get(Integer.parseInt(index[i])));
-        }
 
 
         return result;

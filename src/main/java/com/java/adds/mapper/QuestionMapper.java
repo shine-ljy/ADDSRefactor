@@ -78,4 +78,10 @@ public interface QuestionMapper {
      * @return
      */
     public ArrayList<QuestionEntity> getAllQuestion();
+
+    /**ljy
+     * 获取所有问题
+     * @return
+     */
+    public ArrayList<QuestionEntity> getAllQuestionTest();
 }
