@@ -4,12 +4,15 @@ import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.dao.DoctorDao;
 import com.java.adds.entity.DataSetsEntity;
+import com.java.adds.entity.DeepModelTaskEntity;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 
@@ -134,5 +137,15 @@ public class DoctorService {
     public ArrayList<DataSetsEntity> getKGS(Long doctorId)
     {
         return doctorDao.getKGS(doctorId);
+    }
+
+
+    /**ljy
+     * 医生运行一个深度学习模型
+     * @return
+     */
+    public void doDeepModelTask(Integer doctorId,DeepModelTaskEntity deepModelTaskEntity)
+    {
+        doctorDao.doDeepModelTask(doctorId,deepModelTaskEntity);
     }
 }

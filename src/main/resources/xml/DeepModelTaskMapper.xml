@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.adds.mapper.DeepModelTaskMapper">
+    <resultMap id="deepModelTaskList" type="com.java.adds.entity.DeepModelTaskEntity">
+        <id column="id" property="id"/>
+        <result column="dataset_id" property="datasetId"/>
+        <result column="kg_id" property="kgId"/>
+        <result column="model_id" property="modelId"/>
+        <result column="metric_id" property="metricId"/>
+        <result column="status" property="status"/>
+        <result column="user_id" property="userId"/>
+        <result column="result" property="result"/>
+    </resultMap>
+
+    <insert id="doDeepModelTask" useGeneratedKeys="true" keyProperty="id">
+        insert into model_evaluation_task(dataset_id,kg_id,model_id,metric_id,status,user_id) values(#{datasetId},#{kgId},#{modelId},#{metricId},#{status},#{userId})
+    </insert>
+
+</mapper>

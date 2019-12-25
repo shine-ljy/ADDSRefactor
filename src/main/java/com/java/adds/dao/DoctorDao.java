@@ -2,10 +2,9 @@ package com.java.adds.dao;
 
 import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
-import com.java.adds.entity.DoctorEntity;
-import com.java.adds.entity.DataSetsEntity;
-import com.java.adds.entity.QuestionEntity;
+import com.java.adds.entity.*;
 import com.java.adds.mapper.*;
+import com.java.adds.utils.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +29,13 @@ public class DoctorDao {
 
     @Autowired
     KGMapper kgMapper;
+
+    @Autowired
+    DeepModelTaskMapper deepModelTaskMapper;
+
+    @Autowired
+    EmailUtil emailUtil;
+
 
     /**ljy
      * 管理员获取所有医生信息
@@ -187,5 +193,23 @@ public class DoctorDao {
     public ArrayList<DataSetsEntity> getKGS(Long doctorId)
     {
         return kgMapper.getKGS(doctorId);
+    }
+
+
+    /**ljy
+     * 医生运行一个深度学习模型
+     * @return
+     */
+    public void doDeepModelTask(Integer doctorId, DeepModelTaskEntity deepModelTaskEntity)
+    {
+        //向数据库中插入一条深度学习模型信息
+        deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
+        //多线程运行深度学习模型
+
+        //模型运行结束，生成运行结果文件
+        //修改数据库信息
+        //向用户发送模型运行完毕的邮件
+        DoctorEntity doctorEntity=doctorMapper.getDoctorById(doctorId);
+        emailUtil.sendSimpleEmail("ADDS system task completion notification","You have a new completed task, please log in the ADDS system for viewing!",doctorEntity.getEmail());
     }
 }

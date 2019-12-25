@@ -3,6 +3,7 @@ package com.java.adds.controller;
 import com.java.adds.controller.vo.FilterQuestionVO;
 import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.entity.DataSetsEntity;
+import com.java.adds.entity.DeepModelTaskEntity;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.DoctorService;
@@ -183,5 +184,16 @@ public class DoctorController {
     public ArrayList<DataSetsEntity> getKGS(@PathVariable Long doctorId)
     {
         return doctorService.getKGS(doctorId);
+    }
+
+
+    /**ljy
+     * 医生运行一个深度学习模型
+     * @return
+     */
+    @PostMapping("{doctorId}/DLTask")
+    public void doDeepModelTask(@PathVariable Integer doctorId, @RequestBody DeepModelTaskEntity deepModelTaskEntity)
+    {
+        doctorService.doDeepModelTask(doctorId,deepModelTaskEntity);
     }
 }

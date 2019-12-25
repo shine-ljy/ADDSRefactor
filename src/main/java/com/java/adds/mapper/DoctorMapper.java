@@ -21,4 +21,9 @@ public interface DoctorMapper {
      * 根据科室id获取科室下所有医生
      */
     public ArrayList<DoctorEntity> getDoctorsByDepartment(@Param("did") Long did);
+
+    /**ljy
+     * 根据id获取医生信息
+     */
+    public DoctorEntity getDoctorById(@Param("id") Integer doctorId);
 }

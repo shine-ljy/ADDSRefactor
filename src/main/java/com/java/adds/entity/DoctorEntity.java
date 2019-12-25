@@ -16,6 +16,7 @@ public class DoctorEntity {
     private String skill;
     private String outpatient_time;
     private String introduction;
+    private String email;
 
     public Integer getId() {
         return id;
@@ -127,5 +128,13 @@ public class DoctorEntity {
 
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

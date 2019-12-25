@@ -17,6 +17,7 @@
         <result column="skill" property="skill"/>
         <result column="outpatient_time" property="outpatient_time"/>
         <result column="introduction" property="introduction"/>
+        <result column="email" property="email"/>
     </resultMap>
 
     <select id="getAllDoctors" resultMap="doctorList">
@@ -25,5 +26,9 @@
 
     <select id="getDoctorsByDepartment" resultMap="doctorList">
         select * from doctor where department=#{did};
+    </select>
+
+    <select id="getDoctorById" resultMap="doctorList">
+        select * from doctor where Id=#{id}
     </select>
 </mapper>
