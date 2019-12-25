@@ -1,6 +1,7 @@
 package com.java.adds.controller;
 
 
+import com.java.adds.entity.DepartmentEntity;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,14 @@ public class DepartmentController {
     public ArrayList<DoctorEntity> getDoctorsByDepartment(@PathVariable Long did)
     {
         return departmentService.getDoctorsByDepartment(did);
+    }
+
+    /**ljy
+     * 获取所有科室
+     */
+    @GetMapping("")
+    public ArrayList<DepartmentEntity> getAllDepartment()
+    {
+        return departmentService.getAllDepartment();
     }
 }
