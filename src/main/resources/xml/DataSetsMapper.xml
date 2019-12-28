@@ -36,4 +36,8 @@
         select * from data_sets_upload where user_id=#{uId};
     </select>
 
+    <select id="getDataSetsById" resultMap="DataSetsList">
+        select * from data_sets_upload where id=#{id}
+    </select>
+
 </mapper>

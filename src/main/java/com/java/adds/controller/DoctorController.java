@@ -7,7 +7,7 @@ import com.java.adds.entity.DeepModelTaskEntity;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.DoctorService;
-import com.java.adds.utils.FileCheckUtil;
+import com.java.adds.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +27,14 @@ public class DoctorController {
     DoctorService doctorService;
 
     @Autowired
-    FileCheckUtil fileCheckUtil;
+    FileUtil fileUtil;
 
 
-    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
+//    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
+//    String dataSetsPathInServer;
+
+    @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample/")
     String dataSetsPathInServer;
-
-    @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample")
-    String dataSetsPathInUbuntu;
 
     @Value("/ADDS/dataSets/**")
     String dataSetsPath;
@@ -157,7 +157,7 @@ public class DoctorController {
             }
             file.transferTo(dest);  //将文件保存到服务器
 
-            if(fileCheckUtil.checkDataset(dest)==false)  //检查文件格式
+            if(fileUtil.checkDataset(dest)==false)  //检查文件格式
                 httpServletResponse.setStatus(400,"文件格式错误");
 
             doctorService.uploadDataSet(dId,doctorId,fileName,dataSetsPath+fileName,type);

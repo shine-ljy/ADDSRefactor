@@ -5,7 +5,9 @@ import com.java.adds.controller.vo.QuestionAnswerVO;
 import com.java.adds.entity.*;
 import com.java.adds.mapper.*;
 import com.java.adds.utils.EmailUtil;
+import com.java.adds.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -35,6 +37,15 @@ public class DoctorDao {
 
     @Autowired
     EmailUtil emailUtil;
+
+    @Autowired
+    FileUtil fileUtil;
+
+    //    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
+//    String dataSetsPathInServer;
+
+    @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample/")
+    String dataSetsPathInServer;
 
 
     /**ljy
@@ -208,7 +219,25 @@ public class DoctorDao {
         ArrayList<DeepModelTaskEntity> tempDeepModelTask=deepModelTaskMapper.getSimilarityModelTask(deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId());
         if(tempDeepModelTask==null)  //没有找到相同的模型结果
         {
-            //开一个线程运行深度学习模型
+            DataSetsEntity tempDataSet=dataSetsMapper.getDataSetsById(deepModelTaskEntity.getDatasetId());
+            String train=dataSetsPathInServer+tempDataSet.getTrain_name();
+            String test=dataSetsPathInServer+tempDataSet.getTest_name();
+            String dev=dataSetsPathInServer+tempDataSet.getDev_name();
+            String dstdir=dataSetsPathInServer;
+            String modelDstDir=dataSetsPathInServer;
+            //生成配置文件
+            fileUtil.createPythonConfig(train,test,dev,dstdir,modelDstDir);
+
+            //运行.sh文件,执行模型运行代码
+            try {
+                String[] cmd = {"root","/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/run_data.sh"};
+                Runtime rt = Runtime.getRuntime();
+                rt.exec(cmd);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             //模型运行结束，生成运行结果文件
             String result="";

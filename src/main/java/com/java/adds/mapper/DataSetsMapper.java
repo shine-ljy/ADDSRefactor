@@ -41,4 +41,10 @@ public interface DataSetsMapper {
      * @return
      */
     public ArrayList<DataSetsEntity> getDataSets(@Param("uId") Long doctorId);
+
+    /**ljy
+     * 根据id获取dataset
+     * @return
+     */
+    public DataSetsEntity getDataSetsById(@Param("id") Integer id);
 }
