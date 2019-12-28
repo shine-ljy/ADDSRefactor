@@ -7,6 +7,7 @@ import com.java.adds.entity.DeepModelTaskEntity;
 import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.DoctorService;
+import com.java.adds.utils.FileCheckUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 @RestController
 @RequestMapping("doctor")
@@ -23,8 +26,15 @@ public class DoctorController {
     @Autowired
     DoctorService doctorService;
 
+    @Autowired
+    FileCheckUtil fileCheckUtil;
+
+
     @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
     String dataSetsPathInServer;
+
+    @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample")
+    String dataSetsPathInUbuntu;
 
     @Value("/ADDS/dataSets/**")
     String dataSetsPath;
@@ -126,14 +136,30 @@ public class DoctorController {
     @PostMapping("{doctorId}/dataSets")
     public void uploadDataSet(HttpServletResponse httpServletResponse, @PathVariable Integer doctorId, MultipartFile file, Integer dId, String type)
     {//类型包括train，test，dev
+        String fileName=new String();
         try {
-            String fileName=file.getOriginalFilename();  //获取原始文件名
-            fileName=doctorId.toString()+fileName;  //为了避免文件重名
-            File dest=new File(dataSetsPathInServer+fileName);
+//            if(type.equals("train"))
+//                fileName="pinfo-mz-train.txt";
+//            else if(type.equals("test"))
+//                fileName="pinfo-mz-train.txt";
+//            else if(type.equals("dev"))
+//                fileName="pinfo-mz-dev.txt";
+            fileName=file.getOriginalFilename();  //获取原始文件名
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            Date date = new Date();
+            String nowData = format.format(date);
+            //dataSetsPathInServer+doctorId.toString()+nowData+"//";
+            fileName=doctorId.toString()+nowData+fileName;//为了避免文件重名
+            String filePath=dataSetsPathInServer+fileName;
+            File dest=new File(filePath);
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdir();
             }
             file.transferTo(dest);  //将文件保存到服务器
+
+            if(fileCheckUtil.checkDataset(dest)==false)  //检查文件格式
+                httpServletResponse.setStatus(400,"文件格式错误");
+
             doctorService.uploadDataSet(dId,doctorId,fileName,dataSetsPath+fileName,type);
         } catch (IOException e) {
             httpServletResponse.setStatus(302,"文件上传失败");
@@ -151,8 +177,12 @@ public class DoctorController {
         Long fileId=null;
         try {
             String fileName=file.getOriginalFilename();  //获取原始文件名
-            fileName=doctorId.toString()+fileName;  //为了避免文件重名
-            File dest=new File(dataSetsPathInServer+fileName);
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            Date date = new Date();
+            String nowData = format.format(date);
+            fileName=doctorId.toString()+nowData+fileName;  //为了避免文件重名
+            String filePath=dataSetsPathInServer+fileName;
+            File dest=new File(filePath);
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdir();
             }

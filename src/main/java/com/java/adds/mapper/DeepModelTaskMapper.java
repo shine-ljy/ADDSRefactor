@@ -1,7 +1,6 @@
 package com.java.adds.mapper;
 
 
-import com.java.adds.entity.DeepModelEntity;
 import com.java.adds.entity.DeepModelTaskEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,6 +15,17 @@ public interface DeepModelTaskMapper {
      * 医生运行一个深度学习模型
      * @return
      */
-    public void doDeepModelTask(@Param("userId") Integer doctorId, @Param("datasetId")Integer datasetId,@Param("kgId")Integer kgId,@Param("modelId")Integer modelId,@Param("metricId")Integer metricId,@Param("status")Integer status);
+    public Integer doDeepModelTask(@Param("userId") Integer doctorId, @Param("datasetId")Integer datasetId,@Param("kgId")Integer kgId,@Param("modelId")Integer modelId,@Param("metricId")Integer metricId,@Param("status")Integer status);
 
+    /**ljy
+     * 查找是否有已经有相同的模型运行结果
+     * @return
+     */
+    public ArrayList<DeepModelTaskEntity> getSimilarityModelTask(@Param("datasetId")Integer datasetId,@Param("kgId")Integer kgId,@Param("modelId")Integer modelId,@Param("metricId")Integer metricId);
+
+    /**ljy
+     * 更新模型运行结果
+     * @return
+     */
+    public void updateTask(@Param("id") Integer doctorId,@Param("status") Integer status,@Param("result") String result);
 }

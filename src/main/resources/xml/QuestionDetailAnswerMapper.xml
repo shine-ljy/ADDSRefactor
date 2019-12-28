@@ -11,7 +11,7 @@
     </resultMap>
 
     <select id="searchDetailAnswerById" resultMap="QAAnswerList">
-        select * from question_detail_answer where qid=#{qid} and detail_answer is not null
+        select * from question_detail_answer where qid=#{qid} and (detail_answer is not null)
     </select>
 
     <insert id="insertDetailAnswer" useGeneratedKeys="true" keyProperty="qrid">

@@ -15,6 +15,16 @@
 
     <insert id="doDeepModelTask" useGeneratedKeys="true" keyProperty="id">
         insert into model_evaluation_task(dataset_id,kg_id,model_id,metric_id,status,user_id) values(#{datasetId},#{kgId},#{modelId},#{metricId},#{status},#{userId})
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select  last_insert_id()
+        </selectKey>
     </insert>
 
+    <select id="getSimilarityModelTask" resultMap="deepModelTaskList">
+        select * from model_evaluation_task where dataset_id=#{datasetId} and kg_id=#{kgId} and model_id=#{modelId} and status=1
+    </select>
+
+    <update id="updateTask">
+        update model_evaluation_task set status=#{status} and result=#{result} where id=#{id}
+    </update>
 </mapper>

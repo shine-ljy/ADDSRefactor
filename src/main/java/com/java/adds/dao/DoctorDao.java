@@ -203,11 +203,20 @@ public class DoctorDao {
     public void doDeepModelTask(Integer doctorId, DeepModelTaskEntity deepModelTaskEntity)
     {
         //向数据库中插入一条深度学习模型信息
-        deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
-        //多线程运行深度学习模型
+        Integer taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
+        //查找是否已经有了相同的模型运行结果
+        ArrayList<DeepModelTaskEntity> tempDeepModelTask=deepModelTaskMapper.getSimilarityModelTask(deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId());
+        if(tempDeepModelTask==null)  //没有找到相同的模型结果
+        {
+            //开一个线程运行深度学习模型
 
-        //模型运行结束，生成运行结果文件
-        //修改数据库信息
+            //模型运行结束，生成运行结果文件
+            String result="";
+            //修改数据库信息
+            deepModelTaskMapper.updateTask(taskId,1,result);
+        }
+        else
+            deepModelTaskMapper.updateTask(taskId,1,tempDeepModelTask.get(0).getResult());
         //向用户发送模型运行完毕的邮件
         DoctorEntity doctorEntity=doctorMapper.getDoctorById(doctorId);
         emailUtil.sendSimpleEmail("ADDS system task completion notification","You have a new completed task, please log in the ADDS system for viewing!",doctorEntity.getEmail());
