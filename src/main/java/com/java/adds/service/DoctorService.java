@@ -9,10 +9,6 @@ import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 
@@ -97,9 +93,9 @@ public class DoctorService {
      * 医生新建一个数据集
      * @return
      */
-    public Integer newDataSet(Integer doctorId)
+    public Integer newDataSet(Integer doctorId, DataSetsEntity dataSetsEntity)
     {
-        return doctorDao.newDataSet(doctorId);
+        return doctorDao.newDataSet(doctorId, dataSetsEntity);
     }
 
     /**ljy

@@ -170,9 +170,10 @@ public class DoctorDao {
      * 医生新建一个数据集
      * @return
      */
-    public Integer newDataSet(Integer doctorId)
+    public Integer newDataSet(Integer doctorId, DataSetsEntity dataSetsEntity)
     {
-        return dataSetsMapper.newDataSet(doctorId);
+        dataSetsMapper.newDataSet(doctorId, dataSetsEntity);
+        return Math.toIntExact(dataSetsEntity.getId());
     }
 
     /**ljy

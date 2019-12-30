@@ -2,7 +2,9 @@ package com.java.adds.mapper;
 
 
 import com.java.adds.entity.DataSetsEntity;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +17,9 @@ public interface DataSetsMapper {
      * 医生新建一个数据集
      * @return
      */
-    public Integer newDataSet(@Param("uId") Integer doctorId);
+    @Insert("insert into data_sets_upload(dataset_name, dataset_desc, user_id) values(#{dataSetsEntity.dataset_name}, #{dataSetsEntity.dataset_desc}, #{uId})")
+    @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "dataSetsEntity.id")
+    public Integer newDataSet(@Param("uId") Integer doctorId, @Param("dataSetsEntity") DataSetsEntity dataSetsEntity);
 
     /**ljy
      * 医生上传数据集-train

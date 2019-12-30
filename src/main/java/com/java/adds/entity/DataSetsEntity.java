@@ -3,6 +3,8 @@ package com.java.adds.entity;
 
 public class DataSetsEntity {
     private Long id;
+    private String dataset_name;
+    private String dataset_desc;
     private Long user_id;
     private String train_path;
     private String train_name;
@@ -17,6 +19,22 @@ public class DataSetsEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDataset_name() {
+        return dataset_name;
+    }
+
+    public void setDataset_name(String dataset_name) {
+        this.dataset_name = dataset_name;
+    }
+
+    public String getDataset_desc() {
+        return dataset_desc;
+    }
+
+    public void setDataset_desc(String dataset_desc) {
+        this.dataset_desc = dataset_desc;
     }
 
     public Long getUser_id() {

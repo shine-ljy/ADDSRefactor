@@ -13,7 +13,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class UploadFileConfig extends WebMvcConfigurerAdapter {
     @Value("/ADDS/dataSets/**")
     String dataSetsPath;   //虚拟路径
-    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
+//    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
+//    String dataSetsPathInServer;  //在服务器上存储的位置
+
+    @Value("C://Users//302//Desktop//addsFileUploadTesting//")
     String dataSetsPathInServer;  //在服务器上存储的位置
 
     @Override

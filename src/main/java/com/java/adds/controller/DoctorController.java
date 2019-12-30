@@ -33,7 +33,10 @@ public class DoctorController {
 //    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
 //    String dataSetsPathInServer;
 
-    @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample/")
+//    @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample/")
+//    String dataSetsPathInServer;
+
+    @Value("C://Users//302//Desktop//addsFileUploadTesting//")
     String dataSetsPathInServer;
 
     @Value("/ADDS/dataSets/**")
@@ -124,9 +127,9 @@ public class DoctorController {
      * @return
      */
     @PostMapping("{doctorId}/dataSet")
-    public Integer newDataSet(@PathVariable Integer doctorId)
+    public Integer newDataSet(@PathVariable Integer doctorId, @RequestBody DataSetsEntity dataSetsEntity)
     {
-        return doctorService.newDataSet(doctorId);
+        return doctorService.newDataSet(doctorId, dataSetsEntity);
     }
 
     /**ljy
