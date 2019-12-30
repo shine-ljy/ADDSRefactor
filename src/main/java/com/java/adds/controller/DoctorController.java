@@ -149,16 +149,15 @@ public class DoctorController {
             Date date = new Date();
             String nowData = format.format(date);
             //dataSetsPathInServer+doctorId.toString()+nowData+"//";
-            fileName=doctorId.toString()+nowData+fileName;//为了避免文件重名
+            fileName=doctorId.toString()+nowData+"-"+fileName;//为了避免文件重名
             String filePath=dataSetsPathInServer+fileName;
             File dest=new File(filePath);
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdir();
             }
-            file.transferTo(dest);  //将文件保存到服务器
-
             if(fileUtil.checkDataset(dest)==false)  //检查文件格式
                 httpServletResponse.setStatus(400,"文件格式错误");
+            file.transferTo(dest);  //将文件保存到服务器
 
             doctorService.uploadDataSet(dId,doctorId,fileName,dataSetsPath+fileName,type);
         } catch (IOException e) {

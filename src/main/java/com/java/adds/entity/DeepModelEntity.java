@@ -5,6 +5,15 @@ public class DeepModelEntity {
     private Integer id;
     private String modelName;
     private Integer modelCategory;
+    private String configFile;
+
+    public String getConfigFile() {
+        return configFile;
+    }
+
+    public void setConfigFile(String configFile) {
+        this.configFile = configFile;
+    }
 
     public Integer getId() {
         return id;

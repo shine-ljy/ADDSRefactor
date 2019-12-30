@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.DataInputStream;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Component
 public class DoctorDao {
@@ -52,6 +52,11 @@ public class DoctorDao {
     @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample/")
     String dataSetsPathInServer;
 
+    @Value("main.py --phase train --model_file examples/pinfo/config/")
+    String type1PythonPath;  //运行模型命令的前缀路径
+
+    @Value("home/lf/桌面/SIGIR_OA/HAR-master/matchzoo/")
+    String deepModelPath;  //运行模型命令的前缀路径
 
     /**ljy
      * 管理员获取所有医生信息
@@ -238,26 +243,25 @@ public class DoctorDao {
                 String[] cmd = {"chmod","/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/run_data.sh"};
                 Runtime rt = Runtime.getRuntime();
                 rt.exec(cmd);
+
                 //运行深度学习模型
+                DeepModelEntity deepModelEntity=deepModelMapper.getModelById(deepModelTaskEntity.getModelId());
                 String exe="python";
                 String command="";
-                DeepModelEntity deepModelEntity=deepModelMapper.getModelById(deepModelTaskEntity.getModelId());
-                if(deepModelTaskEntity.getModelType()==1)
-                {
-                    if(deepModelTaskEntity.getModelId()==1)
-                        command="";
-                    else if(deepModelTaskEntity.getModelId()==2)
-                        command="matchzoo/main.py --phase train --model_file examples/pinfo/config/anmm_pinfo.config";
-                    else if()
-                }
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                Date date = new Date();
+                String nowData = format.format(date);
+                String outputPath=deepModelPath+"output/"+deepModelTaskEntity.getId().toString()+nowData+".txt";  //模型结果存放的路径
 
-                String[] cmdArr = new String[] {exe, command};
+                if(deepModelTaskEntity.getModelType()==1)  //first type Feature-based
+                    command="python"+deepModelPath+type1PythonPath+deepModelEntity.getConfigFile()+" >>"+outputPath;
+                else if(deepModelTaskEntity.getModelType()==2)
+                    ;
+                else
+                    ;
+                String[] cmdArr = new String[] {"sh","-c",command};  //模型运行
                 Process process = Runtime.getRuntime().exec(cmdArr);
-                InputStream is = process.getInputStream();
-                DataInputStream dis = new DataInputStream(is);
-                String str = dis.readLine();
-                process.waitFor();
-                System.out.println(str);
+                //从文本中提取出结果存入数据库
 
             }
             catch (Exception e)

@@ -16,4 +16,10 @@ public interface DeepModelMapper {
      * @return
      */
     public ArrayList<DeepModelEntity> getAllModelOfCategory(@Param("categoryId") Integer mId);
+
+    /**ljy
+     * 根据id获取模型信息
+     * @return
+     */
+    public DeepModelEntity getModelById(@Param("id") Integer id);
 }
