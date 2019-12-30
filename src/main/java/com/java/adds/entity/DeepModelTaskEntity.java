@@ -5,11 +5,20 @@ public class DeepModelTaskEntity {
     private Integer id;
     private Integer datasetId;
     private Integer kgId;
+    private Integer modelType;  //模型类型
     private Integer modelId;
     private Integer metricId;
     private Integer status;  //0:正在运行模型，1：模型运行结束
     private Integer userId;
     private String result;
+
+    public Integer getModelType() {
+        return modelType;
+    }
+
+    public void setModelType(Integer modelType) {
+        this.modelType = modelType;
+    }
 
     public Integer getId() {
         return id;

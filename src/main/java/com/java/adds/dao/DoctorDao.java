@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.DataInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 @Component
@@ -40,6 +42,9 @@ public class DoctorDao {
 
     @Autowired
     FileUtil fileUtil;
+
+    @Autowired
+    DeepModelMapper deepModelMapper;
 
     //    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
 //    String dataSetsPathInServer;
@@ -230,9 +235,30 @@ public class DoctorDao {
 
             //运行.sh文件,执行模型运行代码
             try {
-                String[] cmd = {"root","/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/run_data.sh"};
+                String[] cmd = {"chmod","/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/run_data.sh"};
                 Runtime rt = Runtime.getRuntime();
                 rt.exec(cmd);
+                //运行深度学习模型
+                String exe="python";
+                String command="";
+                DeepModelEntity deepModelEntity=deepModelMapper.getModelById(deepModelTaskEntity.getModelId());
+                if(deepModelTaskEntity.getModelType()==1)
+                {
+                    if(deepModelTaskEntity.getModelId()==1)
+                        command="";
+                    else if(deepModelTaskEntity.getModelId()==2)
+                        command="matchzoo/main.py --phase train --model_file examples/pinfo/config/anmm_pinfo.config";
+                    else if()
+                }
+
+                String[] cmdArr = new String[] {exe, command};
+                Process process = Runtime.getRuntime().exec(cmdArr);
+                InputStream is = process.getInputStream();
+                DataInputStream dis = new DataInputStream(is);
+                String str = dis.readLine();
+                process.waitFor();
+                System.out.println(str);
+
             }
             catch (Exception e)
             {
