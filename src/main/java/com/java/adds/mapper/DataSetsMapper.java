@@ -41,7 +41,7 @@ public interface DataSetsMapper {
 
 
     /**ljy
-     * 医生获取数据集
+     * 医生获取数据集(可用)
      * @return
      */
     public ArrayList<DataSetsEntity> getDataSets(@Param("uId") Long doctorId);

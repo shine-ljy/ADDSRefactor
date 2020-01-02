@@ -159,7 +159,11 @@ public class DoctorController {
                 dest.getParentFile().mkdir();
             }
             if(fileUtil.checkDataset(dest)==false)  //检查文件格式
+            {
                 httpServletResponse.setStatus(400,"文件格式错误");
+                return;
+            }
+
             file.transferTo(dest);  //将文件保存到服务器
 
             doctorService.uploadDataSet(dId,doctorId,fileName,dataSetsPath+fileName,type);
@@ -199,7 +203,7 @@ public class DoctorController {
     }
 
     /**ljy
-     * 医生获取数据集
+     * 医生获取数据集(可用)
      * @return
      */
     @GetMapping("{doctorId}/dataSets")

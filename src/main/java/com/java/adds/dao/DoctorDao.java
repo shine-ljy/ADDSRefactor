@@ -9,7 +9,6 @@ import com.java.adds.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -176,6 +175,7 @@ public class DoctorDao {
         return Math.toIntExact(dataSetsEntity.getId());
     }
 
+
     /**ljy
      * 医生上传数据集
      * @return
@@ -200,7 +200,7 @@ public class DoctorDao {
     }
 
     /**ljy
-     * 医生获取数据集
+     * 医生获取数据集(可用)
      * @return
      */
     public ArrayList<DataSetsEntity> getDataSets(Long doctorId)
@@ -260,8 +260,10 @@ public class DoctorDao {
                     ;
                 else
                     ;
-                String[] cmdArr = new String[] {"sh","-c",command};  //模型运行
-                Process process = Runtime.getRuntime().exec(cmdArr);
+                String[] cmdArr = new String[] {"sh","-c","conda activate pytorch"};
+                Runtime.getRuntime().exec(cmdArr);  //切换服务器环境
+                cmdArr = new String[] {"sh","-c",command};  //模型运行
+                Process process = Runtime.getRuntime().exec(cmdArr);//模型运行
                 //从文本中提取出结果存入数据库
 
             }
