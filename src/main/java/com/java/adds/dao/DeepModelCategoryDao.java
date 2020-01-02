@@ -34,4 +34,14 @@ public class DeepModelCategoryDao {
     {
         return deepModelMapper.getAllModelOfCategory(mId);
     }
+
+    /**
+     * 根据 id 获取模型信息
+     * @param mId Deep Model Id: Integer
+     * @return DeepModelEntity
+     * @author Liam
+     */
+    public DeepModelEntity getModelById(Integer mId) {
+        return deepModelMapper.getModelById(mId);
+    }
 }

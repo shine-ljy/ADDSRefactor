@@ -37,4 +37,15 @@ public class DeepModelCategoryController {
     {
         return deepModelCategoryService.getAllModelOfCategory(mId);
     }
+
+    /**
+     * 根据 id 获取模型信息
+     * @param mId Deep Model Id: Integer
+     * @return DeepModelEntity
+     * @author Liam
+     */
+    @GetMapping("model/{mId}")
+    public DeepModelEntity getModelById(@PathVariable Integer mId) {
+        return deepModelCategoryService.getModelById(mId);
+    }
 }

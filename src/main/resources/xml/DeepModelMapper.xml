@@ -8,12 +8,12 @@
         <result column="model_category" property="modelCategory"/>
     </resultMap>
 
-    <select id="getAllModelOfCategory" resultMap="deepModelList">
-        select * from deep_model where model_category=#{categoryId}
-    </select>
+<!--    <select id="getAllModelOfCategory" resultMap="deepModelList">-->
+<!--        select * from deep_model where model_category=#{categoryId}-->
+<!--    </select>-->
 
-    <select id="getModelById" resultMap="deepModelList">
-        select * from deep_model where id=#{id}
-    </select>
+<!--    <select id="getModelById" resultMap="deepModelList">-->
+<!--        select * from deep_model where id=#{id}-->
+<!--    </select>-->
 
 </mapper>
