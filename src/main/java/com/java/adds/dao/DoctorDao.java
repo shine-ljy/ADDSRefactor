@@ -9,9 +9,13 @@ import com.java.adds.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 @Component
 public class DoctorDao {
@@ -45,6 +49,9 @@ public class DoctorDao {
     @Autowired
     DeepModelMapper deepModelMapper;
 
+    @Autowired
+    DeepModelTaskResultMapper deepModelTaskResultMapper;
+
     //    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
 //    String dataSetsPathInServer;
 
@@ -64,44 +71,6 @@ public class DoctorDao {
     {
         return doctorMapper.getAllDoctors();
     }
-
-//    /**ljy
-//     *获取所有还没回答的选择题
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, FilterQuestionVO filterQuestionVO)
-//    {
-//        ArrayList<QAEntity> allQuestions=questionMapper.getChoiceQuestionsNotAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),uid);
-//        return allQuestions;
-//    }
-
-
-//    /**ljy
-//     *医生获取所有已经回答的选择题问题（分页查询）
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long uid)
-//    {
-//        return questionMapper.getQuestionAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),uid);
-//    }
-
-//    /**ljy
-//     * 医生获取所有已经回答的详细解答问题（分页查询）
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getDetailQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
-//    {
-//        return questionMapper.getDetailQuestionsAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
-//    }
-
-//    /**ljy
-//     * 医生获取所有还未回答的详细解答题
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
-//    {
-//        return questionMapper.getDetailQuestionsNotAnswered((filterQuestionVO.getStart()-1)* filterQuestionVO.getLimit(), filterQuestionVO.getLimit(),doctorId);
-//    }
 
     /**ljy
      * 医生获取问题（回答与否，问题类型）
@@ -228,6 +197,7 @@ public class DoctorDao {
         Integer taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
         //查找是否已经有了相同的模型运行结果
         ArrayList<DeepModelTaskEntity> tempDeepModelTask=deepModelTaskMapper.getSimilarityModelTask(deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId());
+        Integer taskResultId=null;
         if(tempDeepModelTask==null)  //没有找到相同的模型结果
         {
             DataSetsEntity tempDataSet=dataSetsMapper.getDataSetsById(deepModelTaskEntity.getDatasetId());
@@ -264,8 +234,43 @@ public class DoctorDao {
                 Runtime.getRuntime().exec(cmdArr);  //切换服务器环境
                 cmdArr = new String[] {"sh","-c",command};  //模型运行
                 Process process = Runtime.getRuntime().exec(cmdArr);//模型运行
-                //从文本中提取出结果存入数据库
 
+                //从文本中提取出结果存入数据库
+                String result="";
+                DeepModelTaskResultEntity deepModelTaskResultEntity=new DeepModelTaskResultEntity();
+                FileReader fileReader = null;
+                try
+                {
+                    fileReader = new FileReader(outputPath);//"C:\\Users\\yin\\Desktop\\res.txt"
+                }
+                catch (FileNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+                Scanner sc = new Scanner(fileReader);
+                String line = null;
+                while((sc.hasNextLine()&&(line=sc.nextLine())!=null))
+                {
+                    if(!sc.hasNextLine()){
+                        result=line;
+                    }
+                }
+                sc.close();
+                String temp[]=result.split("\t");
+                deepModelTaskResultEntity.setNdcg1(temp[2].split("=")[1]);
+                deepModelTaskResultEntity.setNdcg3(temp[3].split("=")[1]);
+                deepModelTaskResultEntity.setNdcg5(temp[4].split("=")[1]);
+                deepModelTaskResultEntity.setNdcg10(temp[5].split("=")[1]);
+                deepModelTaskResultEntity.setMap(temp[6].split("=")[1]);
+                deepModelTaskResultEntity.setRecall3(temp[7].split("=")[1]);
+                deepModelTaskResultEntity.setRecall5(temp[8].split("=")[1]);
+                deepModelTaskResultEntity.setRecall10(temp[9].split("=")[1]);
+                deepModelTaskResultEntity.setPrecision1(temp[10].split("=")[1]);
+                deepModelTaskResultEntity.setPrecision3(temp[11].split("=")[1]);
+                deepModelTaskResultEntity.setPrecision5(temp[12].split("=")[1]);
+                deepModelTaskResultEntity.setPrecision10(temp[13].split("=")[1]);
+                deepModelTaskResultEntity.setTaskId(taskId);
+                taskResultId=deepModelTaskResultMapper.insertDeepModelTaskResult(deepModelTaskResultEntity);//将结果插入数据库
             }
             catch (Exception e)
             {

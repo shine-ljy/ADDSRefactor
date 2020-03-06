@@ -3,14 +3,14 @@ package com.java.adds.mapper;
 
 import com.java.adds.entity.DataSetsEntity;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 
-@Mapper
+@Component
 @Repository
 public interface DataSetsMapper {
     /**ljy

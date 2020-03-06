@@ -3,11 +3,12 @@ package com.java.adds.mapper;
 
 import com.java.adds.entity.DeepModelEntity;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 
-@Mapper
+@Component
 @Repository
 public interface DeepModelMapper {
     /**ljy
