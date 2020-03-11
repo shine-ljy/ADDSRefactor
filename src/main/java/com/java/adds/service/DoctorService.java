@@ -34,42 +34,6 @@ public class DoctorService {
         return doctorDao.getFilterQuestion(filterQuestionVO,doctorId);
     }
 
-//    /**ljy
-//     *获取所有还没回答的选择题
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getChoiceQuestionsNotAnswered(Long uid, FilterQuestionVO filterQuestionVO)
-//    {
-//        return doctorDao.getChoiceQuestionsNotAnswered(uid, filterQuestionVO);
-//    }
-
-//    /**ljy
-//     *医生获取所有已经回答的选择题问题（分页查询）
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
-//    {
-//        return doctorDao.getQuestionsAnswered(filterQuestionVO,doctorId);
-//    }
-
-//    /**ljy
-//     * 医生获取所有已经回答的详细解答问题（分页查询）
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getDetailQuestionsAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
-//    {
-//        return doctorDao.getDetailQuestionsAnswered(filterQuestionVO,doctorId);
-//    }
-
-//    /**ljy
-//     * 医生获取所有还未回答的详细解答题
-//     * @return
-//     */
-//    public ArrayList<QAEntity> getDetailQuestionsNotAnswered(FilterQuestionVO filterQuestionVO, Long doctorId)
-//    {
-//        return doctorDao.getDetailQuestionsNotAnswered(filterQuestionVO,doctorId);
-//    }
-
     /**ljy
      *获取某一个科室下的未回答问题
      * @return

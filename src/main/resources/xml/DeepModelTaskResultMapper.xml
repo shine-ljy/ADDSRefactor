@@ -19,10 +19,10 @@
         <result column="precision@10" property="precision10"/>
     </resultMap>
 
-    <insert id="doDeepModelTask" parameterType="com.java.adds.entity.DeepModelTaskResultEntity" useGeneratedKeys="true" keyProperty="id">
-        insert into deep_model_task_result(task_id,ndcg@1,ndcg@3,ndcg@5,ndcg@10,map,recall@3,recall@5,recall@10,precision@1,precision@3,precision@5,precision@10)
-        values(#{taskId},#{ndcg1},#{ndcg3},#{ndcg5},#{ndcg10},#{map},#{recall3},#{recall5},#{recall10},#{precision1},#{precision3},#{precision5},#{precision10})
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+    <insert id="doDeepModelTask" parameterType="com.java.adds.entity.DeepModelTaskResultEntity" useGeneratedKeys="true" keyColumn="id" keyProperty="deepModelTaskResultEntity.id">
+        insert into deep_model_task_result(task_id,ndcg@1,ndcg@3,ndcg@5,ndcg@10,map,recall@3,recall@5,recall@10,pre@1,pre@3,pre@5,pre@10)
+        values(#{deepModelTaskResultEntity.taskId},#{deepModelTaskResultEntity.ndcg1},#{deepModelTaskResultEntity.ndcg3},#{deepModelTaskResultEntity.ndcg5},#{deepModelTaskResultEntity.ndcg10},#{deepModelTaskResultEntity.map},#{deepModelTaskResultEntity.recall3},#{deepModelTaskResultEntity.recall5},#{deepModelTaskResultEntity.recall10},#{deepModelTaskResultEntity.precision1},#{deepModelTaskResultEntity.precision3},#{deepModelTaskResultEntity.precision5},#{deepModelTaskResultEntity.precision10})
+        <selectKey keyProperty="deepModelTaskResultEntity.id" order="AFTER" resultType="java.lang.Integer">
             select  last_insert_id()
         </selectKey>
     </insert>

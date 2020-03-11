@@ -25,6 +25,6 @@
     </select>
 
     <update id="updateTask">
-        update model_evaluation_task set status=#{status} and result=#{result} where id=#{id}
+        update model_evaluation_task set status=#{status} and result_id=#{result} where id=#{id}
     </update>
 </mapper>

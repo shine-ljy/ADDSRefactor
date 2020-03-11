@@ -63,5 +63,28 @@ public class FileUtil {
         }
 
     }
+
+    public boolean checkKG(File file)
+    {
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new FileReader("C:\\Users\\yin\\Desktop\\test.csv"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String line="";
+        try{
+            line=bufferedReader.readLine();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        if(line.split(",").length==3)
+            return true;
+        else
+            return false;
+    }
 }
 

@@ -8,6 +8,7 @@ import com.java.adds.utils.EmailUtil;
 import com.java.adds.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
@@ -191,7 +192,8 @@ public class DoctorDao {
      * 医生运行一个深度学习模型
      * @return
      */
-    public void doDeepModelTask(Integer doctorId, DeepModelTaskEntity deepModelTaskEntity)
+    @Async
+    public void doDeepModelTask(Integer doctorId, DeepModelTaskEntity deepModelTaskEntity)  //异步线程调用
     {
         //向数据库中插入一条深度学习模型信息
         Integer taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
@@ -232,7 +234,7 @@ public class DoctorDao {
                     ;
                 String[] cmdArr = new String[] {"sh","-c","conda activate pytorch"};
                 Runtime.getRuntime().exec(cmdArr);  //切换服务器环境
-                cmdArr = new String[] {"sh","-c",command};  //模型运行
+                cmdArr = new String[] {"sh","-c",command};
                 Process process = Runtime.getRuntime().exec(cmdArr);//模型运行
 
                 //从文本中提取出结果存入数据库
@@ -277,13 +279,13 @@ public class DoctorDao {
                 e.printStackTrace();
             }
 
-            //模型运行结束，生成运行结果文件
-            String result="";
+//            //模型运行结束，生成运行结果文件
+//            String result="";
             //修改数据库信息
-            deepModelTaskMapper.updateTask(taskId,1,result);
+            deepModelTaskMapper.updateTask(taskId,1,taskResultId);
         }
         else
-            deepModelTaskMapper.updateTask(taskId,1,tempDeepModelTask.get(0).getResult());
+            deepModelTaskMapper.updateTask(taskId,1,tempDeepModelTask.get(0).getResultId());
         //向用户发送模型运行完毕的邮件
         DoctorEntity doctorEntity=doctorMapper.getDoctorById(doctorId);
         emailUtil.sendSimpleEmail("ADDS system task completion notification","You have a new completed task, please log in the ADDS system for viewing!",doctorEntity.getEmail());

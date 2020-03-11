@@ -10,7 +10,7 @@ public class DeepModelTaskEntity {
     private Integer metricId;
     private Integer status;  //0:正在运行模型，1：模型运行结束
     private Integer userId;
-    private String result;
+    private Integer resultId;
 
     public Integer getModelType() {
         return modelType;
@@ -76,11 +76,11 @@ public class DeepModelTaskEntity {
         this.userId = userId;
     }
 
-    public String getResult() {
-        return result;
+    public Integer getResultId() {
+        return resultId;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setResultId(Integer result) {
+        this.resultId = result;
     }
 }
