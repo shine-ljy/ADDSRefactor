@@ -3,6 +3,7 @@ package com.java.adds.entity;
 
 public class DeepModelTaskEntity {
     private Integer id;
+    private String taskName;
     private Integer datasetId;
     private Integer kgId;
     private Integer modelType;  //模型类型
@@ -26,6 +27,14 @@ public class DeepModelTaskEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     public Integer getDatasetId() {

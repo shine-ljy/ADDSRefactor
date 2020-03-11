@@ -15,7 +15,7 @@ public interface DeepModelTaskMapper {
      * 医生运行一个深度学习模型
      * @return
      */
-    public Integer doDeepModelTask(@Param("userId") Integer doctorId, @Param("datasetId")Integer datasetId,@Param("kgId")Integer kgId,@Param("modelId")Integer modelId,@Param("metricId")Integer metricId,@Param("status")Integer status);
+    public Integer doDeepModelTask(@Param("userId") Integer doctorId, @Param("taskName")String taskName,@Param("datasetId")Integer datasetId,@Param("kgId")Integer kgId,@Param("modelId")Integer modelId,@Param("metricId")Integer metricId,@Param("status")Integer status);
 
     /**ljy
      * 查找是否有已经有相同的模型运行结果
@@ -28,4 +28,11 @@ public interface DeepModelTaskMapper {
      * @return
      */
     public void updateTask(@Param("id") Integer doctorId,@Param("status") Integer status,@Param("result") Integer result);
+
+    /**
+     * 医生获取所有任务
+     * @author ljy
+     * @return
+     */
+    public ArrayList<DeepModelTaskEntity> getDMTasks(@Param("userId") Integer doctorId);
 }

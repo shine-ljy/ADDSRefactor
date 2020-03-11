@@ -108,4 +108,14 @@ public class DoctorService {
     {
         doctorDao.doDeepModelTask(doctorId,deepModelTaskEntity);
     }
+
+    /**
+     * 医生获取所有任务
+     * @author ljy
+     * @return
+     */
+    public ArrayList<DeepModelTaskEntity> getDMTasks(Integer doctorId)
+    {
+        return doctorDao.getDMTasks(doctorId);
+    }
 }

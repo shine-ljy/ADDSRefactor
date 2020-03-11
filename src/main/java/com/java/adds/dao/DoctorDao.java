@@ -196,7 +196,7 @@ public class DoctorDao {
     public void doDeepModelTask(Integer doctorId, DeepModelTaskEntity deepModelTaskEntity)  //异步线程调用
     {
         //向数据库中插入一条深度学习模型信息
-        Integer taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
+        Integer taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getTaskName(),deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
         //查找是否已经有了相同的模型运行结果
         ArrayList<DeepModelTaskEntity> tempDeepModelTask=deepModelTaskMapper.getSimilarityModelTask(deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId());
         Integer taskResultId=null;
@@ -289,5 +289,15 @@ public class DoctorDao {
         //向用户发送模型运行完毕的邮件
         DoctorEntity doctorEntity=doctorMapper.getDoctorById(doctorId);
         emailUtil.sendSimpleEmail("ADDS system task completion notification","You have a new completed task, please log in the ADDS system for viewing!",doctorEntity.getEmail());
+    }
+
+    /**
+     * 医生获取所有任务
+     * @author ljy
+     * @return
+     */
+    public ArrayList<DeepModelTaskEntity> getDMTasks(Integer doctorId)
+    {
+        return deepModelTaskMapper.getDMTasks(doctorId);
     }
 }

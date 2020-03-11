@@ -191,4 +191,17 @@ public class DoctorController {
     {
         doctorService.doDeepModelTask(doctorId,deepModelTaskEntity);
     }
+
+    /**
+     * 医生获取所有任务
+     * @author ljy
+     * @return
+     */
+    @GetMapping("{doctorId}/DLTask")
+    public ArrayList<DeepModelTaskEntity> getDMTasks(@PathVariable Integer doctorId)
+    {
+        return doctorService.getDMTasks(doctorId);
+    }
+
+    
 }
