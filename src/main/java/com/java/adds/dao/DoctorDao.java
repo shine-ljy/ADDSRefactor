@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,6 +63,15 @@ public class DoctorDao {
 
     @Value("home/lf/桌面/SIGIR_OA/HAR-master/matchzoo/")
     String deepModelPath;  //运行模型命令的前缀路径
+
+
+    //模型运行结果路径
+    //E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//DMResultFile//
+    @Value("C:\\Users\\yin\\Desktop\\")
+    String deepModelResultPathInServer;
+
+    @Value("/ADDS/deepModelResult/**")
+    String deepModelResultPath;
 
     /**ljy
      * 管理员获取所有医生信息
@@ -200,6 +208,7 @@ public class DoctorDao {
         //查找是否已经有了相同的模型运行结果
         ArrayList<DeepModelTaskEntity> tempDeepModelTask=deepModelTaskMapper.getSimilarityModelTask(deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId());
         Integer taskResultId=null;
+        String taskResultFilePath="";  //模型结果文件路径
         if(tempDeepModelTask==null)  //没有找到相同的模型结果
         {
             DataSetsEntity tempDataSet=dataSetsMapper.getDataSetsById(deepModelTaskEntity.getDatasetId());
@@ -272,20 +281,89 @@ public class DoctorDao {
                 deepModelTaskResultEntity.setPrecision5(temp[12].split("=")[1]);
                 deepModelTaskResultEntity.setPrecision10(temp[13].split("=")[1]);
                 deepModelTaskResultEntity.setTaskId(taskId);
+
+                //结果写入文件
+                SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                Date d = new Date();
+                String nowTime = f.format(d);
+                String resultFileName=doctorId.toString()+nowTime+"-ModelResult.csv";//为了避免文件重名
+                String resultFilePath=deepModelResultPathInServer+resultFileName;
+                taskResultFilePath=deepModelResultPath+resultFileName;
+                File resultFileDest=new File(resultFilePath);
+                //创建目录
+                if(!resultFileDest.getParentFile().exists()){
+                    resultFileDest.getParentFile().mkdir();
+                }
+                //create a file
+                try{
+                    resultFileDest.createNewFile();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                FileOutputStream out=null;
+                OutputStreamWriter osw=null;
+                BufferedWriter bw=null;
+                try {
+                    out = new FileOutputStream(resultFileDest);
+                    osw = new OutputStreamWriter(out,"UTF-8");
+                    bw =new BufferedWriter(osw);
+
+                    //写入数据
+                    String fileHead="Id,taskId,ndcg@1,ndcg@3,ndcg@5,ndcg@10,map,recall@3,recall@5,recall@10,precision@1,precision@3,precision@5,precision@10";
+                    bw.append(fileHead);
+                    //换行符
+                    bw.append("\r");
+                    String re=doctorId.toString()+","+taskId.toString()+","+deepModelTaskResultEntity.getNdcg1()+","+deepModelTaskResultEntity.getNdcg3()+","+deepModelTaskResultEntity.getNdcg5()+","+deepModelTaskResultEntity.getNdcg10()+","+deepModelTaskResultEntity.getMap()+","+deepModelTaskResultEntity.getRecall3()+","+deepModelTaskResultEntity.getRecall5()+","+deepModelTaskResultEntity.getRecall10()+","+deepModelTaskResultEntity.getPrecision1()+","+deepModelTaskResultEntity.getPrecision3()+","+deepModelTaskResultEntity.getPrecision5()+","+deepModelTaskResultEntity.getPrecision10();
+                    bw.append("\r");
+
+                } catch (Exception e) {
+
+                }finally{
+                    if(bw!=null){
+                        try {
+                            bw.close();
+                            bw=null;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(osw!=null){
+                        try {
+                            osw.close();
+                            osw=null;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(out!=null){
+                        try {
+                            out.close();
+                            out=null;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                if(resultFileDest.exists()&&resultFileDest.length()>0){
+                    System.out.println("ok");
+                }
                 taskResultId=deepModelTaskResultMapper.insertDeepModelTaskResult(deepModelTaskResultEntity);//将结果插入数据库
+
             }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
-
-//            //模型运行结束，生成运行结果文件
-//            String result="";
             //修改数据库信息
-            deepModelTaskMapper.updateTask(taskId,1,taskResultId);
+            deepModelTaskMapper.updateTask(taskId,1,taskResultId,taskResultFilePath);
         }
         else
-            deepModelTaskMapper.updateTask(taskId,1,tempDeepModelTask.get(0).getResultId());
+            deepModelTaskMapper.updateTask(taskId,1,tempDeepModelTask.get(0).getResultId(),tempDeepModelTask.get(0).getResultFilePath());
+
         //向用户发送模型运行完毕的邮件
         DoctorEntity doctorEntity=doctorMapper.getDoctorById(doctorId);
         emailUtil.sendSimpleEmail("ADDS system task completion notification","You have a new completed task, please log in the ADDS system for viewing!",doctorEntity.getEmail());

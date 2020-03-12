@@ -27,7 +27,7 @@ public interface DeepModelTaskMapper {
      * 更新模型运行结果
      * @return
      */
-    public void updateTask(@Param("id") Integer doctorId,@Param("status") Integer status,@Param("result") Integer result);
+    public void updateTask(@Param("id") Integer doctorId,@Param("status") Integer status,@Param("result") Integer result,@Param("resultFilePath")String resultFilePath);
 
     /**
      * 医生获取所有任务

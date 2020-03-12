@@ -12,6 +12,15 @@ public class DeepModelTaskEntity {
     private Integer status;  //0:正在运行模型，1：模型运行结束
     private Integer userId;
     private Integer resultId;
+    private String resultFilePath; //结果文件存放路径
+
+    public String getResultFilePath() {
+        return resultFilePath;
+    }
+
+    public void setResultFilePath(String resultFilePath) {
+        this.resultFilePath = resultFilePath;
+    }
 
     public Integer getModelType() {
         return modelType;
