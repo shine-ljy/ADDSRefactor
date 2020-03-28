@@ -76,35 +76,42 @@ public class DoctorService {
      * 医生上传知识图谱
      * @return
      */
-    public Long uploadKG(Long doctorId,String fileName,String filePath)
-    {
-        return doctorDao.uploadKG(doctorId,fileName,filePath);
+//    public Long uploadKG(Long doctorId,String fileName,String filePath)
+//    {
+//        return doctorDao.uploadKG(doctorId,fileName,filePath);
+//    }
+
+    /**ljy
+     * 医生获取全部数据集
+     * @return
+     */
+    public ArrayList<DataSetsEntity> getDataSets(Long doctorId) {
+        return doctorDao.getDataSets(doctorId);
     }
 
     /**ljy
-     * 医生获取数据集(可用)
+     * 医生获取可用数据集
      * @return
      */
-    public ArrayList<DataSetsEntity> getDataSets(Long doctorId)
-    {
-        return doctorDao.getDataSets(doctorId);
+    public ArrayList<DataSetsEntity> getAvailableDataSets(Long doctorId) {
+        return doctorDao.getAvailableDataSets(doctorId);
     }
 
     /**ljy
      * 医生获获取知识图谱
      * @return
      */
-    public ArrayList<DataSetsEntity> getKGS(Long doctorId)
-    {
-        return doctorDao.getKGS(doctorId);
-    }
+//    public ArrayList<DataSetsEntity> getKGS(Long doctorId)
+//    {
+//        return doctorDao.getKGS(doctorId);
+//    }
 
 
     /**ljy
      * 医生运行一个深度学习模型
      * @return
      */
-    public void doDeepModelTask(Integer doctorId,DeepModelTaskEntity deepModelTaskEntity)
+    public void doDeepModelTask(Long doctorId,DeepModelTaskEntity deepModelTaskEntity)
     {
         doctorDao.doDeepModelTask(doctorId,deepModelTaskEntity);
     }

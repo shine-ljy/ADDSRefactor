@@ -172,28 +172,35 @@ public class DoctorDao {
      * 医生上传知识图谱
      * @return
      */
-    public Long uploadKG(Long doctorId,String fileName,String filePath)
-    {
-        return kgMapper.uploadKG(doctorId,fileName,filePath);
+//    public Long uploadKG(Long doctorId,String fileName,String filePath)
+//    {
+//        return kgMapper.uploadKG(doctorId,fileName,filePath);
+//    }
+
+    /**ljy
+     * 医生获取全部数据集
+     * @return
+     */
+    public ArrayList<DataSetsEntity> getDataSets(Long doctorId) {
+        return dataSetsMapper.getDataSets(doctorId);
     }
 
     /**ljy
-     * 医生获取数据集(可用)
+     * 医生获取可用数据集
      * @return
      */
-    public ArrayList<DataSetsEntity> getDataSets(Long doctorId)
-    {
-        return dataSetsMapper.getDataSets(doctorId);
+    public ArrayList<DataSetsEntity> getAvailableDataSets(Long doctorId) {
+        return dataSetsMapper.getAvailableDataSets(doctorId);
     }
 
     /**ljy
      * 医生获获取知识图谱
      * @return
      */
-    public ArrayList<DataSetsEntity> getKGS(Long doctorId)
-    {
-        return kgMapper.getKGS(doctorId);
-    }
+//    public ArrayList<DataSetsEntity> getKGS(Long doctorId)
+//    {
+//        return kgMapper.getKGS(doctorId);
+//    }
 
 
     /**ljy
@@ -201,13 +208,13 @@ public class DoctorDao {
      * @return
      */
     @Async
-    public void doDeepModelTask(Integer doctorId, DeepModelTaskEntity deepModelTaskEntity)  //异步线程调用
+    public void doDeepModelTask(Long doctorId, DeepModelTaskEntity deepModelTaskEntity)  //异步线程调用
     {
         //向数据库中插入一条深度学习模型信息
-        Integer taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getTaskName(),deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
+        Long taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getTaskName(),deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
         //查找是否已经有了相同的模型运行结果
         ArrayList<DeepModelTaskEntity> tempDeepModelTask=deepModelTaskMapper.getSimilarityModelTask(deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId());
-        Integer taskResultId=null;
+        Long taskResultId=null;
         String taskResultFilePath="";  //模型结果文件路径
         if(tempDeepModelTask==null)  //没有找到相同的模型结果
         {

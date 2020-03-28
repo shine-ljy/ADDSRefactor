@@ -99,7 +99,7 @@ public class DoctorController {
     @PostMapping("{doctorId}/dataSets")
     public void uploadDataSet(HttpServletResponse httpServletResponse, @PathVariable Integer doctorId, MultipartFile file, Integer dId, String type)
     {//类型包括train，test，dev
-        String fileName=new String();
+        String fileName;
         try {
             fileName=file.getOriginalFilename();  //获取原始文件名
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
@@ -107,19 +107,23 @@ public class DoctorController {
             String nowData = format.format(date);
             //dataSetsPathInServer+doctorId.toString()+nowData+"//";
             fileName=doctorId.toString()+nowData+"-"+fileName;//为了避免文件重名
-            String filePath=dataSetsPathInServer+fileName;
+
+            // 文件保存路径（服务器用）
+//            String filePath=dataSetsPathInServer+fileName;
+
+            // 文件保存路径（QXL 测试用）
+            String filePath = "/Users/liam/Desktop/testup/" + fileName;
+
             File dest=new File(filePath);
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdir();
             }
-            if(fileUtil.checkDataset(dest)==false)  //检查文件格式
+            file.transferTo(dest);  //将文件保存到服务器
+            if(!fileUtil.checkDataset(dest))  //检查文件格式
             {
                 httpServletResponse.setStatus(400,"文件格式错误");
                 return;
             }
-
-            file.transferTo(dest);  //将文件保存到服务器
-
             doctorService.uploadDataSet(dId,doctorId,fileName,dataSetsPath+fileName,type);
         } catch (IOException e) {
             httpServletResponse.setStatus(302,"文件上传失败");
@@ -128,41 +132,7 @@ public class DoctorController {
     }
 
     /**ljy
-     * 医生上传知识图谱
-     * @return
-     */
-    @PostMapping("{doctorId}/kg")
-    public void uploadKG(HttpServletResponse httpServletResponse, @PathVariable Long doctorId, MultipartFile file)
-    {
-        Long fileId=null;
-        try {
-            String fileName=file.getOriginalFilename();  //获取原始文件名
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-            Date date = new Date();
-            String nowData = format.format(date);
-            fileName=doctorId.toString()+nowData+fileName;  //为了避免文件重名
-            String filePath=dataSetsPathInServer+fileName;
-            File dest=new File(filePath);
-            if(!dest.getParentFile().exists()){
-                dest.getParentFile().mkdir();
-            }
-            if(fileUtil.checkKG(dest)==false)  //检查文件格式
-            {
-                httpServletResponse.setStatus(400,"文件格式错误");
-                return;
-            }
-            file.transferTo(dest);  //将文件保存到服务器
-            fileId=doctorService.uploadKG(doctorId,fileName,dataSetsPath+fileName);
-            //此处还缺少知识图谱的整理和导入代码
-        } catch (IOException e) {
-            httpServletResponse.setStatus(302,"文件上传失败");
-        }
-        httpServletResponse.setStatus(200,"文件上传成功");
-       // return fileId;
-    }
-
-    /**ljy
-     * 医生获取数据集(可用)
+     * 医生获取全部数据集
      * @return
      */
     @GetMapping("{doctorId}/dataSets")
@@ -172,24 +142,33 @@ public class DoctorController {
     }
 
     /**ljy
+     * 医生获取可用数据集
+     * @return
+     */
+    @GetMapping("{doctorId}/availableDataSets")
+    public ArrayList<DataSetsEntity> getAvailableDataSets(@PathVariable Long doctorId)
+    {
+        return doctorService.getAvailableDataSets(doctorId);
+    }
+
+    /**ljy
      * 医生获获取知识图谱
      * @return
      */
-    @GetMapping("{doctorId}/kg")
-    public ArrayList<DataSetsEntity> getKGS(@PathVariable Long doctorId)
-    {
-        return doctorService.getKGS(doctorId);
-    }
+//    @GetMapping("{doctorId}/kg")
+//    public ArrayList<DataSetsEntity> getKGS(@PathVariable Long doctorId)
+//    {
+//        return doctorService.getKGS(doctorId);
+//    }
 
 
     /**ljy
      * 医生运行一个深度学习模型
-     * @return
      */
     @PostMapping("{doctorId}/DLTask")
     public void doDeepModelTask(@PathVariable Integer doctorId, @RequestBody DeepModelTaskEntity deepModelTaskEntity)
     {
-        doctorService.doDeepModelTask(doctorId,deepModelTaskEntity);
+//        doctorService.doDeepModelTask(doctorId,deepModelTaskEntity);
     }
 
     /**
@@ -202,6 +181,4 @@ public class DoctorController {
     {
         return doctorService.getDMTasks(doctorId);
     }
-
-
 }

@@ -25,5 +25,5 @@ public interface DoctorMapper {
     /**ljy
      * 根据id获取医生信息
      */
-    public DoctorEntity getDoctorById(@Param("id") Integer doctorId);
+    public DoctorEntity getDoctorById(@Param("id") Long doctorId);
 }
