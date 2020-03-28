@@ -1,8 +1,10 @@
 package com.java.adds.utils;
 
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.*;
+import java.util.List;
 
 
 /**ljy
@@ -32,8 +34,7 @@ public class FileUtil {
             return true;
     }
 
-    public void createPythonConfig(String train,String test,String dev,String dstdir,String modelDstDir)
-    {
+    public void createPythonConfig(String train,String test,String dev,String dstdir,String modelDstDir) {
         try {
             File file =new File(fileToBeChange);
             if(!file.exists()){
@@ -64,27 +65,84 @@ public class FileUtil {
 
     }
 
-    public boolean checkKG(File file)
-    {
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new FileReader("C:\\Users\\yin\\Desktop\\test.csv"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    /**
+     * QXL
+     * 判断文件类型（后缀名）是否是 csv 文件
+     * @param file file
+     * @return true / false
+     */
+    public boolean csvFileType(File file) {
+        String fileName = file.getName();
+        if (fileName.contains(".")) {
+            String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
+            return fileType.toLowerCase().equals("csv");
         }
-        String line="";
-        try{
-            line=bufferedReader.readLine();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        return false;
+    }
 
-        if(line.split(",").length==3)
-            return true;
-        else
+    /**
+     * QXL
+     * 判断 KG 文件（前提是 csv 文件）的数据格式是否正确
+     * 目前判断规则是：csv 文件必须有header，必须有 3 列，且为 header / relation / tail
+     * 否则均视为格式错误
+     * @param file file
+     * @return true / false
+     */
+    public boolean kgFileFormat(File file) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String[] csvHeaders = reader.readLine().split(",");
+            if (csvHeaders.length == 3) {
+                return csvHeaders[0].equals("header") && csvHeaders[1].equals("relation") && csvHeaders[2].equals("tail");
+            }
             return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * QXL
+     * 删除文件
+     * @param file file
+     */
+    public void deleteFile(File file) {
+        if (file.exists()) {
+            boolean result = file.delete();
+            if (result) {
+                System.out.println("File is deleted successfully! ");
+            } else {
+                System.out.println("Fail to delete file... ");
+            }
+        } else {
+            System.out.println("File is non-exist. ");
+        }
+    }
+
+    /**
+     * QXL
+     * 数据导出至 Excel 表格
+     * @param outputStream HttpServletResponse outputStream
+     * @param data Task result data
+     * @param sheetName Excel sheet name
+     * @param columnWidth Excel sheet column width
+     */
+    public static void exportDataToExcel(OutputStream outputStream, List<List<Object>> data, String sheetName, int columnWidth) throws IOException {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet(sheetName);
+        sheet.setDefaultColumnWidth(columnWidth);
+
+        int rowIndex = 0;
+        for (List<Object> rowData : data) {
+            HSSFRow row = sheet.createRow(rowIndex++);
+            for (int i = 0; i < rowData.size(); i++) {
+                HSSFCell cell = row.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString((String) rowData.get(i));
+                cell.setCellValue(text);
+            }
+        }
+        workbook.write(outputStream);
+        workbook.close();
     }
 }
-
