@@ -35,6 +35,10 @@
 <!--    </insert>-->
     
     <select id="getDataSets" resultMap="DataSetsList">
+        select * from data_sets_upload where user_id=#{uId};
+    </select>
+
+    <select id="getAvailableDataSets" resultMap="DataSetsList">
         select * from data_sets_upload where user_id=#{uId} and train_name is not null and test_name is not null and dev_name is not null;
     </select>
 

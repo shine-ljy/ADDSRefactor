@@ -41,14 +41,20 @@ public interface DataSetsMapper {
 
 
     /**ljy
-     * 医生获取数据集(可用)
+     * 医生获取全部数据集
      * @return
      */
     public ArrayList<DataSetsEntity> getDataSets(@Param("uId") Long doctorId);
 
     /**ljy
+     * 医生获取可用数据集
+     * @return
+     */
+    public ArrayList<DataSetsEntity> getAvailableDataSets(@Param("uId") Long doctorId);
+
+    /**ljy
      * 根据id获取dataset
      * @return
      */
-    public DataSetsEntity getDataSetsById(@Param("id") Integer id);
+    public DataSetsEntity getDataSetsById(@Param("id") Long id);
 }
