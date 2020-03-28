@@ -15,19 +15,19 @@ public interface DeepModelTaskMapper {
      * 医生运行一个深度学习模型
      * @return
      */
-    public Integer doDeepModelTask(@Param("userId") Integer doctorId, @Param("taskName")String taskName,@Param("datasetId")Integer datasetId,@Param("kgId")Integer kgId,@Param("modelId")Integer modelId,@Param("metricId")Integer metricId,@Param("status")Integer status);
+    public Long doDeepModelTask(@Param("userId") Long doctorId, @Param("taskName")String taskName,@Param("datasetId") Long datasetId,@Param("kgId") Long kgId,@Param("modelId") Long modelId,@Param("metricId") Long metricId,@Param("status")Integer status);
 
     /**ljy
      * 查找是否有已经有相同的模型运行结果
      * @return
      */
-    public ArrayList<DeepModelTaskEntity> getSimilarityModelTask(@Param("datasetId")Integer datasetId,@Param("kgId")Integer kgId,@Param("modelId")Integer modelId,@Param("metricId")Integer metricId);
+    public ArrayList<DeepModelTaskEntity> getSimilarityModelTask(@Param("datasetId") Long datasetId,@Param("kgId") Long kgId,@Param("modelId") Long modelId,@Param("metricId") Long metricId);
 
     /**ljy
      * 更新模型运行结果
      * @return
      */
-    public void updateTask(@Param("id") Integer doctorId,@Param("status") Integer status,@Param("result") Integer result,@Param("resultFilePath")String resultFilePath);
+    public void updateTask(@Param("id") Long doctorId,@Param("status") Integer status,@Param("result") Long result,@Param("resultFilePath")String resultFilePath);
 
     /**
      * 医生获取所有任务
