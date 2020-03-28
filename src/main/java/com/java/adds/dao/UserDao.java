@@ -12,13 +12,13 @@ public class UserDao {
     @Autowired
     UserMapper userMapper;
 
-
-    /**ljy
-     *用户登录
-     * @return
+    /**
+     * QXL
+     * User log in
+     * @param login_name User's login name
+     * @return UserEntity User's info
      */
-    public UserEntity login(String login_name)
-    {
+    public UserEntity login(String login_name) {
         return userMapper.login(login_name);
     }
 

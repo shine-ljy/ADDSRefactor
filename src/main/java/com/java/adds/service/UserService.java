@@ -12,21 +12,29 @@ import java.util.ArrayList;
 
 @Service
 public class UserService {
+
     @Autowired
     UserDao userDao;
 
     @Autowired
     QADao qaDao;
 
-    /**ljy
-     * 用户登录
-     *
+    /**
+     * QXL
+     * User log in
+     * @param login_name User's login name
+     * @param password User's login password
+     * @return UserEntity User's info without password
      */
-    public UserEntity login(String login_name)
-    {
-        return userDao.login(login_name);
+    public UserEntity login(String login_name, String password) {
+        UserEntity userEntity = userDao.login(login_name);
+        if (userEntity != null && password.equals(userEntity.getPassword())) {
+            userEntity.setPassword("");
+            return userEntity;
+        } else {
+            return null;
+        }
     }
-
 
     /**ljy
      * 用户注册
