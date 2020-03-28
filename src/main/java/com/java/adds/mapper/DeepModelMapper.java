@@ -1,6 +1,5 @@
 package com.java.adds.mapper;
 
-
 import com.java.adds.entity.DeepModelEntity;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -10,35 +9,43 @@ import java.util.ArrayList;
 @Mapper
 @Repository
 public interface DeepModelMapper {
-    /**ljy
-     * 获取特定类型下的所有深度学习模型
-     * @return ArrayList<DeepModelEntity>
-     */
-    @Select("SELECT id, model_name, model_category, config_file FROM deep_model WHERE model_category=#{categoryId}")
-    @Results(id = "deepModelMap", value = {
-//            @Result(property = "id", column = "id"),
-//            @Result(property = "modelName", column = "model_name"),
-//            @Result(property = "modelCategory", column = "model_category"),
-//            @Result(property = "configFile", column = "config_file")
 
+    /**
+     * QXL
+     * Get Models of Category
+     * @param categoryId Category id
+     * @return A DeepModelEntity ArrayList
+     */
+    @Select("SELECT * FROM deep_model WHERE model_category=#{categoryId}")
+    @Results(id = "deepModelMap", value = {
             @Result(property = "id", column = "id"),
-            @Result(property = "modelName", column = "model_name"),
-            @Result(property = "modelIntroduction", column = "model_introduction"),
-            @Result(property = "modelArticleTitle", column = "model_article_title"),
-            @Result(property = "modelArticleUrl", column = "model_article_url"),
-            @Result(property = "modelArchitectureUrl", column = "model_architecture_url"),
-            @Result(property = "modelCodeUrl", column = "model_code_url"),
-            @Result(property = "modelCategory", column = "model_category"),
+            @Result(property = "name", column = "model_name"),
+            @Result(property = "intro", column = "model_introduction"),
+            @Result(property = "articleTitle", column = "model_article_title"),
+            @Result(property = "articleUrl", column = "model_article_url"),
+            @Result(property = "architectureUrl", column = "model_architecture_url"),
+            @Result(property = "codeUrl", column = "model_code_url"),
+            @Result(property = "categoryId", column = "model_category"),
             @Result(property = "configFile", column = "config_file")
     })
-    public ArrayList<DeepModelEntity> getAllModelOfCategory(@Param("categoryId") Integer mId);
+    ArrayList<DeepModelEntity> getModelsByCategoryId(@Param("categoryId") Long categoryId);
 
-    /**ljy
-     * 根据 id 获取模型信息
-     * @return DeepModelEntity
+    /**
+     * QXL
+     * Get All Deep Models (Only Model id and name)
+     * @return A DeepModelEntity ArrayList
      */
-    @Select("SELECT * FROM deep_model WHERE id=#{id}")
-//    @Results(id = "deepModel", value = {})
+    @Select("SELECT id, model_name FROM deep_model")
     @ResultMap("deepModelMap")
-    public DeepModelEntity getModelById(@Param("id") Integer id);
+    ArrayList<DeepModelEntity> getDeepModelsName();
+
+    /**
+     * QXL
+     * Get Model by id
+     * @param modelId Model id
+     * @return A DeepModelEntity
+     */
+    @Select("SELECT * FROM deep_model WHERE id=#{modelId}")
+    @ResultMap("deepModelMap")
+    DeepModelEntity getModelById(@Param("modelId") Long modelId);
 }

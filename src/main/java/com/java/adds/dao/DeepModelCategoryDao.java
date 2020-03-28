@@ -11,37 +11,16 @@ import java.util.ArrayList;
 
 @Component
 public class DeepModelCategoryDao {
-    @Autowired
-    DeepModelCategoryMapper deepModelCategoryMapper;
 
     @Autowired
-    DeepModelMapper deepModelMapper;
-
-    /**ljy
-     * 获取所有深度学习模型的类别
-     * @return
-     */
-    public ArrayList<DeepModelCategoryEntity> getAllModelCategory()
-    {
-        return deepModelCategoryMapper.getAllModelCategory();
-    }
-
-    /**ljy
-     * 获取特定类型下的所有深度学习模型
-     * @return
-     */
-    public ArrayList<DeepModelEntity> getAllModelOfCategory(Integer mId)
-    {
-        return deepModelMapper.getAllModelOfCategory(mId);
-    }
+    DeepModelCategoryMapper categoryMapper;
 
     /**
-     * 根据 id 获取模型信息
-     * @param mId Deep Model Id: Integer
-     * @return DeepModelEntity
-     * @author Liam
+     * QXL
+     * Get Model Categories (with Models)
+     * @return A DeepModelCategoryEntity ArrayList
      */
-    public DeepModelEntity getModelById(Integer mId) {
-        return deepModelMapper.getModelById(mId);
+    public ArrayList<DeepModelCategoryEntity> getModelCategory() {
+        return categoryMapper.getModelCategory();
     }
 }

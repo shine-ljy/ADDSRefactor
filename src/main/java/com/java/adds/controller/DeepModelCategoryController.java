@@ -1,8 +1,8 @@
 package com.java.adds.controller;
 
-
 import com.java.adds.entity.DeepModelCategoryEntity;
 import com.java.adds.entity.DeepModelEntity;
+import com.java.adds.security.annotation.PassToken;
 import com.java.adds.service.DeepModelCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("modelCategory")
 public class DeepModelCategoryController {
+
     @Autowired
     DeepModelCategoryService deepModelCategoryService;
 
@@ -23,29 +24,28 @@ public class DeepModelCategoryController {
      * @return
      */
     @GetMapping("")
-    public ArrayList<DeepModelCategoryEntity> getAllModelCategory()
-    {
-        return deepModelCategoryService.getAllModelCategory();
-    }
-
-    /**ljy
-     * 获取特定类型下的所有深度学习模型
-     * @return
-     */
-    @GetMapping("{mId}/deepModel")
-    public ArrayList<DeepModelEntity> getAllModelOfCategory(@PathVariable Integer mId)
-    {
-        return deepModelCategoryService.getAllModelOfCategory(mId);
+    public ArrayList<DeepModelCategoryEntity> getAllModelCategory() {
+        return deepModelCategoryService.getModelCategory();
     }
 
     /**
+     * QXL
+     * Get All Deep Models (Only Model id and name)
+     * @return A DeepModelEntity ArrayList
+     */
+    @GetMapping("modelName")
+    public ArrayList<DeepModelEntity> getDeepModelsName() {
+        return deepModelCategoryService.getDeepModelsName();
+    }
+
+    /**
+     * QXL
      * 根据 id 获取模型信息
-     * @param mId Deep Model Id: Integer
+     * @param mId Deep Model id
      * @return DeepModelEntity
-     * @author Liam
      */
     @GetMapping("model/{mId}")
-    public DeepModelEntity getModelById(@PathVariable Integer mId) {
+    public DeepModelEntity getModelById(@PathVariable Long mId) {
         return deepModelCategoryService.getModelById(mId);
     }
 }

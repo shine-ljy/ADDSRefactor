@@ -1,8 +1,7 @@
 package com.java.adds.mapper;
 
-
 import com.java.adds.entity.DeepModelCategoryEntity;
-import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -11,9 +10,17 @@ import java.util.ArrayList;
 @Repository
 public interface DeepModelCategoryMapper {
 
-    /**ljy
-     * 获取所有深度学习模型的类别
-     * @return
+    /**
+     * QXL
+     * Get Model Categories (with Models)
+     * @return A DeepModelCategoryEntity ArrayList
      */
-    public ArrayList<DeepModelCategoryEntity> getAllModelCategory();
+    @Select("SELECT * FROM deep_model_category")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "name", column = "category"),
+            @Result(property = "models", column = "id",
+                    many = @Many(select = "com.java.adds.mapper.DeepModelMapper.getModelsByCategoryId"))
+    })
+    ArrayList<DeepModelCategoryEntity> getModelCategory();
 }

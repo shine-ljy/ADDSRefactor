@@ -7,8 +7,8 @@
         <result column="category" property="category"/>
     </resultMap>
 
-    <select id="getAllModelCategory" resultMap="deepModelCategory">
-        select * from deep_model_category
-    </select>
+<!--    <select id="getAllModelCategory" resultMap="deepModelCategory">-->
+<!--        select * from deep_model_category-->
+<!--    </select>-->
 
 </mapper>
