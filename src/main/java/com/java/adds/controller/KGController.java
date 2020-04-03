@@ -1,5 +1,6 @@
 package com.java.adds.controller;
 
+import com.java.adds.config.UploadFileConfig;
 import com.java.adds.entity.KGEntity;
 import com.java.adds.service.KGService;
 import com.java.adds.utils.FileUtil;
@@ -27,6 +28,9 @@ public class KGController {
     private KGService kgService;
 
     @Autowired
+    private UploadFileConfig fileConfig;
+
+    @Autowired
     private FileUtil fileUtil;
 
     /**
@@ -43,7 +47,7 @@ public class KGController {
      * Get Knowledge-Graph by KG id
      */
     @RequestMapping(value = "/graph/{kgId}", method = RequestMethod.GET)
-    public Map<String, Object> getKG(@PathVariable("kgId") Long kgId) {
+    public Map<String, Object> getKGById(@PathVariable("kgId") Long kgId) {
         return kgService.getKGById(kgId);
     }
 
@@ -65,7 +69,7 @@ public class KGController {
         Date date = new Date();
         String currentTime = format.format(date);
         fileName = doctorId.toString() + currentTime + fileName;
-        String filePath = "/Users/liam/Desktop/testup/" + fileName;
+        String filePath = fileConfig.getKgFilePath() + fileName;
         File dest = new File(filePath);
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdir();
