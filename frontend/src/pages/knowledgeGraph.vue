@@ -37,17 +37,17 @@
               </svg>
             </div>
           </div>
-          <div class="info-div">
-            <el-card>
-              <div slot="header" class="">
-                <span>{{"Node"}}</span>
-                <el-button type="primary" size="mini" plain style="float: right;">Unfold</el-button>
-              </div>
-              <div>
-                <span><i>_NODE_INFO_</i></span>
-              </div>
-            </el-card>
-          </div>
+<!--          <div class="info-div">-->
+<!--            <el-card>-->
+<!--              <div slot="header" class="">-->
+<!--                <span>{{"Node"}}</span>-->
+<!--                <el-button type="primary" size="mini" plain style="float: right;">Unfold</el-button>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <span><i>_NODE_INFO_</i></span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--          </div>-->
         </el-main>
       </el-container>
     </el-container>

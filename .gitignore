@@ -72,3 +72,5 @@ fabric.properties
 hs_err_pid*
 
 frontend/package-lock.json
+
+frontend/node_modules/
