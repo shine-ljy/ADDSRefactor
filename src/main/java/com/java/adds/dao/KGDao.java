@@ -70,11 +70,12 @@ public class KGDao {
     public Long getCentralNodeByKGId(Long kgId) {
 
         String getCentralityListCypher =
+                "MATCH (x:kgId" + kgId + ")-[r]-(y) " +
                 "CALL algo.betweenness.sampled.stream(\"kgId" + kgId + "\", \"ADDSKGRel\", {strategy: \"degree\", direction: \"out\"}) " +
-                        "YIELD nodeId, centrality " +
-                        "RETURN nodeId " +
-                        "ORDER BY centrality DESC " +
-                        "LIMIT 1";
+                "YIELD nodeId, centrality " +
+                "RETURN nodeId " +
+                "ORDER BY centrality DESC " +
+                "LIMIT 1";
 
         StatementResult result = executeCypher(getCentralityListCypher);
         if (result.hasNext()) {
@@ -92,6 +93,16 @@ public class KGDao {
     public Map<String, Object> getNodeAndRelNodes(Long nodeId) {
         List<Map<String, Object>> kg = kgRepository.getNodeAndRelNodes(nodeId);
         return toD3Format(kg);
+    }
+
+    /**
+     * KG data format when there's no data
+     * @return KG data(partial): A String-Object Map for d3
+     */
+    public Map<String, Object> noDataFormat() {
+        List<Map<String, Object>> nodes = new ArrayList<>();
+        List<Map<String, Object>> rels = new ArrayList<>();
+        return map2("nodes", nodes, "links", rels);
     }
 
     /**

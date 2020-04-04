@@ -51,7 +51,11 @@ public class KGService {
      */
     public Map<String, Object> getKGById(Long kgId) {
         Long nodeId = kgDao.getCentralNodeByKGId(kgId);
-        return kgDao.getNodeAndRelNodes(nodeId);
+        if (nodeId < 0) {
+            return kgDao.noDataFormat();
+        } else {
+            return kgDao.getNodeAndRelNodes(nodeId);
+        }
     }
 
     /**
