@@ -6,7 +6,7 @@
         <el-main>
           <div class="option-bar">
             <div class="option-block">
-              <el-select v-model="kgChosen" placeholder="Choose a knowledge graph">
+              <el-select v-model="kgChosen" placeholder="Choose a knowledge graph" @change="loadKG">
                 <el-option-group v-for="group in kgGroupList" :key="group.label" :label="group.label">
                   <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
@@ -40,11 +40,14 @@
           <div class="info-div">
             <el-card>
               <div slot="header" class="">
-                <span>{{"Node"}}</span>
-                <el-button type="primary" size="mini" plain style="float: right;">Unfold</el-button>
+                <span>{{kgEntityInfo.entityType}}</span>
+                <el-button v-if="kgNodeUnfoldFlag[kgEntityInfo.id] !== true" type="primary" size="mini" plain style="float: right;" @click="testing">Unfold</el-button>
+                <el-button v-else type="info" size="mini" plain style="float: right;" @click="">Ellipsis</el-button>
               </div>
               <div>
                 <span><i>_NODE_INFO_</i></span>
+                <span><i>{{kgEntityInfo.name}}</i></span>
+                <span><i>{{bufferedChildEntities.nodes}}</i></span>
               </div>
             </el-card>
           </div>
@@ -71,102 +74,300 @@
             return {
                 kgGroupList: [{
                     label: 'System Knowledge Graph',
-                    options: [{
-                        value: 'sh',
-                        label: 'Shanghai'
-                    }]
+                    options: []
                 }, {
                     label: 'My Knowledge Graph',
-                    options: [{
-                        value: 'sh',
-                        label: 'Shanghai'
-                    }]
+                    options: []
                 }],
-                kgChosen: ''
+                kgChosen: '',
+                kgData: {
+                    nodes: [],
+                    links: []
+                },
+                kgNodeMap: [],
+                kgNodeChildMap: [],
+                kgNodeUnfoldFlag: [],
+                kgSvgComponents: {
+                    svg: null,
+                    simulation: null,
+                    colors: [],
+                    linkGroup: [],
+                    linkTextGroup: [],
+                    nodeGroup: [],
+                    nodeTextGroup: []
+                },
+                kgEntityInfo: {
+                    entityType: 'Entity Type',
+                    id: 0,
+                    name: '',
+                    childNode: []
+                },
+                bufferedChildEntities: {
+                    nodes: [],
+                    links: []
+                }
             };
         },
         methods: {
+            loadKGList() {
+                this.$axios({
+                    method: 'get',
+                    url: '/kg/doctor/' + this.$store.state.user.id,
+                }).then(res => {
+                    // console.log(res.data);
+                    this.kgGroupList[1].options.length = 0;
+                    for (let kg in res.data) {
+                        if (res.data.hasOwnProperty(kg)) {
+                            this.kgGroupList[1].options.push({
+                                value: res.data[kg].id,
+                                label: res.data[kg].name
+                            });
+                        }
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
+            loadKG() {
+                this.kgNodeMap.length = 0;
+                this.kgNodeChildMap.length = 0;
+                this.$axios({
+                    method: 'get',
+                    url: '/kg/graph/' + this.kgChosen,
+                }).then(res => {
+                    // console.log(res.data);
+                    this.kgData.nodes = res.data.nodes;
+                    this.kgData.links = res.data.links;
+                    for (let node in res.data.nodes) {
+                      if (res.data.nodes.hasOwnProperty(node)) {
+                        this.kgNodeMap[res.data.nodes[node].id] = res.data.nodes[node].name;
+                      }
+                    }
+                    this.paintGraph();
+                }).catch(error => {
+                    console.log(error);
+                });
+            },
+            getRelNodes(nodeId) {
+              if (this.kgNodeChildMap[nodeId] == null) {
+                this.$axios({
+                  method: 'get',
+                  url: '/kg/graph/relNodes/' + nodeId,
+                }).then(res => {
+                  // console.log(res.data);
+                  console.log(nodeId);
+                  this.bufferedChildEntities.nodes = res.data.nodes;
+                  this.bufferedChildEntities.links = res.data.links;
+                  this.kgNodeChildMap[nodeId] = res.data;
+                }).catch(error => {
+                  console.log(error);
+                });
+              } else {
+                this.bufferedChildEntities.nodes = this.kgNodeChildMap[nodeId].nodes;
+                this.bufferedChildEntities.links = this.kgNodeChildMap[nodeId].links;
+              }
+            },
+            showRelNodes() {
+                let newNodes = this.bufferedChildEntities.nodes;
+                for (let node in newNodes) {
+                    if (newNodes.hasOwnProperty(node)) {
+                        let n = newNodes[node];
+                        if (this.kgNodeMap[n.id] == null) {
+                            this.kgData.nodes.push(n);
+                            this.kgNodeMap[n.id] = n.name;
+                        }
+                    }
+                }
+                let links = this.kgData.links.concat(this.bufferedChildEntities.links);
+                let linkSet = new Set(links);
+                this.kgData.links = Array.from(linkSet);
+                this.paintGraph();
+            },
             initGraph() {
+                let width = this.$refs.svgDiv.offsetWidth;
+                let height = this.$refs.svgDiv.offsetHeight;
+                this.kgSvgComponents.simulation = d3.forceSimulation()
+                    .force("link", d3.forceLink().id(d => {return d.id;}))
+                    .force("charge", d3.forceManyBody().strength(100))
+                    .force("center", d3.forceCenter(width / 2, height / 2))
+                    .force("collide", d3.forceCollide(80).strength(0.2).iterations(5));
+                this.kgSvgComponents.colors = [
+                    '#6ca46c', '#4e88af',
+                    '#ca635f', '#d2907c',
+                    '#d6744d', '#ded295',
+                    '#b4c6e7', '#cdb4e6'
+                ];
+                this.kgSvgComponents.svg = d3.select("svg");
+                this.kgSvgComponents.linkGroup = this.kgSvgComponents.svg.append("g").attr("class", "links");
+                this.kgSvgComponents.nodeGroup = this.kgSvgComponents.svg.append("g").attr("class", "nodes");
+                this.kgSvgComponents.nodeTextGroup = this.kgSvgComponents.svg.append("g").attr("class", "texts");
+            },
+            paintGraph() {
+                let svg = this.kgSvgComponents.svg;
+                let simulation = this.kgSvgComponents.simulation;
+                let colors = this.kgSvgComponents.colors;
+
+                svg.selectAll("*").remove();
+
+                let link = svg.append("g").attr("class", "links")
+                    .selectAll("line").data(this.kgData.links).enter().append("line")
+                    .attr("stroke-width", 1)
+                    .style("stroke", "rgba(240, 240, 240, 0.8)");
+
+                let node = svg.append("g").attr("class", "nodes")
+                    .selectAll("circle").data(this.kgData.nodes).enter().append("circle")
+                    .attr("r", d => {return d.id * 0.5 + 15;})
+                    .attr("fill", d => {return colors[d.id % 8];})
+                    .style("stroke", "#fff")
+                    .style("stroke-width", "2px")
+                    .style("cursor", "pointer")
+                    .call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended));
+
+                node.on("click", d => {
+                    this.kgEntityInfo.entityType = 'Node';
+                    this.kgEntityInfo.id = d.id;
+                    this.kgEntityInfo.name = d.name;
+                    this.getRelNodes(d.id);
+                });
+
+                let text = svg.append("g").attr("class", "texts")
+                    .selectAll("text").data(this.kgData.nodes).enter().append("text")
+                    .text(d => {return d.name;})
+                    .attr("dy", 4)
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "white")
+                    .style("cursor", "pointer")
+                    .call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended));
+
+                simulation.nodes(this.kgData.nodes).on("tick", ticked);
+                simulation.force("link").links(this.kgData.links);
+
+                svg.call(d3.zoom().on("zoom", () => {
+                    svg.selectAll("g").attr("transform", d3.event.transform);
+                }));
+                svg.on("dblclick.zoom", null);
+
+                function ticked() {
+                    link
+                        .attr("x1", function(d) {return d.source.x;})
+                        .attr("y1", function(d) {return d.source.y;})
+                        .attr("x2", function(d) {return d.target.x;})
+                        .attr("y2", function(d) {return d.target.y;});
+                    node
+                        .attr("cx", function(d) {return d.x;})
+                        .attr("cy", function(d) {return d.y;});
+                    text
+                        .attr("x", function(d) { return d.x; })
+                        .attr("y", function(d) { return d.y; });
+                }
+                function dragstarted(d) {
+                    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                }
+                function dragged(d) {
+                    d.fx = d3.event.x;
+                    d.fy = d3.event.y;
+                }
+                function dragended(d) {
+                    if (!d3.event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }
+            },
+            testing() {
+              this.showRelNodes();
+              this.kgNodeUnfoldFlag[this.kgEntityInfo.id] = true;
             },
             downloadKg() {
-            }
-        },
-        mounted() {
-            // 获取 svg 元素所在块元素（svgDiv）的长度和高度，用来确定画布中心点
-            let width = this.$refs.svgDiv.offsetWidth;
-            let height = this.$refs.svgDiv.offsetHeight;
+            },
+            paintKG() {
+              // 获取 svg 元素所在块元素（svgDiv）的长度和高度，用来确定画布中心点
+              let width = this.$refs.svgDiv.offsetWidth;
+              let height = this.$refs.svgDiv.offsetHeight;
 
-            // let names = ['Films', 'Characters', 'Planets', 'Starships', 'Vehicles', 'Species'];
-            // 设置不同组的节点颜色
-            let colors = ['#6ca46c', '#4e88af', '#ca635f', '#d2907c', '#d6744d', '#ded295', '#b4c6e7', '#cdb4e6'];
-            // 获取图谱数据
-            let graph = GraphData.graph();
-            // console.log(graph); //(test)
+              // let names = ['Films', 'Characters', 'Planets', 'Starships', 'Vehicles', 'Species'];
+              // 设置不同组的节点颜色
+              let colors = [
+                '#6ca46c', '#4e88af',
+                '#ca635f', '#d2907c',
+                '#d6744d', '#ded295',
+                '#b4c6e7', '#cdb4e6'];
+              // 获取图谱数据
+              // let graph = GraphData.graph();
+              let graph = this.kgData;
 
-            // 设置节点半径
-            for (let i = 0; i < graph.nodes.length; i++) {
+              // 设置节点半径
+              for (let i = 0; i < graph.nodes.length; i++) {
                 let nd = graph.nodes[i];
-                nd.r = nd.id.length * 1.6 + 20;
+                nd.r = nd.id * 0.5 + 15;
                 // nd.r = nd.id.length * 3; //(test)
-            }
+              }
 
-            // 创建一个力学模拟器（force 力学图）
-            let simulation = d3.forceSimulation()
-                .force("link", d3.forceLink().id(function (d) {
+              // 创建一个力学模拟器（force 力学图）
+              let simulation = d3.forceSimulation()
+                  .force("link", d3.forceLink().id(function (d) {
                     return d.id;
-                }))
-                // 设置万有引力，设置引力强度
-                .force("charge", d3.forceManyBody().strength(100))
-                // 设置居中力，中心点为画布中心点
-                .force("center", d3.forceCenter(width / 2, height / 2))
-                // 设置碰撞作用力，指定一个 radius 区域来防止节点重叠；设置碰撞力强度，范围是[0,1]，默认为0.7；设置迭代次数，默认为1（迭代次数越多最终的布局效果越好，但是计算复杂度更高）
-                .force("collide", d3.forceCollide(80).strength(0.2).iterations(5))
+                  }))
+                  // 设置万有引力，设置引力强度
+                  .force("charge", d3.forceManyBody().strength(100))
+                  // 设置居中力，中心点为画布中心点
+                  .force("center", d3.forceCenter(width / 2, height / 2))
+                  // 设置碰撞作用力，指定一个 radius 区域来防止节点重叠；设置碰撞力强度，范围是[0,1]，默认为0.7；设置迭代次数，默认为1（迭代次数越多最终的布局效果越好，但是计算复杂度更高）
+                  .force("collide", d3.forceCollide(80).strength(0.2).iterations(5))
                 // .force("collide", d3.forceCollide(100).strength(0.2).iterations(5)) //(test)
                 // // 设置 alpha 系数，在计时器的每一帧中，仿真的 alpha 系数会不断削减，当 alpha 到达一个系数时，仿真将会停止，也就是 alpha 的目标系数 alphaTarget，该值区间为[0,1]，默认为0，控制力学模拟衰减率区间为[0-1]，设为0则不停止，默认0.0228，直到0.001
                 // .alphaDecay(0.0228)
                 // // 设置监听事件，例如监听 tick 滴答事件
                 // .on("tick", ()=>this.ticked())
-            ;
+              ;
 
-            // 获取 svg 元素
-            let svg = d3.select("svg");
-            // 设置鼠标滚轮缩放
-            svg.call(d3.zoom().on("zoom", function () {
+              // 获取 svg 元素
+              let svg = d3.select("svg");
+              svg.selectAll("*").remove();
+
+              // 设置鼠标滚轮缩放
+              svg.call(d3.zoom().on("zoom", function () {
                 svg.selectAll("g").attr("transform", d3.event.transform);
-            }));
-            // 禁止双击缩放
-            svg.on("dblclick.zoom", null);
+              }));
+              // 禁止双击缩放
+              svg.on("dblclick.zoom", null);
 
-            // 添加 line
-            let link = svg.append("g").attr("class", "links")
+              // 添加 line
+              let link = svg.append("g").attr("class", "links")
                 .selectAll("line").data(graph.links).enter().append("line")
                 .attr("stroke-width", 1)
                 .style("stroke", "rgba(240, 240, 240, 0.8)");
 
-            // 添加 circle
-            let node = svg.append("g").attr("class", "nodes")
+              // 添加 circle
+              let node = svg.append("g").attr("class", "nodes")
                 .selectAll("circle").data(graph.nodes).enter().append("circle")
                 .attr("r", function (d) {
-                    return d.r;
+                  return d.r;
                 })
                 .attr("fill", function (d) {
-                    return colors[d.group];
-                    // return 'rgb(140, 197, 255)';
+                  return colors[d.id % 8];
+                  // return 'rgb(140, 197, 255)';
                 })
                 .style("stroke", "#fff")
                 .style("stroke-width", "2px")
                 .style("cursor", "pointer")
                 .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
+                  .on("start", dragstarted)
+                  .on("drag", dragged)
+                  .on("end", dragended));
 
-            node.append("title").text(d=>{return d.id});
+              // node.append("title").text(d=>{return d.name});
+              node.on("click", d => {
+                // console.log(d.name);
+                this.kgEntityInfo.entityType = 'Node';
+                this.kgEntityInfo.name = d.name;
+              });
 
-            // 添加 text
-            let text = svg.append("g").attr("class", "texts")
+              // 添加 text
+              let text = svg.append("g").attr("class", "texts")
                 .selectAll("text").data(graph.nodes).enter().append("text")
-                .text(d=>{return d.id})
+                .text(d=>{return d.name})
                 .attr("dy", 4)
                 // 设置文本对齐方式为居中（start | middle | end）
                 .attr("text-anchor", "middle")
@@ -180,48 +381,55 @@
                 // .style("vertical-align", "middle")
                 .style("cursor", "pointer")
                 .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
+                  .on("start", dragstarted)
+                  .on("drag", dragged)
+                  .on("end", dragended));
 
-            simulation.nodes(graph.nodes).on("tick", ticked);
-            simulation.force("link").links(graph.links);
+              simulation.nodes(graph.nodes).on("tick", ticked);
+              simulation.force("link").links(graph.links);
 
-            //ticked()函数确定link线的起始点x、y坐标 node确定中心点 文本通过translate平移变化
-            function ticked() {
+              //ticked()函数确定link线的起始点x、y坐标 node确定中心点 文本通过translate平移变化
+              function ticked() {
                 link
-                    .attr("x1", function(d) {return d.source.x;})
-                    .attr("y1", function(d) {return d.source.y;})
-                    .attr("x2", function(d) {return d.target.x;})
-                    .attr("y2", function(d) {return d.target.y;});
+                  .attr("x1", function(d) {return d.source.x;})
+                  .attr("y1", function(d) {return d.source.y;})
+                  .attr("x2", function(d) {return d.target.x;})
+                  .attr("y2", function(d) {return d.target.y;});
                 node
-                    .attr("cx", function(d) {return d.x;})
-                    .attr("cy", function(d) {return d.y;});
+                  .attr("cx", function(d) {return d.x;})
+                  .attr("cy", function(d) {return d.y;});
                 text
-                    .attr("x", function(d) { return d.x; })
-                    .attr("y", function(d) { return d.y; });
-            }
+                  .attr("x", function(d) { return d.x; })
+                  .attr("y", function(d) { return d.y; });
+              }
 
-            function dragstarted(d) {
+              function dragstarted(d) {
                 if (!d3.event.active) simulation.alphaTarget(0.3).restart();
                 d.fx = d.x;
                 d.fy = d.y;
                 //dragging = true;
-            }
+              }
 
-            //拖动进行中
-            function dragged(d) {
+              //拖动进行中
+              function dragged(d) {
                 d.fx = d3.event.x;
                 d.fy = d3.event.y;
-            }
+              }
 
-            //拖动结束
-            function dragended(d) {
+              //拖动结束
+              function dragended(d) {
                 if (!d3.event.active) simulation.alphaTarget(0);
                 d.fx = null;
                 d.fy = null;
                 //dragging = false;
+              }
             }
+        },
+        created() {
+            this.loadKGList();
+        },
+        mounted() {
+            this.initGraph();
         }
     }
 </script>
