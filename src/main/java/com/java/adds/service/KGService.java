@@ -59,11 +59,11 @@ public class KGService {
     }
 
     /**
-     * 这边还有些细节问题，是否包含本节点？
+     * Get Knowledge-Graph node's relational nodes by node id (without this node)
      * @param nodeId KG node id
      * @return KG data(partial): A String-Object Map format for D3
      */
     public Map<String, Object> getRelNodes(Long nodeId) {
-        return kgDao.getNodeAndRelNodes(nodeId);
+        return kgDao.getRelNodes(nodeId);
     }
 }
