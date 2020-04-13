@@ -94,6 +94,11 @@ public class FileUtil {
     public void createPythonConfig(String configPath, String configFile, DeepModelTaskEntity deepModelTaskEntity, DeepModelEntity deepModelEntity)
     {
         String config=configPath+configFile;
+        String dataSetPath="";
+        if(deepModelTaskEntity.getDatasetId()==null)   //默认数据集
+            ;
+        else
+            dataSetPath="/data_"+deepModelTaskEntity.getDatasetId().toString();
         try {
             File file =new File(config);
             if(!file.exists()){
@@ -118,11 +123,11 @@ public class FileUtil {
                         "  },\n" +
                         "  \"inputs\": {\n" +
                         "    \"share\": {\n" +
-                        "        \"text1_corpus\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/corpus_preprocessed.txt\",\n" +
-                        "        \"text2_corpus\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/corpus_preprocessed.txt\",\n" +
+                        "        \"text1_corpus\": \"./data/pinfo/hqa_sample" + dataSetPath + "/corpus_preprocessed.txt\",\n" +
+                        "        \"text2_corpus\": \"./data/pinfo/hqa_sample" + dataSetPath + "/corpus_preprocessed.txt\",\n" +
                         "        \"use_dpool\": false,\n" +
                         "        \"embed_size\": 300,\n" +
-                        "        \"embed_path\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/embed.idf\",\n" +
+                        "        \"embed_path\": \"./data/pinfo/hqa_sample" + dataSetPath + "/embed.idf\",\n" +
                         "        \"vocab_size\": 19597,\n" +
                         "        \"train_embed\": false,\n" +
                         "        \"target_mode\": \"ranking\",\n" +
@@ -137,29 +142,29 @@ public class FileUtil {
                         "        \"query_per_iter\": 50,\n" +
                         "        \"batch_per_iter\": 5,\n" +
                         "        \"batch_size\": 100,\n" +
-                        "        \"relation_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_train.txt\",\n" +
-                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_train.binsum-20.txt\"\n" +
+                        "        \"relation_file\": \"./data/pinfo/hqa_sample" + dataSetPath + "/relation_train.txt\",\n" +
+                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample" +dataSetPath + "/relation_train.binsum-20.txt\"\n" +
                         "    },\n" +
                         "    \"valid\": {\n" +
                         "        \"input_type\": \"DRMM_ListGenerator\",\n" +
                         "        \"phase\": \"EVAL\",\n" +
                         "        \"batch_list\": 10,\n" +
-                        "        \"relation_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_valid.txt\",\n" +
-                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_valid.binsum-20.txt\"\n" +
+                        "        \"relation_file\": \"./data/pinfo/hqa_sample" + dataSetPath + "/relation_valid.txt\",\n" +
+                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample" + dataSetPath + "/relation_valid.binsum-20.txt\"\n" +
                         "    },\n" +
                         "    \"test\": {\n" +
                         "        \"input_type\": \"DRMM_ListGenerator\",\n" +
                         "        \"phase\": \"EVAL\",\n" +
                         "        \"batch_list\": 10,\n" +
-                        "        \"relation_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_test.txt\",\n" +
-                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_test.binsum-20.txt\"\n" +
+                        "        \"relation_file\": \"./data/pinfo/hqa_sample" + dataSetPath + "/relation_test.txt\",\n" +
+                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample" + dataSetPath + "/relation_test.binsum-20.txt\"\n" +
                         "    },\n" +
                         "    \"predict\": {\n" +
                         "        \"input_type\": \"DRMM_ListGenerator\",\n" +
                         "        \"phase\": \"PREDICT\",\n" +
                         "        \"batch_list\": 10,\n" +
-                        "        \"relation_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_test.txt\",\n" +
-                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample/data_" + deepModelTaskEntity.getDatasetId().toString() + "/relation_test.binsum-20.txt\"\n" +
+                        "        \"relation_file\": \"./data/pinfo/hqa_sample" + dataSetPath + "/relation_test.txt\",\n" +
+                        "        \"hist_feats_file\": \"./data/pinfo/hqa_sample" + dataSetPath + "/relation_test.binsum-20.txt\"\n" +
                         "    }\n" +
                         "  },\n" +
                         "  \"outputs\": {\n" +
@@ -192,7 +197,7 @@ public class FileUtil {
             else if(deepModelTaskEntity.getModelType()==2)
             {
                 bufferWritter.write("{\n"+
-                    "    \"data_dir\" : \"../HAR-master/data/pinfo/hqa_sample/data_"+deepModelTaskEntity.getDatasetId().toString()+"/\" ,\n"+
+                    "    \"data_dir\" : \"../HAR-master/data/pinfo/hqa_sample"+dataSetPath+"/\" ,\n"+
                     " \"learning_rate\":0.001,\n"+
                     " \"bert_learning_rate\": 2e-5,\n"+
                     " \"MAX_EPOCH\":100,\n"+
@@ -208,7 +213,7 @@ public class FileUtil {
             else if(deepModelTaskEntity.getModelType()==1||deepModelTaskEntity.getModelType()==3)
             {
                 bufferWritter.write("{\n"+
-                        "    \"data_dir\" : \"../HAR-master/data/pinfo/hqa_sample/data_"+deepModelTaskEntity.getDatasetId().toString()+"/\" ,\n"+
+                        "    \"data_dir\" : \"../HAR-master/data/pinfo/hqa_sample"+dataSetPath+"/\" ,\n"+
                         " \"learning_rate\":0.001,\n"+
                         " \"word_dim\": 300,\n"+
                         " \"MAX_EPOCH\":100,\n"+
