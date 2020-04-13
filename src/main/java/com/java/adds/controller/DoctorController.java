@@ -8,8 +8,10 @@ import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.DoctorService;
 import com.java.adds.utils.FileUtil;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 
 @RestController
 @RequestMapping("doctor")
@@ -166,9 +169,9 @@ public class DoctorController {
      * 医生运行一个深度学习模型
      */
     @PostMapping("{doctorId}/DLTask")
-    public void doDeepModelTask(@PathVariable Integer doctorId, @RequestBody DeepModelTaskEntity deepModelTaskEntity)
+    public void doDeepModelTask(@PathVariable Long doctorId, @RequestBody DeepModelTaskEntity deepModelTaskEntity)
     {
-//        doctorService.doDeepModelTask(doctorId,deepModelTaskEntity);
+        doctorService.doDeepModelTask(doctorId,deepModelTaskEntity);
     }
 
     /**

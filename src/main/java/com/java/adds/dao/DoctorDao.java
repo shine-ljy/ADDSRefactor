@@ -262,7 +262,8 @@ public class DoctorDao {
         String outputPath="../SIGIR_QA/output/"; // 输出结果存放路径
         String nowData="";//现在时间
         String[] changeEnvironment = new String[] {"sh","-c","conda activate pytorch"};  //切换环境
-        String[] nowPath=new String[]{"sh","-c","cd ../../../../../"};  //进入项目根目录
+        //String[] nowPath=new String[]{"sh","-c","cd ../../../../../"};  //进入项目根目录
+        String[] nowPath=new String[]{"sh","-c","cd ../../../../../../../../../"};  //进入项目根目录
         String[] cmdArr=new String[3];//模型运行
         cmdArr[0]="sh";
         cmdArr[1]="-c";

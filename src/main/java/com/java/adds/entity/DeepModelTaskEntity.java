@@ -17,4 +17,5 @@ public class DeepModelTaskEntity {
     private Long userId;
     private Long resultId;
     private String resultFilePath; //结果文件存放路径
+
 }
