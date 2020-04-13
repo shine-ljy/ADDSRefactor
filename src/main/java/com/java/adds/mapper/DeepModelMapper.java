@@ -26,7 +26,8 @@ public interface DeepModelMapper {
             @Result(property = "architectureUrl", column = "model_architecture_url"),
             @Result(property = "codeUrl", column = "model_code_url"),
             @Result(property = "categoryId", column = "model_category"),
-            @Result(property = "configFile", column = "config_file")
+            @Result(property = "configFile", column = "config_file"),
+            @Result(property = "modelPy", column = "model_py")
     })
     ArrayList<DeepModelEntity> getModelsByCategoryId(@Param("categoryId") Long categoryId);
 

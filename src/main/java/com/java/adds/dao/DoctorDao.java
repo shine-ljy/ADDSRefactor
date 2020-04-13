@@ -11,11 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 
 @Component
 public class DoctorDao {
@@ -55,14 +53,35 @@ public class DoctorDao {
     //    @Value("E://医疗项目//大创//ADDS重构//ADDS//src//main//resources//dataSets//")
 //    String dataSetsPathInServer;
 
-    @Value("/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/hqa-sample/")
+    @Value("../SIGIR_QA/HAR-master/data/pinfo/hqa-sample/")
     String dataSetsPathInServer;
 
-    @Value("main.py --phase train --model_file examples/pinfo/config/")
-    String type1PythonPath;  //运行模型命令的前缀路径
+//    @Value("home/lf/桌面/SIGIR_OA")
+//    String deepModelSamePath;  //所有深度学习模型存放的共同路径
 
-    @Value("home/lf/桌面/SIGIR_OA/HAR-master/matchzoo/")
-    String deepModelPath;  //运行模型命令的前缀路径
+    @Value("../SIGIR_QA/HAR-master/examples/pinfo/config/")
+    String featureBasedModelConfigPath;  //feature-based模型配置文件的前缀路径
+
+    @Value("../SIGIR_QA/cedr-master/configs/")
+    String contextBasedModelConfigPath;  //context-based模型配置文件的前缀路径
+
+    @Value("../SIGIR_QA/ernie_model/glove_embed/configs")
+    String knowledgeEmbeddingModelConfigPath;  //knowledge-embedding模型配置文件的前缀路径
+
+    @Value("../SIGIR_QA/ernie_model/configs")
+    String ourJointModelConfigPath;  //our-joint模型配置文件的前缀路径
+
+    @Value(" main.py --phase train --model_file examples/pinfo/config/")
+    String featureBasedPythonPath;  //运行feature-based模型命令的前缀路径
+
+    @Value(" --config configs/")
+    String contextBasedPythonPath;  //运行context-based模型命令的前缀路径
+
+    @Value(" --config ")
+    String knowledgeEmbeddingPythonPath;  //运行knowledge-embedding模型命令的前缀路径
+
+    @Value(" --config ")
+    String outJointPythonPath;  //运行our joint模型命令的前缀路径
 
 
     //模型运行结果路径
@@ -166,6 +185,31 @@ public class DoctorDao {
             dataSetsMapper.uploadTestDataSet(dId,doctorId,filePath,fileName);
         else
             dataSetsMapper.uploadDevDataSet(dId,doctorId,filePath,fileName);
+
+        //数据处理
+        DataSetsEntity dataSetsEntity=dataSetsMapper.getDataSetsById(dId.longValue());
+        if(!dataSetsEntity.getTrain_name().equals(null) && !dataSetsEntity.getTest_name().equals(null) && !dataSetsEntity.getDev_name().equals(null))
+        {
+            String train=dataSetsPathInServer+dataSetsEntity.getTrain_name();
+            String test=dataSetsPathInServer+dataSetsEntity.getTest_name();
+            String dev=dataSetsPathInServer+dataSetsEntity.getDev_name();
+            String dstdir=dataSetsPathInServer+"data_"+dId.toString();
+            String modelDstDir=dataSetsPathInServer+"data_"+dId.toString();
+            //生成处理数据的配置文件
+            fileUtil.createDataSetConfig(dstdir,train,test,dev,modelDstDir);
+            String path[]={"sh","-c","cd ../../../../../"};
+            String cmd[]={"chmod","../SIGIR_QA/HAR-master/data/pinfo/run_data.sh"};  //运行.sh文件的命令
+            Runtime rt = Runtime.getRuntime();
+            try
+            {
+                rt.exec(path);
+                rt.exec(cmd);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**ljy
@@ -210,166 +254,84 @@ public class DoctorDao {
     @Async
     public void doDeepModelTask(Long doctorId, DeepModelTaskEntity deepModelTaskEntity)  //异步线程调用
     {
+
+        Long taskResultId=null;  //任务结果id
+        String configPath=null;  //配置文件路径
+        String configFile=null;  //配置文件名称
+        String command="";//运行深度学习的命令
+        String outputPath="../SIGIR_QA/output/"; // 输出结果存放路径
+        String nowData="";//现在时间
+        String[] changeEnvironment = new String[] {"sh","-c","conda activate pytorch"};  //切换环境
+        String[] nowPath=new String[]{"sh","-c","cd ../../../../../"};  //进入项目根目录
+        String[] cmdArr=new String[3];//模型运行
+        cmdArr[0]="sh";
+        cmdArr[1]="-c";
+        Runtime rt = Runtime.getRuntime();
+
         //向数据库中插入一条深度学习模型信息
         Long taskId=deepModelTaskMapper.doDeepModelTask(doctorId,deepModelTaskEntity.getTaskName(),deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId(),0);
         //查找是否已经有了相同的模型运行结果
         ArrayList<DeepModelTaskEntity> tempDeepModelTask=deepModelTaskMapper.getSimilarityModelTask(deepModelTaskEntity.getDatasetId(),deepModelTaskEntity.getKgId(),deepModelTaskEntity.getModelId(),deepModelTaskEntity.getMetricId());
-        Long taskResultId=null;
-        String taskResultFilePath="";  //模型结果文件路径
+
         if(tempDeepModelTask==null)  //没有找到相同的模型结果
         {
-            DataSetsEntity tempDataSet=dataSetsMapper.getDataSetsById(deepModelTaskEntity.getDatasetId());
-            String train=dataSetsPathInServer+tempDataSet.getTrain_name();
-            String test=dataSetsPathInServer+tempDataSet.getTest_name();
-            String dev=dataSetsPathInServer+tempDataSet.getDev_name();
-            String dstdir=dataSetsPathInServer;
-            String modelDstDir=dataSetsPathInServer;
-            //生成配置文件
-            fileUtil.createPythonConfig(train,test,dev,dstdir,modelDstDir);
+           // DataSetsEntity tempDataSet=dataSetsMapper.getDataSetsById(deepModelTaskEntity.getDatasetId());
 
-            //运行.sh文件,执行模型运行代码
-            try {
-                String[] cmd = {"chmod","/home/lf/桌面/SIGIR_QA/HAR-master/data/pinfo/run_data.sh"};
-                Runtime rt = Runtime.getRuntime();
-                rt.exec(cmd);
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");  //记录时间
+            Date date = new Date();
+            nowData = format.format(date);  //记录时间
+            outputPath = "../SIGIR_QA/output/" + deepModelTaskEntity.getId().toString() + nowData + ".txt";  //模型结果存放的路径
 
-                //运行深度学习模型
-                DeepModelEntity deepModelEntity=deepModelMapper.getModelById(deepModelTaskEntity.getModelId());
-                String exe="python";
-                String command="";
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                Date date = new Date();
-                String nowData = format.format(date);
-                String outputPath=deepModelPath+"output/"+deepModelTaskEntity.getId().toString()+nowData+".txt";  //模型结果存放的路径
+            DeepModelEntity deepModelEntity = deepModelMapper.getModelById(deepModelTaskEntity.getModelId());  //获取模型信息
+            String modelName=deepModelTaskMapper.getTaskNameById(deepModelTaskEntity.getModelId());  //获取模型名称
 
-                if(deepModelTaskEntity.getModelType()==1)  //first type Feature-based
-                    command="python"+deepModelPath+type1PythonPath+deepModelEntity.getConfigFile()+" >>"+outputPath;
-                else if(deepModelTaskEntity.getModelType()==2)
-                    ;
-                else
-                    ;
-                String[] cmdArr = new String[] {"sh","-c","conda activate pytorch"};
-                Runtime.getRuntime().exec(cmdArr);  //切换服务器环境
-                cmdArr = new String[] {"sh","-c",command};
-                Process process = Runtime.getRuntime().exec(cmdArr);//模型运行
-
-                //从文本中提取出结果存入数据库
-                String result="";
-                DeepModelTaskResultEntity deepModelTaskResultEntity=new DeepModelTaskResultEntity();
-                FileReader fileReader = null;
-                try
-                {
-                    fileReader = new FileReader(outputPath);//"C:\\Users\\yin\\Desktop\\res.txt"
-                }
-                catch (FileNotFoundException e)
-                {
-                    e.printStackTrace();
-                }
-                Scanner sc = new Scanner(fileReader);
-                String line = null;
-                while((sc.hasNextLine()&&(line=sc.nextLine())!=null))
-                {
-                    if(!sc.hasNextLine()){
-                        result=line;
-                    }
-                }
-                sc.close();
-                String temp[]=result.split("\t");
-                deepModelTaskResultEntity.setNdcg1(temp[2].split("=")[1]);
-                deepModelTaskResultEntity.setNdcg3(temp[3].split("=")[1]);
-                deepModelTaskResultEntity.setNdcg5(temp[4].split("=")[1]);
-                deepModelTaskResultEntity.setNdcg10(temp[5].split("=")[1]);
-                deepModelTaskResultEntity.setMap(temp[6].split("=")[1]);
-                deepModelTaskResultEntity.setRecall3(temp[7].split("=")[1]);
-                deepModelTaskResultEntity.setRecall5(temp[8].split("=")[1]);
-                deepModelTaskResultEntity.setRecall10(temp[9].split("=")[1]);
-                deepModelTaskResultEntity.setPrecision1(temp[10].split("=")[1]);
-                deepModelTaskResultEntity.setPrecision3(temp[11].split("=")[1]);
-                deepModelTaskResultEntity.setPrecision5(temp[12].split("=")[1]);
-                deepModelTaskResultEntity.setPrecision10(temp[13].split("=")[1]);
-                deepModelTaskResultEntity.setTaskId(taskId);
-
-                //结果写入文件
-                SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                Date d = new Date();
-                String nowTime = f.format(d);
-                String resultFileName=doctorId.toString()+nowTime+"-ModelResult.csv";//为了避免文件重名
-                String resultFilePath=deepModelResultPathInServer+resultFileName;
-                taskResultFilePath=deepModelResultPath+resultFileName;
-                File resultFileDest=new File(resultFilePath);
-                //创建目录
-                if(!resultFileDest.getParentFile().exists()){
-                    resultFileDest.getParentFile().mkdir();
-                }
-                //create a file
-                try{
-                    resultFileDest.createNewFile();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-                FileOutputStream out=null;
-                OutputStreamWriter osw=null;
-                BufferedWriter bw=null;
-                try {
-                    out = new FileOutputStream(resultFileDest);
-                    osw = new OutputStreamWriter(out,"UTF-8");
-                    bw =new BufferedWriter(osw);
-
-                    //写入数据
-                    String fileHead="Id,taskId,ndcg@1,ndcg@3,ndcg@5,ndcg@10,map,recall@3,recall@5,recall@10,precision@1,precision@3,precision@5,precision@10";
-                    bw.append(fileHead);
-                    //换行符
-                    bw.append("\r");
-                    String re=doctorId.toString()+","+taskId.toString()+","+deepModelTaskResultEntity.getNdcg1()+","+deepModelTaskResultEntity.getNdcg3()+","+deepModelTaskResultEntity.getNdcg5()+","+deepModelTaskResultEntity.getNdcg10()+","+deepModelTaskResultEntity.getMap()+","+deepModelTaskResultEntity.getRecall3()+","+deepModelTaskResultEntity.getRecall5()+","+deepModelTaskResultEntity.getRecall10()+","+deepModelTaskResultEntity.getPrecision1()+","+deepModelTaskResultEntity.getPrecision3()+","+deepModelTaskResultEntity.getPrecision5()+","+deepModelTaskResultEntity.getPrecision10();
-                    bw.append("\r");
-
-                } catch (Exception e) {
-
-                }finally{
-                    if(bw!=null){
-                        try {
-                            bw.close();
-                            bw=null;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if(osw!=null){
-                        try {
-                            osw.close();
-                            osw=null;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if(out!=null){
-                        try {
-                            out.close();
-                            out=null;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                if(resultFileDest.exists()&&resultFileDest.length()>0){
-                    System.out.println("ok");
-                }
-                taskResultId=deepModelTaskResultMapper.insertDeepModelTaskResult(deepModelTaskResultEntity);//将结果插入数据库
+            if(deepModelTaskEntity.getModelType()==1&&!(modelName.equals("PACRR")||modelName.equals("KNRM")||modelName.equals("DRMMTKS")))  //first type Feature-based
+            {
+                configPath=featureBasedModelConfigPath;
+                configFile=deepModelEntity.getConfigFile();
+                command = "python ../SIGIR_QA/HAR-master/matchzoo/main.py --phase train --model_file "+featureBasedModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
+            }
+            else if(deepModelTaskEntity.getModelType()==2) //context-based
+            {
+                configPath=contextBasedModelConfigPath;
+                configFile=deepModelEntity.getConfigFile();
+                command = "python ../SIGIR_QA/cedr-master/train.py --model "+deepModelEntity.getModelPy()+" --config " + contextBasedModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
 
             }
+            else if(deepModelTaskEntity.getModelType()==1||deepModelTaskEntity.getModelType()==3)//knowledge-embedding
+            {
+                configPath=knowledgeEmbeddingModelConfigPath;
+                configFile=deepModelEntity.getConfigFile();
+                command="python ../SIGIR_QA/ernie_model/glove_embed/train_kg.py --model "+deepModelEntity.getModelPy() +" --config "+ knowledgeEmbeddingModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
+
+            }
+            else   //our joint model
+            {
+               // configPath=ourJointModelConfigPath;
+
+            }
+
+            fileUtil.createPythonConfig(configPath,configFile,deepModelTaskEntity,deepModelEntity);   //生成配置文件
+
+            try {
+                rt.exec(nowPath);// 进入ADDS目录
+                rt.exec(changeEnvironment);//切换服务器环境
+                cmdArr[2]=command;
+                rt.exec(cmdArr);  //运行深度学习模型
+
+                //从文本中提取出结果存入数据库
+                taskResultId=fileUtil.extractResult(outputPath,taskId,deepModelTaskEntity.getModelType(),modelName);
+                }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
+
             //修改数据库信息
-            deepModelTaskMapper.updateTask(taskId,1,taskResultId,taskResultFilePath);
+            deepModelTaskMapper.updateTask(taskId,1,taskResultId);
         }
         else
-            deepModelTaskMapper.updateTask(taskId,1,tempDeepModelTask.get(0).getResultId(),tempDeepModelTask.get(0).getResultFilePath());
+            deepModelTaskMapper.updateTask(taskId,1,tempDeepModelTask.get(0).getResultId());
 
         //向用户发送模型运行完毕的邮件
         DoctorEntity doctorEntity=doctorMapper.getDoctorById(doctorId);

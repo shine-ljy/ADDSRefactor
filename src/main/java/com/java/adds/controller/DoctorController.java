@@ -109,7 +109,7 @@ public class DoctorController {
             fileName=doctorId.toString()+nowData+"-"+fileName;//为了避免文件重名
 
             // 文件保存路径（服务器用）
-//            String filePath=dataSetsPathInServer+fileName;
+//            String filePath=dataSetsPathInServer+"data_"+dId.toString()+fileName;
 
             // 文件保存路径（QXL 测试用）
             String filePath = "/Users/liam/Desktop/testup/" + fileName;

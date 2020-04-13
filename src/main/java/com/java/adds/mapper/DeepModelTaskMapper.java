@@ -27,7 +27,7 @@ public interface DeepModelTaskMapper {
      * 更新模型运行结果
      * @return
      */
-    public void updateTask(@Param("id") Long doctorId,@Param("status") Integer status,@Param("result") Long result,@Param("resultFilePath")String resultFilePath);
+    public void updateTask(@Param("id") Long doctorId,@Param("status") Integer status,@Param("result") Long result);
 
     /**
      * 医生获取所有任务
@@ -35,4 +35,11 @@ public interface DeepModelTaskMapper {
      * @return
      */
     public ArrayList<DeepModelTaskEntity> getDMTasks(@Param("userId") Integer doctorId);
+
+    /**
+     * 根据id获取taskName
+     * @author ljy
+     * @return
+     */
+    public String getTaskNameById(@Param("id")Long id);
 }

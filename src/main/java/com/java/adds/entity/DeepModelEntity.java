@@ -13,4 +13,5 @@ public class DeepModelEntity {
     private String codeUrl;
     private String configFile;
     private Long categoryId;
+    private String modelPy;
 }

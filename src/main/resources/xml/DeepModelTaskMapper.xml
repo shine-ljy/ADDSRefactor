@@ -26,10 +26,14 @@
     </select>
 
     <update id="updateTask">
-        update model_evaluation_task set status=#{status} and result_id=#{result} and result_file_path=#{resultFilePath} where id=#{id}
+        update model_evaluation_task set status=#{status} and result_id=#{result} where id=#{id}
     </update>
 
     <select id="getDMTasks" resultMap="deepModelTaskList">
         select * from model_evaluation_task where user_id=#{userId}
+    </select>
+
+    <select id="getTaskNameById" resultType="String">
+        select task_name from model_evaluation_task where id=#{id}
     </select>
 </mapper>
