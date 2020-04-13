@@ -51,6 +51,10 @@ public class KGController {
         return kgService.getKGById(kgId);
     }
 
+    /**
+     * Author: QXL
+     * Get Knowledge-Graph relational nodes by node id
+     */
     @RequestMapping(value = "/graph/relNodes/{nodeId}", method = RequestMethod.GET)
     public Map<String, Object> getRelNodes(@PathVariable("nodeId") Long nodeId) {
         return kgService.getRelNodes(nodeId);

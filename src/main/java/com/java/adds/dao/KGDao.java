@@ -92,17 +92,20 @@ public class KGDao {
      */
     public Map<String, Object> getNodeAndRelNodes(Long nodeId) {
         List<Map<String, Object>> kg = kgRepository.getNodeAndRelNodes(nodeId);
-        return toD3Format(kg);
+        return toD3Format(kg, true);
     }
 
     /**
-     * KG data format when there's no data
+     * Get Knowledge-Graph node's relational nodes by node id (without this node)
+     * @param nodeId node id
      * @return KG data(partial): A String-Object Map for d3
      */
-    public Map<String, Object> noDataFormat() {
-        List<Map<String, Object>> nodes = new ArrayList<>();
-        List<Map<String, Object>> rels = new ArrayList<>();
-        return map2("nodes", nodes, "links", rels);
+    public Map<String, Object> getRelNodes(Long nodeId) {
+        List<Map<String, Object>> kg = kgRepository.getNodeAndRelNodes(nodeId);
+        if (kg.size() == 0) {
+            return noDataFormat();
+        }
+        return toD3Format(kg, false);
     }
 
     /**
@@ -157,12 +160,14 @@ public class KGDao {
         return result;
     }
 
-    public Map<String, Object> toD3Format(List<Map<String, Object>> kg) {
+    public Map<String, Object> toD3Format(List<Map<String, Object>> kg, boolean withOriginNode) {
         List<Map<String, Object>> nodes = new ArrayList<>();
         List<Map<String, Object>> rels = new ArrayList<>();
 
         KGNode startNode = (KGNode) kg.get(0).get("x");
-        nodes.add(map2("id", startNode.getId(), "name", startNode.getName()));
+        if (withOriginNode) {
+            nodes.add(map2("id", startNode.getId(), "name", startNode.getName()));
+        }
 
         for (Map<String, Object> triad : kg) {
             KGNode endNode = (KGNode) triad.get("y");
@@ -186,5 +191,15 @@ public class KGDao {
         result.put(key2, value2);
         result.put(key3, value3);
         return result;
+    }
+
+    /**
+     * KG data format when there's no data
+     * @return KG data(partial): A String-Object Map for d3
+     */
+    public Map<String, Object> noDataFormat() {
+        List<Map<String, Object>> nodes = new ArrayList<>();
+        List<Map<String, Object>> rels = new ArrayList<>();
+        return map2("nodes", nodes, "links", rels);
     }
 }
