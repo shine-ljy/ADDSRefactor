@@ -59,28 +59,28 @@ public class DoctorDao {
 //    @Value("home/lf/桌面/SIGIR_OA")
 //    String deepModelSamePath;  //所有深度学习模型存放的共同路径
 
-    @Value("../SIGIR_QA/HAR-master/examples/pinfo/config/")
+    @Value("examples/pinfo/config/")
     String featureBasedModelConfigPath;  //feature-based模型配置文件的前缀路径
 
-    @Value("../SIGIR_QA/cedr-master/configs/")
+    @Value("configs/")
     String contextBasedModelConfigPath;  //context-based模型配置文件的前缀路径
 
-    @Value("../SIGIR_QA/ernie_model/glove_embed/configs")
+    @Value("configs")
     String knowledgeEmbeddingModelConfigPath;  //knowledge-embedding模型配置文件的前缀路径
 
-    @Value("../SIGIR_QA/ernie_model/configs")
+    @Value("configs")
     String ourJointModelConfigPath;  //our-joint模型配置文件的前缀路径
 
-    @Value(" main.py --phase train --model_file examples/pinfo/config/")
+    @Value("../SIGIR_QA/HAR-master")
     String featureBasedPythonPath;  //运行feature-based模型命令的前缀路径
 
-    @Value(" --config configs/")
+    @Value("../SIGIR_QA/cedr-master")
     String contextBasedPythonPath;  //运行context-based模型命令的前缀路径
 
-    @Value(" --config ")
+    @Value("../SIGIR_QA/ernie_model/glove_embed")
     String knowledgeEmbeddingPythonPath;  //运行knowledge-embedding模型命令的前缀路径
 
-    @Value(" --config ")
+    @Value("../SIGIR_QA/ernie_model")
     String outJointPythonPath;  //运行our joint模型命令的前缀路径
 
 
@@ -262,8 +262,11 @@ public class DoctorDao {
         String outputPath="../SIGIR_QA/output/"; // 输出结果存放路径
         String nowData="";//现在时间
         String[] changeEnvironment = new String[] {"sh","-c","conda activate pytorch"};  //切换环境
-        //String[] nowPath=new String[]{"sh","-c","cd ../../../../../"};  //进入项目根目录
-        String[] nowPath=new String[]{"sh","-c","cd ../../../../../../../../../"};  //进入项目根目录
+        String[] nowPath=new String[]{"sh","-c","cd ../../../../../"};  //进入项目根目录（假设项目和深度学习模型放在同一目录下）
+        //String[] nowPath=new String[]{"sh","-c","cd ../../../../../../../../../"};  //进入项目根目录(针对服务器上的项目位置)
+        String[] modelPath=new String[3];  //进入模型目录
+        modelPath[0]="sh";
+        modelPath[1]="-c";
         String[] cmdArr=new String[3];//模型运行
         cmdArr[0]="sh";
         cmdArr[1]="-c";
@@ -281,7 +284,7 @@ public class DoctorDao {
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");  //记录时间
             Date date = new Date();
             nowData = format.format(date);  //记录时间
-            outputPath = "../SIGIR_QA/output/" + deepModelTaskEntity.getId().toString() + nowData + ".txt";  //模型结果存放的路径
+            outputPath = "../output/" + deepModelTaskEntity.getId().toString() + nowData + ".txt";  //模型结果存放的路径
 
             DeepModelEntity deepModelEntity = deepModelMapper.getModelById(deepModelTaskEntity.getModelId());  //获取模型信息
             String modelName=deepModelTaskMapper.getTaskNameById(deepModelTaskEntity.getModelId());  //获取模型名称
@@ -290,20 +293,23 @@ public class DoctorDao {
             {
                 configPath=featureBasedModelConfigPath;
                 configFile=deepModelEntity.getConfigFile();
-                command = "python ../SIGIR_QA/HAR-master/matchzoo/main.py --phase train --model_file "+featureBasedModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
+                modelPath[2]=featureBasedPythonPath;
+                command = "python matchzoo/main.py --phase train --model_file "+featureBasedModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
             }
             else if(deepModelTaskEntity.getModelType()==2) //context-based
             {
                 configPath=contextBasedModelConfigPath;
                 configFile=deepModelEntity.getConfigFile();
-                command = "python ../SIGIR_QA/cedr-master/train.py --model "+deepModelEntity.getModelPy()+" --config " + contextBasedModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
+                modelPath[2]=contextBasedPythonPath;
+                command = "python train.py --model "+deepModelEntity.getModelPy()+" --config " + contextBasedModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
 
             }
             else if(deepModelTaskEntity.getModelType()==1||deepModelTaskEntity.getModelType()==3)//knowledge-embedding
             {
                 configPath=knowledgeEmbeddingModelConfigPath;
                 configFile=deepModelEntity.getConfigFile();
-                command="python ../SIGIR_QA/ernie_model/glove_embed/train_kg.py --model "+deepModelEntity.getModelPy() +" --config "+ knowledgeEmbeddingModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
+                modelPath[2]=knowledgeEmbeddingPythonPath;
+                command="python train_kg.py --model "+deepModelEntity.getModelPy() +" --config "+ knowledgeEmbeddingModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
 
             }
             else   //our joint model
@@ -316,6 +322,7 @@ public class DoctorDao {
 
             try {
                 rt.exec(nowPath);// 进入ADDS目录
+                rt.exec(modelPath);  //进入模型运行目录
                 rt.exec(changeEnvironment);//切换服务器环境
                 cmdArr[2]=command;
                 rt.exec(cmdArr);  //运行深度学习模型
