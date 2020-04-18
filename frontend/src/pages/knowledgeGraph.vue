@@ -41,13 +41,14 @@
             <el-card>
               <div slot="header" class="">
                 <span>{{kgEntityInfo.entityType}}</span>
-                <el-button v-if="kgNodeUnfoldFlag[kgEntityInfo.id] !== true" type="primary" size="mini" plain style="float: right;" @click="testing">Unfold</el-button>
-                <el-button v-else type="info" size="mini" plain style="float: right;" @click="">Ellipsis</el-button>
+                <el-button v-if="kgNodeUnfoldFlag[kgEntityInfo.id]" type="primary" size="mini" plain style="float: right;" @click="unfoldRelNodes">Unfold</el-button>
+                <el-button v-else type="info" size="mini" plain style="float: right;" @click="resetGraph">Ellipsis</el-button>
               </div>
               <div>
-                <span><i>_NODE_INFO_</i></span>
-                <span><i>{{kgEntityInfo.name}}</i></span>
-                <span><i>{{bufferedChildEntities.nodes}}</i></span>
+                <span><i>_NODE_INFO_</i></span><br/>
+                <span><i>name: {{kgEntityInfo.name}}</i></span><br/>
+                <span v-if="kgEntityInfo.childNode.length !== 0"><i>child: {{kgEntityInfo.childNode}}</i></span>
+                <span v-else><i>child: {{kgEntityInfo.noChildNodeInfo}}</i></span>
               </div>
             </el-card>
           </div>
@@ -80,28 +81,34 @@
                     options: []
                 }],
                 kgChosen: '',
-                kgData: {
-                    nodes: [],
-                    links: []
-                },
-                kgNodeMap: [],
-                kgNodeChildMap: [],
-                kgNodeUnfoldFlag: [],
                 kgSvgComponents: {
                     svg: null,
                     simulation: null,
                     colors: [],
+
                     linkGroup: [],
                     linkTextGroup: [],
                     nodeGroup: [],
                     nodeTextGroup: []
                 },
+                kgNodeBufferedMap: [],
+                kgNodeUnfoldFlag: [],
                 kgEntityInfo: {
-                    entityType: 'Entity Type',
-                    id: 0,
+                    entityType: 'Entity Info',
+                    id: -1,
                     name: '',
-                    childNode: []
+                    childNode: [],
+                    noChildNodeInfo: '',
+                    status: true
                 },
+                kgData: {
+                    nodes: [],
+                    links: []
+                },
+
+
+                kgNodeMap: [],
+                kgNodeChildMap: [],
                 bufferedChildEntities: {
                     nodes: [],
                     links: []
@@ -129,61 +136,129 @@
                 });
             },
             loadKG() {
-                this.kgNodeMap.length = 0;
-                this.kgNodeChildMap.length = 0;
+                this.removeCurrentKgData();
+                // this.kgNodeMap.length = 0;
+                // this.kgNodeChildMap.length = 0;
                 this.$axios({
                     method: 'get',
                     url: '/kg/graph/' + this.kgChosen,
                 }).then(res => {
                     // console.log(res.data);
-                    this.kgData.nodes = res.data.nodes;
-                    this.kgData.links = res.data.links;
-                    for (let node in res.data.nodes) {
-                      if (res.data.nodes.hasOwnProperty(node)) {
-                        this.kgNodeMap[res.data.nodes[node].id] = res.data.nodes[node].name;
-                      }
+                    let nodes = res.data.nodes;
+                    let links = res.data.links;
+                    this.kgData.nodes = nodes;
+                    this.kgData.links = links;
+                    for (let node in nodes) {
+                        if (nodes.hasOwnProperty(node)) {
+                            this.kgNodeBufferedMap[nodes[node].id] = {
+                                id: nodes[node].id,
+                                name: nodes[node].name,
+                                childNode: [],
+                                relations: [],
+                                loadedInGraph: true
+                            };
+                        }
+                    }
+                    for (let link in links) {
+                        if (links.hasOwnProperty(link)) {
+                            this.kgNodeBufferedMap[links[link].source].childNode.push({
+                                id: this.kgNodeBufferedMap[links[link].target].id,
+                                name: this.kgNodeBufferedMap[links[link].target].name
+                            });
+                            this.kgNodeBufferedMap[links[link].source].relations.push(links[link]);
+                            this.kgNodeUnfoldFlag[links[link].source] = false;
+                            this.kgNodeUnfoldFlag[links[link].target] = true;
+                        }
                     }
                     this.paintGraph();
                 }).catch(error => {
                     console.log(error);
                 });
             },
-            getRelNodes(nodeId) {
-              if (this.kgNodeChildMap[nodeId] == null) {
-                this.$axios({
-                  method: 'get',
-                  url: '/kg/graph/relNodes/' + nodeId,
-                }).then(res => {
-                  // console.log(res.data);
-                  console.log(nodeId);
-                  this.bufferedChildEntities.nodes = res.data.nodes;
-                  this.bufferedChildEntities.links = res.data.links;
-                  this.kgNodeChildMap[nodeId] = res.data;
-                }).catch(error => {
-                  console.log(error);
-                });
-              } else {
-                this.bufferedChildEntities.nodes = this.kgNodeChildMap[nodeId].nodes;
-                this.bufferedChildEntities.links = this.kgNodeChildMap[nodeId].links;
-              }
+            removeCurrentKgData() {
+                this.kgNodeBufferedMap.length = 0;
+                this.kgNodeUnfoldFlag.length = 0;
+                this.kgEntityInfo.entityType = 'Entity Info';
+                this.kgEntityInfo.id = -1;
+                this.kgEntityInfo.name = '';
+                this.kgEntityInfo.childNode.length = 0;
+                this.kgEntityInfo.noChildNodeInfo = '';
+                this.kgData.nodes.length = 0;
+                this.kgData.links.length = 0;
             },
-            showRelNodes() {
-                let newNodes = this.bufferedChildEntities.nodes;
+            displayNodeInfo(nodeId) {
+                this.kgEntityInfo.entityType = 'Node';
+                this.kgEntityInfo.id = nodeId;
+                this.kgEntityInfo.name = this.kgNodeBufferedMap[nodeId].name;
+                let childNode = this.kgNodeBufferedMap[nodeId].childNode;
+                if (childNode != null) {
+                  if (childNode.length === 0) {
+                    this.kgEntityInfo.noChildNodeInfo = 'Loading...';
+                    this.getRelNodes(nodeId);
+                  } else {
+                    this.kgEntityInfo.childNode = childNode;
+                  }
+                } else {
+                  this.kgEntityInfo.noChildNodeInfo = 'No relation node';
+                }
+            },
+            getRelNodes(nodeId) {
+                if (this.kgNodeBufferedMap[nodeId].childNode.length === 0) {
+                    this.$axios({
+                        method: 'get',
+                        url: '/kg/graph/relNodes/' + nodeId,
+                    }).then(res => {
+                        // console.log(res.data);
+                        let nodes = res.data.nodes;
+                        let links = res.data.links;
+                        this.kgNodeBufferedMap[nodeId].childNode = nodes;
+                        this.kgNodeBufferedMap[nodeId].relations = links;
+                        this.kgEntityInfo.childNode = nodes;
+                        for (let node in nodes) {
+                            if (nodes.hasOwnProperty(node)) {
+                                if (this.kgNodeBufferedMap[nodes[node].id] == null) {
+                                    this.kgNodeBufferedMap[nodes[node].id] = {
+                                        id: nodes[node].id,
+                                        name: nodes[node].name,
+                                        childNode: [],
+                                        relations: [],
+                                        loadedInGraph: false
+                                    };
+                                    this.kgNodeUnfoldFlag[nodes[node].id] = true;
+                                }
+                            }
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                }
+            },
+            unfoldRelNodes() {
+                let newNodes = this.kgNodeBufferedMap[this.kgEntityInfo.id].childNode;
                 for (let node in newNodes) {
                     if (newNodes.hasOwnProperty(node)) {
                         let n = newNodes[node];
-                        if (this.kgNodeMap[n.id] == null) {
+                        if (!this.kgNodeBufferedMap[n.id].loadedInGraph) {
                             this.kgData.nodes.push(n);
-                            this.kgNodeMap[n.id] = n.name;
+                            this.kgNodeBufferedMap[n.id].loadedInGraph = true;
                         }
                     }
                 }
-                let links = this.kgData.links.concat(this.bufferedChildEntities.links);
+                // 这里可能会出现重复的link，使用linkSet去重是否有效？待测试
+                let links = this.kgData.links.concat(this.kgNodeBufferedMap[this.kgEntityInfo.id].relations);
                 let linkSet = new Set(links);
                 this.kgData.links = Array.from(linkSet);
+                // paintGraph方法重新设计
                 this.paintGraph();
+                this.kgNodeUnfoldFlag[this.kgEntityInfo.id] = false;
+            },
+            ellipsisRelNodes() {
+            },
+            resetGraph() {
+                this.loadKG();
             },
             initGraph() {
+                // console.log("Init Graph SVG");
                 let width = this.$refs.svgDiv.offsetWidth;
                 let height = this.$refs.svgDiv.offsetHeight;
                 this.kgSvgComponents.simulation = d3.forceSimulation()
@@ -208,6 +283,8 @@
                 let colors = this.kgSvgComponents.colors;
 
                 svg.selectAll("*").remove();
+                let centerX = this.$refs.svgDiv.offsetWidth / 2;
+                let centerY = this.$refs.svgDiv.offsetHeight / 2;
 
                 let link = svg.append("g").attr("class", "links")
                     .selectAll("line").data(this.kgData.links).enter().append("line")
@@ -216,6 +293,8 @@
 
                 let node = svg.append("g").attr("class", "nodes")
                     .selectAll("circle").data(this.kgData.nodes).enter().append("circle")
+                    .attr("cx", centerX)
+                    .attr("cy", centerY)
                     .attr("r", d => {return d.id * 0.5 + 15;})
                     .attr("fill", d => {return colors[d.id % 8];})
                     .style("stroke", "#fff")
@@ -224,15 +303,15 @@
                     .call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended));
 
                 node.on("click", d => {
-                    this.kgEntityInfo.entityType = 'Node';
-                    this.kgEntityInfo.id = d.id;
-                    this.kgEntityInfo.name = d.name;
-                    this.getRelNodes(d.id);
+                    // console.log(d);
+                    this.displayNodeInfo(d.id);
                 });
 
                 let text = svg.append("g").attr("class", "texts")
                     .selectAll("text").data(this.kgData.nodes).enter().append("text")
                     .text(d => {return d.name;})
+                    .attr("x", centerX)
+                    .attr("y", centerY)
                     .attr("dy", 4)
                     .attr("text-anchor", "middle")
                     .attr("fill", "white")
@@ -241,7 +320,7 @@
 
                 simulation.nodes(this.kgData.nodes).on("tick", ticked);
                 simulation.force("link").links(this.kgData.links);
-
+                simulation.alpha(0.1).restart();
                 svg.call(d3.zoom().on("zoom", () => {
                     svg.selectAll("g").attr("transform", d3.event.transform);
                 }));
@@ -274,10 +353,6 @@
                     d.fx = null;
                     d.fy = null;
                 }
-            },
-            testing() {
-              this.showRelNodes();
-              this.kgNodeUnfoldFlag[this.kgEntityInfo.id] = true;
             },
             downloadKg() {
             },
