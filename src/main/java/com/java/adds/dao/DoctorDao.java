@@ -65,10 +65,10 @@ public class DoctorDao {
     @Value("configs/")
     String contextBasedModelConfigPath;  //context-based模型配置文件的前缀路径
 
-    @Value("configs")
+    @Value("configs/")
     String knowledgeEmbeddingModelConfigPath;  //knowledge-embedding模型配置文件的前缀路径
 
-    @Value("configs")
+    @Value("configs/")
     String ourJointModelConfigPath;  //our-joint模型配置文件的前缀路径
 
     @Value("../SIGIR_QA/HAR-master")
@@ -81,7 +81,7 @@ public class DoctorDao {
     String knowledgeEmbeddingPythonPath;  //运行knowledge-embedding模型命令的前缀路径
 
     @Value("../SIGIR_QA/ernie_model")
-    String outJointPythonPath;  //运行our joint模型命令的前缀路径
+    String ourJointPythonPath;  //运行our joint模型命令的前缀路径
 
 
     //模型运行结果路径
@@ -306,15 +306,38 @@ public class DoctorDao {
             }
             else if(deepModelTaskEntity.getModelType()==1||deepModelTaskEntity.getModelType()==3)//knowledge-embedding
             {
+                String dataset="";
+                if(deepModelTaskEntity.getDatasetId()==2)  //不同数据集的配置
+                    dataset="nf_";
                 configPath=knowledgeEmbeddingModelConfigPath;
-                configFile=deepModelEntity.getConfigFile();
+                configFile=dataset+deepModelEntity.getConfigFile();
                 modelPath[2]=knowledgeEmbeddingPythonPath;
-                command="python train_kg.py --model "+deepModelEntity.getModelPy() +" --config "+ knowledgeEmbeddingModelConfigPath + deepModelEntity.getConfigFile() + " >>" + outputPath;
+
+                command="python train_kg.py --model "+deepModelEntity.getModelPy() +" --config "+ knowledgeEmbeddingModelConfigPath +configFile + " >>" + outputPath;
 
             }
             else   //our joint model
             {
-               // configPath=ourJointModelConfigPath;
+                configPath=ourJointModelConfigPath+deepModelEntity.getConfigFile().split("/")[0]+"/";
+                configFile=deepModelEntity.getConfigFile().split("/")[1];
+                modelPath[2]=ourJointPythonPath;
+                if(deepModelTaskEntity.getDatasetId()==2)
+                {
+                    String tempPath[]=deepModelEntity.getConfigFile().split("/");
+                    String confFile[]=tempPath[1].split("_");
+                    configFile=confFile[0];
+                    for(int i=1;i<confFile.length;i++)
+                    {
+                        if(i==confFile.length-2)
+                            configFile+="_nf";
+                        else
+                            configFile+="_"+confFile[i];
+                    }
+                }
+
+
+
+                command="python train.py --model "+deepModelEntity.getModelPy()+" --config "+configPath+configFile+ " >>" + outputPath;
 
             }
 

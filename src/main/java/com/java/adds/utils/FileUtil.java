@@ -95,7 +95,7 @@ public class FileUtil {
     {
         String config=configPath+configFile;
         String dataSetPath="";
-        if(deepModelTaskEntity.getDatasetId()==null)   //默认数据集
+        if(deepModelTaskEntity.getDatasetId()==1)   //默认数据集hqa
             ;
         else
             dataSetPath="/data_"+deepModelTaskEntity.getDatasetId().toString();
@@ -228,6 +228,22 @@ public class FileUtil {
             }
             else  //第四种
             {
+                bufferWritter.write("{\n"+
+                        "    \"data_dir\" : \"../HAR-master/data/pinfo/hqa_sample"+dataSetPath+"/\" ,\n"+
+                        " \"learning_rate\":0.001,\n"+
+                        " \"bert_learning_rate\": 2e-5,\n"+
+                        " \"MAX_EPOCH\":100,\n"+
+                        " \"BATCH_SIZE\": 16,\n"+
+                        " \"BATCHES_PER_EPOCH\": 32,\n"+
+                        " \"text1_maxlen\": "+deepModelTaskEntity.getQueryLength()+",\n"+
+                        " \"text2_maxlen\": "+deepModelTaskEntity.getDocumentLength()+",\n"+
+                        " \"atten_dim\": 500,\n"+
+                        " \"entity_dim\": 100,\n"+
+                        " \"kg_path\": \"kg_embed\",\n"+
+                        " \"content_entity\": \"content2entity.f\",\n"+
+                        " \"base_metric\":\""+metricMapper.getMetricById(deepModelTaskEntity.getMetricId())+"\",\n"+
+                        " \"model_out_dir\":\"all-weight/nf_drmmtks_glove_weight\",\n"+
+                        " \"metrics\": [ \"ndcg@1\", \"ndcg@3\", \"ndcg@5\", \"ndcg@10\", \"map\", \"recall@3\", \"recall@3\", \"recall@5\", \"recall@10\", \"precision@1\", \"precision@3\", \"precision@5\", \"precision@10\"]\n"+ "}\n");
 
             }
             bufferWritter.close();

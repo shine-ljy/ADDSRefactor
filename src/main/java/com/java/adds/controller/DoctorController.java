@@ -8,12 +8,11 @@ import com.java.adds.entity.DoctorEntity;
 import com.java.adds.entity.QuestionEntity;
 import com.java.adds.service.DoctorService;
 import com.java.adds.utils.FileUtil;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -112,7 +111,7 @@ public class DoctorController {
             fileName=doctorId.toString()+nowData+"-"+fileName;//为了避免文件重名
 
             // 文件保存路径（服务器用）
-//            String filePath=dataSetsPathInServer+"data_"+dId.toString()+fileName;
+//            String filePath=dataSetsPathInServer+"data_"+dId.toString()+"/"+fileName;
 
             // 文件保存路径（QXL 测试用）
             String filePath = "/Users/liam/Desktop/testup/" + fileName;
