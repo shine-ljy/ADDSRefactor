@@ -123,25 +123,35 @@ public class TaskDao {
 
         List<Object> header = new ArrayList<>();
         header.add("model");
-        header.add("map");
-        header.add("p@3");
-        header.add("p@5");
-        header.add("r@3");
-        header.add("r@5");
+        header.add("n@1");
         header.add("n@3");
         header.add("n@5");
+        header.add("n@10");
+        header.add("map");
+        header.add("r@3");
+        header.add("r@5");
+        header.add("r@10");
+        header.add("p@1");
+        header.add("p@3");
+        header.add("p@5");
+        header.add("p@10");
         excelData.add(header);
 
         for (DeepModelTaskResultEntity result : results) {
             List<Object> row = new ArrayList<>();
             row.add(result.getModelName());
-            row.add(result.getMap());
-            row.add(result.getPrecision3());
-            row.add(result.getPrecision5());
-            row.add(result.getRecall3());
-            row.add(result.getRecall5());
+            row.add(result.getNdcg1());
             row.add(result.getNdcg3());
             row.add(result.getNdcg5());
+            row.add(result.getNdcg10());
+            row.add(result.getMap());
+            row.add(result.getRecall3());
+            row.add(result.getRecall5());
+            row.add(result.getRecall10());
+            row.add(result.getPrecision1());
+            row.add(result.getPrecision3());
+            row.add(result.getPrecision5());
+            row.add(result.getPrecision10());
             excelData.add(row);
         }
 

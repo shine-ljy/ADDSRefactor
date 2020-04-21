@@ -39,8 +39,8 @@ public interface TaskMapper {
      * Add A Model Evaluation Task
      * @param task Model Evaluation Task Entity
      */
-    @Insert("INSERT INTO model_evaluation_task(task_name, type, dataset_id, query_length, document_length, model_id, metric_id, user_id) " +
-            "VALUES (#{task.taskName}, 1, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.modelId}, #{task.metricId}, #{task.userId})")
+    @Insert("INSERT INTO model_evaluation_task(task_name, type, dataset_id, query_length, document_length, model_id, metric_id, status, user_id) " +
+            "VALUES (#{task.taskName}, 1, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.modelId}, #{task.metricId}, 0, #{task.userId})")
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "task.id")
     void addModelEvaluationTask(@Param("task") DeepModelTaskEntity task);
 
@@ -71,8 +71,8 @@ public interface TaskMapper {
      */
 //    @Insert("INSERT INTO auto_selection_task(name, dataset_id, query_length, document_length, metric_id, user_id) " +
 //            "VALUES (#{task.taskName}, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.metricId}, #{task.userId})")
-    @Insert("INSERT INTO model_evaluation_task(task_name, type, dataset_id, query_length, document_length, metric_id, user_id) " +
-            "VALUES (#{task.taskName}, 2, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.metricId}, #{task.userId})")
+    @Insert("INSERT INTO model_evaluation_task(task_name, type, dataset_id, query_length, document_length, metric_id, status, user_id) " +
+            "VALUES (#{task.taskName}, 2, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.metricId}, 0, #{task.userId})")
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "task.id")
     void addAutoSelectionTask(@Param("task") DeepModelTaskEntity task);
 
@@ -103,8 +103,8 @@ public interface TaskMapper {
      */
 //    @Insert("INSERT INTO knowledge_embedding_exploration_task(name, dataset_id, query_length, document_length, metric_id, user_id) " +
 //            "VALUES (#{task.taskName}, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.metricId}, #{task.userId})")
-    @Insert("INSERT INTO model_evaluation_task(task_name, type, dataset_id, query_length, document_length, metric_id, user_id) " +
-            "VALUES (#{task.taskName}, 3, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.metricId}, #{task.userId})")
+    @Insert("INSERT INTO model_evaluation_task(task_name, type, dataset_id, query_length, document_length, metric_id, status, user_id) " +
+            "VALUES (#{task.taskName}, 3, #{task.datasetId}, #{task.queryLength}, #{task.documentLength}, #{task.metricId}, 0, #{task.userId})")
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "task.id")
     void addKnowledgeEmbeddingExplorationTask(@Param("task") DeepModelTaskEntity task);
 }
