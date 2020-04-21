@@ -13,13 +13,12 @@ public interface DeepModelTaskResultMapper {
     /**
      * QXL
      * Get Model Evaluation Task Result
-     * 注：目前使用的是临时数据表 task_result_evaluation_temp
      * @param taskId task id
      * @return A DeepModelTaskResultEntity
      */
     @Select("SELECT r.*, m.model_name " +
             "FROM " +
-            "task_result_evaluation_temp r LEFT JOIN deep_model m " +
+            "deep_model_task_result r LEFT JOIN deep_model m " +
             "ON r.model_id=m.id " +
             "WHERE r.task_id=#{taskId}")
     @Results(id = "taskResultMap", value = {
@@ -27,13 +26,19 @@ public interface DeepModelTaskResultMapper {
             @Result(property = "taskId", column = "task_id"),
             @Result(property = "modelId", column = "model_id"),
             @Result(property = "modelName", column = "model_name"),
+
+            @Result(property = "ndcg1", column = "ndcg@1"),
+            @Result(property = "ndcg3", column = "ndcg@3"),
+            @Result(property = "ndcg5", column = "ndcg@5"),
+            @Result(property = "ndcg10", column = "ndcg@10"),
             @Result(property = "map", column = "map"),
-            @Result(property = "precision3", column = "p@3"),
-            @Result(property = "precision5", column = "p@5"),
-            @Result(property = "recall3", column = "r@3"),
-            @Result(property = "recall5", column = "r@5"),
-            @Result(property = "ndcg3", column = "n@3"),
-            @Result(property = "ndcg5", column = "n@5")
+            @Result(property = "recall3", column = "recall@3"),
+            @Result(property = "recall5", column = "recall@5"),
+            @Result(property = "recall10", column = "recall@10"),
+            @Result(property = "precision1", column = "pre@1"),
+            @Result(property = "precision3", column = "pre@3"),
+            @Result(property = "precision5", column = "pre@5"),
+            @Result(property = "precision10", column = "pre@10")
     })
     DeepModelTaskResultEntity getModelEvaluationTaskResult(@Param("taskId") Long taskId);
 
