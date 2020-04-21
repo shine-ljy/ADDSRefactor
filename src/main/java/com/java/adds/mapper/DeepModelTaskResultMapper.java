@@ -26,7 +26,6 @@ public interface DeepModelTaskResultMapper {
             @Result(property = "taskId", column = "task_id"),
             @Result(property = "modelId", column = "model_id"),
             @Result(property = "modelName", column = "model_name"),
-
             @Result(property = "ndcg1", column = "ndcg@1"),
             @Result(property = "ndcg3", column = "ndcg@3"),
             @Result(property = "ndcg5", column = "ndcg@5"),
@@ -45,13 +44,12 @@ public interface DeepModelTaskResultMapper {
     /**
      * QXL
      * Get Auto Selection Task Results
-     * 注：目前使用的是临时数据表 task_result_selection_temp
      * @param taskId task id
      * @return A DeepModelTaskResultEntity ArrayList
      */
     @Select("SELECT r.*, m.model_name " +
             "FROM " +
-            "task_result_selection_temp r LEFT JOIN deep_model m " +
+            "deep_model_task_result r LEFT JOIN deep_model m " +
             "ON r.model_id=m.id " +
             "WHERE r.task_id=#{taskId}")
     @ResultMap(value = "taskResultMap")
@@ -60,13 +58,12 @@ public interface DeepModelTaskResultMapper {
     /**
      * QXL
      * Get Knowledge Exploration Task Results
-     * 注：目前使用的是临时数据表 task_result_exploration_temp
      * @param taskId task id
      * @return A DeepModelTaskResultEntity ArrayList
      */
     @Select("SELECT r.*, m.model_name " +
             "FROM " +
-            "task_result_exploration_temp r LEFT JOIN deep_model m " +
+            "deep_model_task_result r LEFT JOIN deep_model m " +
             "ON r.model_id=m.id " +
             "WHERE r.task_id=#{taskId}")
     @ResultMap(value = "taskResultMap")
