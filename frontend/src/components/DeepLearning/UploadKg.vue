@@ -6,7 +6,7 @@
           <span>My Knowledge Graph</span>
         </div>
         <div class="operation-btn-bar">
-          <el-button type="primary" @click="dialogFormVisible = true">Add a Knowledge Graph</el-button>
+          <el-button type="primary" @click="dialogFormVisible = true">Add KG</el-button>
         </div>
       </div>
     </div>
@@ -63,7 +63,7 @@
                 <el-table-column prop="desc" label="Description" min-width="30%" :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column prop="operations" label="Operations" min-width="50%">
                   <template slot-scope="scope">
-                    <el-button type="primary" plain size="small" @click="goToKnowledgeGraph(scope.row.id)">Show this Knowledge Graph</el-button>
+                    <el-button type="primary" plain size="small" @click="goToKnowledgeGraph(scope.row.id)">Show this KG</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -158,10 +158,11 @@
                 this.fileList = [];
             },
             goToKnowledgeGraph(kgId) {
-                this.$message({
-                    message: 'Knowledge Graph id: ' + kgId + ', go to Knowledge Graph',
-                    type: 'success'
+                this.$notify.info({
+                    title: 'Notification',
+                    message: 'Go to Knowledge Graph. '
                 });
+                console.log(kgId);
             }
         },
         created() {

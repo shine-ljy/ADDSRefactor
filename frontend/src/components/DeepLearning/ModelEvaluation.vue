@@ -105,13 +105,18 @@
       </div>
       <el-table :data="resultTableData" size="small" border>
         <el-table-column label="model" prop="model" align="center"></el-table-column>
-        <el-table-column label="map" prop="map" align="center"></el-table-column>
-        <el-table-column label="Precision@3" prop="precision3" align="center"></el-table-column>
-        <el-table-column label="Precision@5" prop="precision5" align="center"></el-table-column>
-        <el-table-column label="Recall@3" prop="recall3" align="center"></el-table-column>
-        <el-table-column label="Recall@5" prop="recall5" align="center"></el-table-column>
+        <el-table-column label="NDCG@1" prop="ndcg1" align="center"></el-table-column>
         <el-table-column label="NDCG@3" prop="ndcg3" align="center"></el-table-column>
         <el-table-column label="NDCG@5" prop="ndcg5" align="center"></el-table-column>
+        <el-table-column label="NDCG@10" prop="ndcg10" align="center"></el-table-column>
+        <el-table-column label="map" prop="map" align="center"></el-table-column>
+        <el-table-column label="Recall@3" prop="recall3" align="center"></el-table-column>
+        <el-table-column label="Recall@5" prop="recall5" align="center"></el-table-column>
+        <el-table-column label="Recall@10" prop="recall10" align="center"></el-table-column>
+        <el-table-column label="Precision@1" prop="precision1" align="center"></el-table-column>
+        <el-table-column label="Precision@3" prop="precision3" align="center"></el-table-column>
+        <el-table-column label="Precision@5" prop="precision5" align="center"></el-table-column>
+        <el-table-column label="Precision@10" prop="precision10" align="center"></el-table-column>
       </el-table>
 <!--      <ve-histogram :data="resultData" :settings="resultSettings" style="width: 480px; height: 280px; margin: 0 auto 30px;"></ve-histogram>-->
       <div slot="footer" class="dialog-footer">
@@ -231,12 +236,18 @@
             },
             loadMetric() {
                 let metrics = this.$store.state.sysData.metrics;
+                if (metrics === null || metrics.length === 0) {
+                    metrics = JSON.parse(sessionStorage.getItem("addsSysData")).metrics;
+                }
                 for (let metric in metrics) {
                     if (metrics.hasOwnProperty(metric)) {
-                        this.metricList.push({
-                            value: metric,
-                            label: metrics[metric]
-                        });
+                        // console.log(metrics[metric]);
+                        if (metrics[metric] != null) {
+                            this.metricList.push({
+                                value: metric,
+                                label: metrics[metric]
+                            });
+                        }
                     }
                 }
             },
@@ -276,6 +287,8 @@
             },
             closeAddModelEvaluationTaskForm() {
                 this.addTaskFormVisible = false;
+                this.selectedDeepModel = [];
+                this.addModelEvaluationTaskForm.metricId = '';
                 this.$refs['addModelEvaluationTask'].resetFields();
             },
             addModelEvaluationTask() {
@@ -298,12 +311,39 @@
                         metricId: this.addModelEvaluationTaskForm.metricId
                     }
                 }).then(res => {
-                    this.closeAddModelEvaluationTaskForm();
+                    // console.log(res.data);
+                    // this.closeAddModelEvaluationTaskForm();
                     this.loadModelEvaluationTask();
+                    this.beginTask(res.data);
                 }).catch(error => {
                     this.$message({
                         type: 'error',
                         message: '[ERROR: ModelEvaluation.vue -> addModelEvaluationTask()] Check Console plz! ',
+                        showClose: true
+                    });
+                    console.log(error);
+                });
+            },
+            beginTask(taskId) {
+                this.$axios({
+                    method: 'post',
+                    url: '/doctor/' + this.$store.state.user.id + '/DLTask',
+                    data: {
+                        id: taskId,
+                        taskName: this.addModelEvaluationTaskForm.name,
+                        datasetId: this.addModelEvaluationTaskForm.datasetId,
+                        queryLength: this.addModelEvaluationTaskForm.queryLength,
+                        documentLength: this.addModelEvaluationTaskForm.documentLength,
+                        modelId: this.addModelEvaluationTaskForm.modelId,
+                        metricId: this.addModelEvaluationTaskForm.metricId
+                    }
+                }).then(res => {
+                    // console.log(res);
+                    this.closeAddModelEvaluationTaskForm();
+                }).catch(error => {
+                    this.$message({
+                        type: 'error',
+                        message: '[ERROR: ModelEvaluation.vue -> beginTask()] Check Console plz! ',
                         showClose: true
                     });
                     console.log(error);
@@ -326,23 +366,33 @@
                     // this.resultTableData.length = 0;
                     this.resultTableData.push({
                         model: res.data.modelName,
+                        ndcg1: res.data.ndcg1,
+                        ndcg3: res.data.ndcg3,
+                        ndcg5: res.data.ndcg5,
+                        ndcg10: res.data.ndcg10,
                         map: res.data.map,
-                        precision3: res.data.precision3,
-                        precision5: res.data.precision5,
                         recall3: res.data.recall3,
                         recall5: res.data.recall5,
-                        ndcg3: res.data.ndcg3,
-                        ndcg5: res.data.ndcg5
+                        recall10: res.data.recall10,
+                        precision1: res.data.precision1,
+                        precision3: res.data.precision3,
+                        precision5: res.data.precision5,
+                        precision10: res.data.precision10
                     });
                     this.resultDesc =
                         'model: ' + res.data.modelName + ', ' +
+                        'n@1: ' + res.data.ndcg1 + ', ' +
+                        'n@3: ' + res.data.ndcg3 + ', ' +
+                        'n@5: ' + res.data.ndcg5 + ', ' +
+                        'n@10: ' + res.data.ndcg10 + ', ' +
                         'map: ' + res.data.map + ', ' +
-                        'p@3: ' + res.data.precision3 + ', ' +
-                        'p@5: ' + res.data.precision5 + ', ' +
                         'r@3: ' + res.data.recall3 + ', ' +
                         'r@5: ' + res.data.recall5 + ', ' +
-                        'n@3: ' + res.data.ndcg3 + ', ' +
-                        'n@5: ' + res.data.ndcg5;
+                        'r@10: ' + res.data.recall10 + ', ' +
+                        'p@1: ' + res.data.precision1 + ', ' +
+                        'p@3: ' + res.data.precision3 + ', ' +
+                        'p@5: ' + res.data.precision5 + ', ' +
+                        'p@10: ' + res.data.precision10;
                 }).catch(error => {
                     this.$message({
                         type: 'error',

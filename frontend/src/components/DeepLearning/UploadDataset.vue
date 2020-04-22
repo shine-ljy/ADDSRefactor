@@ -6,7 +6,7 @@
           <span>My Dataset</span>
         </div>
         <div class="operation-btn-bar">
-          <el-button type="primary" @click="addDatasetFormVisible = true">Add a Dataset</el-button>
+          <el-button type="primary" @click="addDatasetFormVisible = true">Add Dataset</el-button>
         </div>
       </div>
     </div>

@@ -56,6 +56,8 @@
 </template>
 
 <script>
+    import axios from "axios";
+
     export default {
         name: "DeepModels",
         data() {
@@ -126,7 +128,7 @@
                     if (url === '' || url === null) {
                         this.modelInfoForm.url = '';
                     } else {
-                        this.modelInfoForm.url = "/api/img/" + url;
+                        this.modelInfoForm.url = "/img/" + url;
                     }
                 }).catch(error => {
                     console.log(error);
@@ -137,9 +139,42 @@
             downloadCode() {
             }
         },
+        mounted() {
+            let models = [];
+            let metrics = [];
+            this.$axios({
+                method: 'get',
+                url: '/modelCategory/modelName',
+            }).then(res => {
+                // console.log(res.data);
+                for (let model in res.data) {
+                    if (res.data.hasOwnProperty(model)) {
+                        models[res.data[model].id] = res.data[model].name;
+                    }
+                }
+                this.$axios({
+                    method: 'get',
+                    url: '/modelMetric',
+                }).then(res => {
+                    // console.log(res.data);
+                    for (let metric in res.data) {
+                        if (res.data.hasOwnProperty(metric)) {
+                            metrics[res.data[metric].id] = res.data[metric].metricName;
+                        }
+                    }
+                    this.$store.dispatch('saveSysData', {
+                        models: models,
+                        metrics: metrics
+                    });
+                }).catch(error => {
+                    console.log(error);
+                });
+            }).catch(error => {
+                console.log(error);
+            });
+        },
         created() {
             this.loadDeepModels();
-            this.$store.dispatch('loadData');
         }
     }
 </script>

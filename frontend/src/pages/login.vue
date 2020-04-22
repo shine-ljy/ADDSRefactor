@@ -1,12 +1,12 @@
 <template>
   <div id="log-in">
-    <div id="info-div">
-      <p id="info-head">ADDS</p>
-      <p id="info-content">Welcome! </p>
-    </div>
+<!--    <div id="info-div">-->
+<!--      <p id="info-head">ADDS</p>-->
+<!--      <p id="info-content">Welcome! </p>-->
+<!--    </div>-->
     <div id="log-in-div">
       <el-form ref="loginForm" :model="loginForm">
-        <p id="form-head">Log in</p>
+        <p id="form-head">Welcome</p>
         <el-form-item prop="username">
           <el-input v-model="loginForm.username" name="username" placeholder="Username" auto-complete="on"></el-input>
         </el-form-item>
@@ -54,20 +54,19 @@
                         // Save user's info & token
                         this.$store.commit('saveUserInfo', res.data.info);
                         this.$store.commit('saveToken', res.headers["token"]);
-                        this.$message({
-                            type: 'success',
-                            message: 'Log in successfully! ',
-                            showClose: true
+                        this.$notify({
+                            title: 'Success',
+                            message: 'Welcome! ',
+                            type: 'success'
                         });
                         this.$router.push('/deepLearning');
                     }).catch(error => {
                         console.log(error);
                         // alert("Username or password is wrong! ");
                         // alert("ERROR  in function \"login( )\" [login]! Check Console plz! ");
-                        this.$message({
-                          type: 'error',
-                          message: 'Username or password is wrong! ',
-                          showClose: true
+                        this.$notify.error({
+                            title: 'Error',
+                            message: 'Username or password is incorrect. '
                         });
                     });
                 }
@@ -124,7 +123,7 @@
   #log-in-div {
     width: 450px;
     /*width: 50%;*/
-    margin: 150px auto;
+    margin: 120px auto;
     text-align: center;
     border: 1px solid #cccccc;
     border-radius: 5px;

@@ -1,9 +1,9 @@
 <template>
   <div id="sign-up">
-    <div id="info-div">
-      <p id="info-head">ADDS</p>
-      <p id="info-content">Welcome! </p>
-    </div>
+<!--    <div id="info-div">-->
+<!--      <p id="info-head">ADDS</p>-->
+<!--      <p id="info-content">Welcome! </p>-->
+<!--    </div>-->
     <div id="sign-up-div">
       <el-form :model="signUpForm" :rules="rules" label-position="left" label-width="100px">
         <p id="form-head">Sign Up</p>

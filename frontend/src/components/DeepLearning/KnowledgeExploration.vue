@@ -80,13 +80,18 @@
       </div>
       <el-table :data="resultTableData" size="small" border :stripe="true" height="200">
         <el-table-column label="model" min-width="100px" prop="model" align="center"></el-table-column>
-        <el-table-column label="map" prop="map" align="center"></el-table-column>
-        <el-table-column label="Precision@3" prop="precision3" align="center"></el-table-column>
-        <el-table-column label="Precision@5" prop="precision5" align="center"></el-table-column>
-        <el-table-column label="Recall@3" prop="recall3" align="center"></el-table-column>
-        <el-table-column label="Recall@5" prop="recall5" align="center"></el-table-column>
+        <el-table-column label="NDCG@1" prop="ndcg1" align="center"></el-table-column>
         <el-table-column label="NDCG@3" prop="ndcg3" align="center"></el-table-column>
         <el-table-column label="NDCG@5" prop="ndcg5" align="center"></el-table-column>
+        <el-table-column label="NDCG@10" prop="ndcg10" align="center"></el-table-column>
+        <el-table-column label="map" prop="map" align="center"></el-table-column>
+        <el-table-column label="Recall@3" prop="recall3" align="center"></el-table-column>
+        <el-table-column label="Recall@5" prop="recall5" align="center"></el-table-column>
+        <el-table-column label="Recall@10" prop="recall10" align="center"></el-table-column>
+        <el-table-column label="Precision@1" prop="precision1" align="center"></el-table-column>
+        <el-table-column label="Precision@3" prop="precision3" align="center"></el-table-column>
+        <el-table-column label="Precision@5" prop="precision5" align="center"></el-table-column>
+        <el-table-column label="Precision@10" prop="precision10" align="center"></el-table-column>
       </el-table>
       <div class="download-btn" style="text-align: right; margin: 10px;">
         <span>Download Results</span>&emsp;
@@ -138,6 +143,7 @@
                 datasetList: [],
                 datasetName: [],
                 metricList: [],
+                deepModelCount: 0,
                 resultDialogFormVisible: false,
                 currentResultTaskId: 0,
                 currentResultTaskName: '',
@@ -193,7 +199,7 @@
                                 id: res.data[task].id,
                                 name: res.data[task].taskName,
                                 desc: desc,
-                                status: res.data[task].status === 1,
+                                status: res.data[task].status === this.deepModelCount,
                                 metric: res.data[task].metricId
                             });
                         }
@@ -235,12 +241,17 @@
             },
             loadMetric() {
                 let metrics = this.$store.state.sysData.metrics;
+                if (metrics === null || metrics.length === 0) {
+                    metrics = JSON.parse(sessionStorage.getItem("addsSysData")).metrics;
+                }
                 for (let metric in metrics) {
                     if (metrics.hasOwnProperty(metric)) {
-                        this.metricList.push({
-                            value: metric,
-                            label: metrics[metric]
-                        });
+                        if (metrics[metric] != null) {
+                            this.metricList.push({
+                                value: metric,
+                                label: metrics[metric]
+                            });
+                        }
                     }
                 }
             },
@@ -249,6 +260,7 @@
             },
             closeAddKnowledgeExplorationTaskForm() {
                 this.addTaskFormVisible = false;
+                this.addKnowledgeExplorationTaskForm.metricId = '';
                 this.$refs['addKnowledgeExplorationTaskForm'].resetFields();
             },
             addKnowledgeExplorationTask() {
@@ -264,12 +276,38 @@
                     }
                 }).then(res => {
                     // console.log(res.data);
-                    this.closeAddKnowledgeExplorationTaskForm();
+                    // this.closeAddKnowledgeExplorationTaskForm();
                     this.loadKnowledgeExplorationTask();
+                    this.beginTask(res.data);
                 }).catch(error => {
                     this.$message({
                         type: 'error',
                         message: '[ERROR: KnowledgeExploration.vue -> addKnowledgeExplorationTask()] Check Console plz! ',
+                        showClose: true
+                    });
+                    console.log(error);
+                });
+            },
+            beginTask(taskId) {
+                this.$axios({
+                  method: 'post',
+                  url: '/doctor/' + this.$store.state.user.id + '/DLTask',
+                  data: {
+                      id: taskId,
+                      taskName: this.addModelEvaluationTaskForm.name,
+                      datasetId: this.addModelEvaluationTaskForm.datasetId,
+                      queryLength: this.addModelEvaluationTaskForm.queryLength,
+                      documentLength: this.addModelEvaluationTaskForm.documentLength,
+                      modelId: this.addModelEvaluationTaskForm.modelId,
+                      metricId: this.addModelEvaluationTaskForm.metricId
+                  }
+                }).then(res => {
+                    console.log(res);
+                    this.closeAddKnowledgeExplorationTaskForm();
+                }).catch(error => {
+                    this.$message({
+                        type: 'error',
+                        message: '[ERROR: KnowledgeExploration.vue -> beginTask()] Check Console plz! ',
                         showClose: true
                     });
                     console.log(error);
@@ -295,22 +333,32 @@
                     let bestResultMetric = -999;
                     let bestResultIndex = -1;
                     let metricMap = {
-                        '1': 'map',
-                        '2': 'p@3',
-                        '3': 'p@5',
-                        '4': 'r@3',
-                        '5': 'r@5',
-                        '6': 'n@3',
-                        '7': 'n@5'
+                        '1': 'n@1',
+                        '2': 'n@3',
+                        '3': 'n@5',
+                        '4': 'n@10',
+                        '5': 'map',
+                        '6': 'r@3',
+                        '7': 'r@5',
+                        '8': 'r@10',
+                        '9': 'p@1',
+                        '10': 'p@3',
+                        '11': 'p@5',
+                        '12': 'p@10'
                     };
                     let metricMapJson = {
-                        '1': 'map',
-                        '2': 'precision3',
-                        '3': 'precision5',
-                        '4': 'recall3',
-                        '5': 'recall5',
-                        '6': 'ndcg3',
-                        '7': 'ndcg5'
+                        '1': 'ndcg1',
+                        '2': 'ndcg3',
+                        '3': 'ndcg5',
+                        '4': 'ndcg10',
+                        '5': 'map',
+                        '6': 'recall3',
+                        '7': 'recall5',
+                        '8': 'recall10',
+                        '9': 'precision1',
+                        '10': 'precision3',
+                        '11': 'precision5',
+                        '12': 'precision10'
                     };
                     this.resultSettings.labelMap['metric'] = metricMap[task.metric];
                     // console.log("Chart Metric: " + this.resultSettings.labelMap['metric']);
@@ -318,13 +366,18 @@
                         if (res.data.hasOwnProperty(result)) {
                             this.resultTableData.push({
                                 model: res.data[result].modelName,
+                                ndcg1: res.data[result].ndcg1,
+                                ndcg3: res.data[result].ndcg3,
+                                ndcg5: res.data[result].ndcg5,
+                                ndcg10: res.data[result].ndcg10,
                                 map: res.data[result].map,
-                                precision3: res.data[result].precision3,
-                                precision5: res.data[result].precision5,
                                 recall3: res.data[result].recall3,
                                 recall5: res.data[result].recall5,
-                                ndcg3: res.data[result].ndcg3,
-                                ndcg5: res.data[result].ndcg5
+                                recall10: res.data[result].recall10,
+                                precision1: res.data[result].precision1,
+                                precision3: res.data[result].precision3,
+                                precision5: res.data[result].precision5,
+                                precision10: res.data[result].precision10
                             });
                             this.resultData.rows.push({
                                 'model': res.data[result].modelName,
@@ -338,13 +391,18 @@
                     }
                     this.bestResultDesc =
                         'model: ' + res.data[bestResultIndex].modelName + ', ' +
+                        'n@1: ' + res.data[bestResultIndex].ndcg1 + ', ' +
+                        'n@3: ' + res.data[bestResultIndex].ndcg3 + ', ' +
+                        'n@5: ' + res.data[bestResultIndex].ndcg5 + ', ' +
+                        'n@10: ' + res.data[bestResultIndex].ndcg10 + ', ' +
                         'map: ' + res.data[bestResultIndex].map + ', ' +
-                        'p@3: ' + res.data[bestResultIndex].precision3 + ', ' +
-                        'p@5: ' + res.data[bestResultIndex].precision5 + ', ' +
                         'r@3: ' + res.data[bestResultIndex].recall3 + ', ' +
                         'r@5: ' + res.data[bestResultIndex].recall5 + ', ' +
-                        'n@3: ' + res.data[bestResultIndex].ndcg3 + ', ' +
-                        'n@5: ' + res.data[bestResultIndex].ndcg5;
+                        'r@10: ' + res.data[bestResultIndex].recall10 + ', ' +
+                        'p@1: ' + res.data[bestResultIndex].precision1 + ', ' +
+                        'p@3: ' + res.data[bestResultIndex].precision3 + ', ' +
+                        'p@5: ' + res.data[bestResultIndex].precision5 + ', ' +
+                        'p@10: ' + res.data[bestResultIndex].precision10;
                 }).catch(error => {
                     console.log(error);
                 });
@@ -391,7 +449,21 @@
         },
         created() {
             this.loadMetric();
-            this.loadDataset();
+            this.$axios({
+                method: 'get',
+                url: '/modelCategory',
+            }).then(res => {
+                let modelCount = 0;
+                for (let category in res.data) {
+                    if (res.data.hasOwnProperty(category)) {
+                        modelCount += res.data[category].models.length;
+                    }
+                }
+                this.deepModelCount = modelCount;
+                this.loadDataset();
+            }).catch(error => {
+                console.log(error);
+            });
         },
         mounted() {
           this.$nextTick(function () {

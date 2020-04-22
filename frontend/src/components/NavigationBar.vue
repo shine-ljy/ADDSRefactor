@@ -2,7 +2,7 @@
   <el-header height="80px">
     <div>
       <div class="nav-left">
-        <img src="../assets/logo_adds.jpg" height="79" alt="LOGO" @click="goToMainPage">
+        <img src="../assets/logo.jpg" height="79" alt="LOGO" @click="goToMainPage">
       </div>
       <div class="nav-center">
         <ul>
@@ -39,16 +39,17 @@
                 this.$router.push('/deepLearning');
             },
             logOut() {
-                this.$confirm('Log Out? ', 'Warning', {
+                this.$confirm('Log Out? ', 'Notification', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
                     type: 'warning'
                 }).then(() => {
                     this.$store.commit('clearUserInfo');
                     this.$router.push('/');
-                    this.$message({
-                        type: 'success',
-                        message: 'Log out successfully! '
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Log out successfully! ',
+                        type: 'success'
                     });
                 }).catch(() => {
                 });

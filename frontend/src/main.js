@@ -11,7 +11,7 @@ import axios from 'axios'
 import VCharts from 'v-charts'
 
 Vue.prototype.$axios = axios;
-axios.defaults.baseURL = '/api';
+axios.defaults.baseURL = '/';
 axios.interceptors.request.use(
   config => {
     const token = store.state.token;
