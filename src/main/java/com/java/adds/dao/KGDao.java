@@ -110,6 +110,7 @@ public class KGDao {
 
     /**
      * Upload Knowledge-Graph data
+     * Notification: [Neo4j Configuration] Allow user to upload a .csv file from any file path
      * @param kgFilePath KG data file path
      * @param kgId KG id
      */

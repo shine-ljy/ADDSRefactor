@@ -37,7 +37,7 @@ public class KGService {
     public Long uploadKG(Long userId, String kgName, String kgDesc, String kgFilePath) {
         Long kgId = kgDao.uploadKGFile(userId, kgName, kgDesc, kgFilePath);
         if (kgId >= 0) {
-//            kgDao.uploadKGData(kgFilePath, kgId);
+            kgDao.uploadKGData(kgFilePath, kgId);
             return kgId;
         } else {
             return -1L;
