@@ -128,7 +128,8 @@
                     if (url === '' || url === null) {
                         this.modelInfoForm.url = '';
                     } else {
-                        this.modelInfoForm.url = "/img/" + url;
+                        this.modelInfoForm.url = "/api/img/deep-model-img/" + url;
+                        // this.modelInfoForm.url = "/img/deep-model-img/" + url;
                     }
                 }).catch(error => {
                     console.log(error);
