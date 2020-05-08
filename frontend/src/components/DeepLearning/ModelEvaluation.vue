@@ -226,11 +226,11 @@
                     }
                     this.loadModelEvaluationTask();
                 }).catch(error => {
-                    this.$message({
-                        type: 'error',
-                        message: '[ERROR: ModelEvaluation.vue -> loadDataset()] Check Console plz! ',
-                        showClose: true
-                    });
+                    // this.$message({
+                    //     type: 'error',
+                    //     message: '[ERROR: ModelEvaluation.vue -> loadDataset()] Check Console plz! ',
+                    //     showClose: true
+                    // });
                     console.log(error);
                 });
             },
@@ -341,11 +341,11 @@
                     // console.log(res);
                     this.closeAddModelEvaluationTaskForm();
                 }).catch(error => {
-                    this.$message({
-                        type: 'error',
-                        message: '[ERROR: ModelEvaluation.vue -> beginTask()] Check Console plz! ',
-                        showClose: true
-                    });
+                    // this.$message({
+                    //     type: 'error',
+                    //     message: '[ERROR: ModelEvaluation.vue -> beginTask()] Check Console plz! ',
+                    //     showClose: true
+                    // });
                     console.log(error);
                 });
             },

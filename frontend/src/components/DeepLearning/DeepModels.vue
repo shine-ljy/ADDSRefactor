@@ -29,19 +29,19 @@
                 </div>
                 <div v-else>
                   <el-form :model="modelInfoForm" label-position="left" label-width="110px">
-                    <el-form-item label="Article" prop="articleTitle">
+                    <el-form-item v-if="modelInfoForm.articleTitle !== ''" label="Article" prop="articleTitle">
                       <span>{{modelInfoForm.articleTitle}}</span>&emsp;&emsp;
                       <el-button type="primary" size="mini" @click="downloadArticle">Download</el-button>
                     </el-form-item>
-                    <el-form-item label="Introduction" prop="introduction">
+                    <el-form-item v-if="modelInfoForm.introduction !== ''" label="Introduction" prop="introduction">
                       <span>{{modelInfoForm.introduction}}</span>
                     </el-form-item>
-                    <el-form-item label="Architecture" prop="architecture">
-                      <el-image :src="modelInfoForm.url" :fit="'scale-down'" style="width: 90%">
+                    <el-form-item v-if="modelInfoForm.imgUrl !== ''" label="Architecture" prop="architecture">
+                      <el-image :src="modelInfoForm.imgUrl" :fit="'scale-down'" style="width: 90%">
                         <div slot="placeholder">Loading... </div>
                       </el-image>
                     </el-form-item>
-                    <el-form-item label="Code" prop="code">
+                    <el-form-item v-if="modelInfoForm.codeUrl !== ''" label="Code" prop="code">
                       <el-button type="primary" size="mini" @click="downloadCode">Download</el-button>
                     </el-form-item>
                   </el-form>
@@ -68,8 +68,10 @@
                 modelInfoForm: {
                     modelName: '',
                     articleTitle: '',
+                    articleUrl: '',
                     introduction: '',
-                    url: '',
+                    imgUrl: '',
+                    codeUrl: ''
                 }
             };
         },
@@ -118,26 +120,64 @@
                     this.modelInfoForm.modelName = res.data.name;
                     this.modelInfoForm.articleTitle = res.data.articleTitle;
                     if (this.modelInfoForm.articleTitle === '' || this.modelInfoForm.articleTitle === null) {
-                        this.modelInfoForm.articleTitle = 'NO Article... ';
+                        this.modelInfoForm.articleTitle = '';
                     }
                     this.modelInfoForm.introduction = res.data.intro;
                     if (this.modelInfoForm.introduction === '' || this.modelInfoForm.introduction === null) {
-                        this.modelInfoForm.introduction = 'NO Introduction... ';
+                        this.modelInfoForm.introduction = '';
                     }
-                    let url = res.data.architectureUrl;
-                    if (url === '' || url === null) {
-                        this.modelInfoForm.url = '';
+                    let imgUrl = res.data.architectureUrl;
+                    if (imgUrl === '' || imgUrl === null) {
+                        this.modelInfoForm.imgUrl = '';
                     } else {
-                        this.modelInfoForm.url = "/api/img/deep-model-img/" + url;
-                        // this.modelInfoForm.url = "/img/deep-model-img/" + url;
+                        this.modelInfoForm.imgUrl = "/api/model-img/deep-model-img/" + imgUrl;
+                        // this.modelInfoForm.imgUrl = "/model-img/deep-model-img/" + imgUrl;
+                    }
+                    this.modelInfoForm.codeUrl = res.data.codeUrl;
+                    if (this.modelInfoForm.codeUrl === '' || this.modelInfoForm.codeUrl === null) {
+                        this.modelInfoForm.codeUrl = '';
+                    }
+                    this.modelInfoForm.articleUrl = res.data.articleUrl;
+                    if (this.modelInfoForm.articleUrl === '' || this.modelInfoForm.articleUrl === null) {
+                        this.modelInfoForm.articleUrl = '';
                     }
                 }).catch(error => {
                     console.log(error);
                 });
             },
             downloadArticle() {
+                if (this.modelInfoForm.articleUrl !== '' && this.modelInfoForm.articleUrl !== null) {
+                    let a = document.createElement('a');
+                    a.href = "/api/model-article/deep-model-article/" + this.modelInfoForm.articleUrl;
+                    // a.href = "/model-article/deep-model-article/" + this.modelInfoForm.articleUrl;
+                    let filename = this.modelInfoForm.articleUrl;
+                    let fileType = filename.substring(filename.lastIndexOf("."), filename.length);
+                    // console.log(fileType);
+                    a.download = this.modelInfoForm.modelName + fileType;
+                    a.click();
+                } else {
+                    this.$notify.info({
+                        title: 'Notification',
+                        message: 'No Article. '
+                    });
+                }
             },
             downloadCode() {
+                if (this.modelInfoForm.codeUrl !== '' && this.modelInfoForm.codeUrl !== null) {
+                    let a = document.createElement('a');
+                    a.href = "/api/model-code/deep-model-code/" + this.modelInfoForm.codeUrl;
+                    // a.href = "/model-code/deep-model-code/" + this.modelInfoForm.codeUrl;
+                    let filename = this.modelInfoForm.codeUrl;
+                    let fileType = filename.substring(filename.lastIndexOf("."), filename.length);
+                    // console.log(fileType);
+                    a.download = this.modelInfoForm.modelName + fileType;
+                    a.click();
+                } else {
+                    this.$notify.info({
+                        title: 'Notification',
+                        message: 'No Code. '
+                    });
+                }
             }
         },
         mounted() {

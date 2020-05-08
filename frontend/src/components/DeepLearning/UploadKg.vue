@@ -59,9 +59,9 @@
                 <template slot="empty">
                   <span>{{kgTableEmptyText}}</span>
                 </template>
-                <el-table-column prop="name" label="Name" min-width="20%" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="desc" label="Description" min-width="30%" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="operations" label="Operations" min-width="50%">
+                <el-table-column prop="name" label="Name" min-width="20%" align="center" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="desc" label="Description" min-width="30%" align="center" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="operations" label="Operations" min-width="50%" align="center">
                   <template slot-scope="scope">
                     <el-button type="primary" plain size="small" @click="goToKnowledgeGraph(scope.row.id)">Show this KG</el-button>
                   </template>

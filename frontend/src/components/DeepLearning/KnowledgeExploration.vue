@@ -333,18 +333,18 @@
                     let bestResultMetric = -999;
                     let bestResultIndex = -1;
                     let metricMap = {
-                        '1': 'n@1',
-                        '2': 'n@3',
-                        '3': 'n@5',
-                        '4': 'n@10',
+                        '1': 'NDCG@1',
+                        '2': 'NDCG@3',
+                        '3': 'NDCG@5',
+                        '4': 'NDCG@10',
                         '5': 'map',
-                        '6': 'r@3',
-                        '7': 'r@5',
-                        '8': 'r@10',
-                        '9': 'p@1',
-                        '10': 'p@3',
-                        '11': 'p@5',
-                        '12': 'p@10'
+                        '6': 'Recall@3',
+                        '7': 'Recall@5',
+                        '8': 'Recall@10',
+                        '9': 'Precision@1',
+                        '10': 'Precision@3',
+                        '11': 'Precision@5',
+                        '12': 'Precision@10'
                     };
                     let metricMapJson = {
                         '1': 'ndcg1',

@@ -383,7 +383,7 @@
   .search-bar {
     float: left;
     margin: 0 20px;
-    width: 300px;
+    width: 280px;
   }
 
   .btn-bar {

@@ -6,12 +6,16 @@
           <span>My Dataset</span>
         </div>
         <div class="operation-btn-bar">
-          <el-button type="primary" @click="addDatasetFormVisible = true">Add Dataset</el-button>
+          <el-button type="primary" @click="newDatasetDialog">Add Dataset</el-button>
         </div>
       </div>
     </div>
-    <el-dialog title="New Dataset" :visible.sync="addDatasetFormVisible" width="640px"
+    <el-dialog title="Add Dataset" :visible.sync="addDatasetFormVisible" width="640px"
                append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+      <el-steps :active="stepsActive" finish-status="success" align-center>
+        <el-step title="Step 1" description="Create dataset"></el-step>
+        <el-step title="Step 2" description="Upload files"></el-step>
+      </el-steps>
       <el-form ref="addDatasetForm" :model="addDatasetForm" :rules="rules" label-position="left" label-width="130px">
         <el-form-item label="Name" prop="name">
           <el-input v-model="addDatasetForm.name"></el-input>
@@ -19,56 +23,6 @@
         <el-form-item label="Description" prop="desc">
           <el-input type="textarea" :rows="5" v-model="addDatasetForm.desc"></el-input>
         </el-form-item>
-
-<!--        <el-form-item label="Dataset Format" prop="datasetFormat">-->
-<!--          <span><b>label \t query \t document.txt</b></span>&emsp;-->
-<!--          <el-tooltip effect="dark" placement="top">-->
-<!--            <div slot="content">-->
-<!--              ???-->
-<!--&lt;!&ndash;              header,relation,tail<br/>&ndash;&gt;-->
-<!--&lt;!&ndash;              m,knows,n<br/>&ndash;&gt;-->
-<!--&lt;!&ndash;              x,knows,y&ndash;&gt;-->
-<!--            </div>-->
-<!--            <el-button type="info" size="mini">Sample</el-button>-->
-<!--          </el-tooltip>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="File Upload" prop="fileUpload">-->
-<!--          <el-upload-->
-<!--            ref="upload"-->
-<!--            action=""-->
-<!--            :multiple="false"-->
-<!--            :file-list="fileListTrainSet"-->
-<!--            :show-file-list="true"-->
-<!--            :http-request="uploadKg"-->
-<!--            :auto-upload="false"-->
-<!--          >-->
-<!--            <el-button slot="trigger" type="primary" class="browse-btn">TrainSet</el-button>-->
-<!--          </el-upload>-->
-<!--          <el-upload-->
-<!--            ref="upload"-->
-<!--            action=""-->
-<!--            :multiple="false"-->
-<!--            :file-list="fileListTestSet"-->
-<!--            :show-file-list="true"-->
-<!--            :http-request="uploadKg"-->
-<!--            :auto-upload="false"-->
-<!--          >-->
-<!--            <el-button slot="trigger" type="primary" class="browse-btn">TestSet</el-button>-->
-<!--          </el-upload>-->
-<!--          <el-upload-->
-<!--            ref="upload"-->
-<!--            action=""-->
-<!--            :multiple="false"-->
-<!--            :file-list="fileListDevSet"-->
-<!--            :show-file-list="true"-->
-<!--            :http-request="uploadKg"-->
-<!--            :auto-upload="false"-->
-<!--          >-->
-<!--            <el-button slot="trigger" type="primary" class="browse-btn">DevSet</el-button>-->
-<!--          </el-upload>-->
-<!--        </el-form-item>-->
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addDataset">Submit</el-button>
@@ -76,29 +30,61 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="'Upload '+uploadDatasetForm.header" :visible.sync="uploadDatasetFormVisible" width="480px"
+    <el-dialog title="Upload Dataset" :visible.sync="uploadDatasetFormVisible" width="640px"
                append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-      <el-form ref="uploadDatasetForm" :model="uploadDatasetForm" :rules="uploadDatasetFormRules" label-position="left" label-width="80px">
-<!--        <el-form-item label="Name" prop="name">-->
-<!--          <el-input v-model="uploadDatasetForm.name"></el-input>-->
-<!--        </el-form-item>-->
-        <el-form-item :label="uploadDatasetForm.header" prop="fileUpload">
+      <el-steps :active="stepsActive" finish-status="success" align-center>
+        <el-step title="Step 1" description="Create dataset"></el-step>
+        <el-step title="Step 2" description="Upload files"></el-step>
+      </el-steps>
+      <el-form ref="uploadDatasetForm" :model="uploadDatasetForm" label-position="left" label-width="70px">
+        <el-form-item v-if="!trainSetExist" label="TrainSet" prop="trainSet">
           <el-upload
-            ref="upload"
+            ref="uploadTrainSet"
             action=""
             :multiple="false"
-            :file-list="fileList"
+            :file-list="trainSetFileList"
             :show-file-list="true"
             :http-request="uploadDatasetFile"
             :auto-upload="false"
           >
-            <el-button slot="trigger" type="primary" class="browse-btn">Browse</el-button>
+            <el-button slot="trigger" type="primary" size="mini" class="browse-btn">Browse</el-button>
+            <el-button type="success" size="mini" class="browse-btn" @click="submitUploadTrainSetFile">Upload</el-button>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item v-if="!testSetExist" label="TestSet" prop="trainSet">
+          <el-upload
+            ref="uploadTestSet"
+            action=""
+            :multiple="false"
+            :file-list="testSetFileList"
+            :show-file-list="true"
+            :http-request="uploadDatasetFile"
+            :auto-upload="false"
+          >
+            <el-button slot="trigger" type="primary" size="mini" class="browse-btn">Browse</el-button>
+            <el-button type="success" size="mini" class="browse-btn" @click="submitUploadTestSetFile">Upload</el-button>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item v-if="!devSetExist" label="DevSet" prop="trainSet">
+          <el-upload
+            ref="uploadDevSet"
+            action=""
+            :multiple="false"
+            :file-list="devSetFileList"
+            :show-file-list="true"
+            :http-request="uploadDatasetFile"
+            :auto-upload="false"
+          >
+            <el-button slot="trigger" type="primary" size="mini" class="browse-btn">Browse</el-button>
+            <el-button type="success" size="mini" class="browse-btn" @click="submitUploadDevSetFile">Upload</el-button>
           </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitUpload">Submit</el-button>
-        <el-button @click="cancelUploadDataset">Cancel</el-button>
+<!--        <el-button type="primary" @click="submitUpload">Submit</el-button>-->
+        <el-button @click="cancelUploadDataset">Finish</el-button>
       </div>
     </el-dialog>
 
@@ -111,29 +97,29 @@
                 <template slot="empty">
                   <span>{{datasetTableEmptyText}}</span>
                 </template>
-                <el-table-column prop="name" label="Name" min-width="20%" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="desc" label="Description" min-width="30%" :show-overflow-tooltip="true"></el-table-column>
-                <el-table-column prop="status" label="Status" min-width="15%">
+                <el-table-column prop="name" label="Name" min-width="20%" align="center" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="desc" label="Description" min-width="30%" align="center" :show-overflow-tooltip="true"></el-table-column>
+                <el-table-column prop="status" label="Status" min-width="15%" align="center">
                   <template slot-scope="scope">
                     <el-popover placement="top" :title="scope.row.name" trigger="hover">
                       <div>
-                        <el-button :type="scope.row.trainSetName===''?'danger':'success'" plain size="mini" @click="openUploadDatasetForm(scope.row.id, 'TrainSet')" class="dataset-btn">TrainSet</el-button>
-                        <el-button :type="scope.row.testSetName===''?'danger':'success'" plain size="mini" @click="openUploadDatasetForm(scope.row.id, 'TestSet')" class="dataset-btn">TestSet</el-button>
-                        <el-button :type="scope.row.devSetName===''?'danger':'success'" plain size="mini" @click="openUploadDatasetForm(scope.row.id, 'DevSet')" class="dataset-btn">DevSet</el-button>
+                        <el-button :type="scope.row.trainSetName===''?'danger':'success'" plain size="mini" class="dataset-btn">TrainSet</el-button>
+                        <el-button :type="scope.row.testSetName===''?'danger':'success'" plain size="mini" class="dataset-btn">TestSet</el-button>
+                        <el-button :type="scope.row.devSetName===''?'danger':'success'" plain size="mini" class="dataset-btn">DevSet</el-button>
                       </div>
-                      <el-tag slot="reference" :type="scope.row.status?'success':'danger'" @click="showMsg(scope.row.status)">{{scope.row.status?"Available":"Upload"}}</el-tag>
+                      <el-tag slot="reference" :type="scope.row.status?'success':'danger'" @click="showMsg(scope.row.status)">{{scope.row.status?"Available":"Not Available"}}</el-tag>
                     </el-popover>
                   </template>
                 </el-table-column>
-                <el-table-column prop="operations" label="Operations" min-width="35%">
+                <el-table-column prop="operations" label="Operations" min-width="35%" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.status">
                       <el-button type="primary" plain size="small" @click="goToModelEvaluation(scope.row.id)">Model Evaluation</el-button>
                       <el-button type="primary" plain size="small" @click="goToAutoSelection(scope.row.id)">Auto Selection</el-button>
                     </div>
-<!--                    <div v-else>-->
-<!--                      <span>Upload Dataset First. </span>-->
-<!--                    </div>-->
+                    <div v-else>
+                      <el-button type="primary" plain size="small" @click="openUploadDatasetForm(scope.row.id, scope.row.trainSetName, scope.row.testSetName, scope.row.devSetName)">Upload</el-button>
+                    </div>
                   </template>
                 </el-table-column>
               </el-table>
@@ -153,33 +139,37 @@
                 datasetTableHeight: 200,
                 datasetTableData: [],
                 datasetTableEmptyText: 'Loading...',
+                stepsActive: 0,
                 addDatasetFormVisible: false,
                 addDatasetForm: {
                     name: '',
-                    desc: ''
+                    desc: '',
                 },
                 rules: {
-                  name: [
-                    {required: true, message: 'Please input name', trigger: 'blur'}
-                    // {min: 1, max: 10, message: 'Name length is between 1 and 10', trigger: 'blur'}
-                  ],
-                  desc: [
-                    {required: true, message: 'Please input description', trigger: 'blur'}
-                  ]
+                    name: [
+                        {required: true, message: 'Please input name', trigger: 'blur'}
+                        // {min: 1, max: 10, message: 'Name length is between 1 and 10', trigger: 'blur'}
+                    ],
+                    desc: [
+                        {required: true, message: 'Please input description', trigger: 'blur'}
+                    ]
                 },
                 uploadDatasetFormVisible: false,
                 uploadDatasetForm: {
                     datasetId: 0,
-                    type: '',
-                    header: ''
-                    // name: ''
+                    type: ''
                 },
-                uploadDatasetFormRules: {
-                  fileUpload: [
-                    {required: true, message: 'Please input description', trigger: 'blur'}
-                  ]
-                },
-                fileList: []
+                // uploadDatasetFormRules: {
+                //   fileUpload: [
+                //     {required: true, message: '', trigger: 'blur'}
+                //   ]
+                // },
+                trainSetExist: false,
+                testSetExist: false,
+                devSetExist: false,
+                trainSetFileList: [],
+                testSetFileList: [],
+                devSetFileList: []
             };
         },
         methods: {
@@ -232,6 +222,10 @@
                     console.log(error);
                 });
             },
+            newDatasetDialog() {
+                this.stepsActive = 0;
+                this.addDatasetFormVisible = true;
+            },
             addDataset() {
                 this.$axios({
                     method: 'post',
@@ -244,6 +238,12 @@
                     // console.log(res.data);
                     this.closeAddDatasetForm();
                     this.loadDataset();
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Successfully create dataset! ',
+                        type: 'success'
+                    });
+                    this.openUploadDatasetForm(res.data, '', '', '');
                 }).catch(error => {
                     console.log(error);
                 });
@@ -255,8 +255,24 @@
                 this.addDatasetFormVisible = false;
                 this.$refs['addDatasetForm'].resetFields();
             },
-            submitUpload() {
-                this.$refs.upload.submit();
+            submitUploadTrainSetFile() {
+                // if (this.trainSetFileList.length === 0) {
+                //     this.$notify.info({
+                //         title: 'Notification',
+                //         message: 'Please choose a file! '
+                //     });
+                // }
+                // console.log(this.trainSetFileList);
+                this.uploadDatasetForm.type = 'train';
+                this.$refs.uploadTrainSet.submit();
+            },
+            submitUploadTestSetFile() {
+                this.uploadDatasetForm.type = 'test';
+                this.$refs.uploadTestSet.submit();
+            },
+            submitUploadDevSetFile() {
+                this.uploadDatasetForm.type = 'dev';
+                this.$refs.uploadDevSet.submit();
             },
             uploadDatasetFile(content) {
                 let params = new FormData();
@@ -264,43 +280,45 @@
                 params.append("type", this.uploadDatasetForm.type);
                 // params.append("name", this.uploadDatasetForm.name);
                 params.append("file", content.file);
+                // console.log(content.file);
 
                 this.$axios({
                     method: 'post',
                     url: '/doctor/' + this.$store.state.user.id + '/dataSets',
                     data: params
                 }).then(res => {
-                    console.log(res.data);
-                }).catch(error => {
-                    this.$message({
-                        type: 'error',
-                        message: '[ERROR: UploadDataset -> uploadDatasetFile()] Check Console plz! ',
-                        showClose: true
+                    // console.log(res.data);
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Successfully upload file! ',
+                        type: 'success'
                     });
+                }).catch(error => {
                     console.log(error);
+                    this.$notify.error({
+                        title: 'Error',
+                        message: 'Wrong file format! '
+                    });
                 });
             },
             cancelUploadDataset() {
                 this.closeUploadDatasetForm();
+                this.loadDataset();
             },
-            openUploadDatasetForm(datasetId, header) {
-                this.uploadDatasetForm.header = header;
+            openUploadDatasetForm(datasetId, trainSet, testSet, devSet) {
+                this.stepsActive = 1;
                 this.uploadDatasetForm.datasetId = datasetId;
-                if (header === 'TrainSet') {
-                    this.uploadDatasetForm.type = 'train';
-                }
-                if (header === 'TestSet') {
-                    this.uploadDatasetForm.type = 'test';
-                }
-                if (header === 'DevSet') {
-                    this.uploadDatasetForm.type = 'dev';
-                }
+                this.trainSetExist = trainSet !== '';
+                this.testSetExist = testSet !== '';
+                this.devSetExist = devSet !== '';
                 this.uploadDatasetFormVisible = true;
             },
             closeUploadDatasetForm() {
                 this.uploadDatasetFormVisible = false;
                 this.$refs['uploadDatasetForm'].resetFields();
-                this.fileList = [];
+                this.trainSetFileList = [];
+                this.testSetFileList = [];
+                this.devSetFileList = [];
             },
             showMsg(status) {
                 if (status) {
@@ -409,12 +427,18 @@
   }
 
   .browse-btn {
-    width: 90px;
+    width: 70px;
+    height: 30px;
     margin: 5px;
+    vertical-align: top;
   }
 
   .el-tag {
-    width: 75px;
+    width: 95px;
     text-align: center;
+  }
+
+  .el-steps {
+    margin-bottom: 40px;
   }
 </style>
