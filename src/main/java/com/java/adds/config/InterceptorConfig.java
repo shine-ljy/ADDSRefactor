@@ -11,6 +11,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 
+    @Value("${file.path.deep-model-article}")
+    private String deepModelArticleFolder;
+
+    @Value("${file.path.deep-model-code}")
+    private String deepModelCodeFolder;
+
     @Value("${file.path.deep-model-img}")
     private String deepModelImgFolder;
 
@@ -18,12 +24,18 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/img/**");
+                .excludePathPatterns("/model-article/**")
+                .excludePathPatterns("/model-code/**")
+                .excludePathPatterns("/model-img/**");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/img/**")
+        registry.addResourceHandler("/model-article/**")
+                .addResourceLocations("file:" + deepModelArticleFolder);
+        registry.addResourceHandler("/model-code/**")
+                .addResourceLocations("file:" + deepModelCodeFolder);
+        registry.addResourceHandler("/model-img/**")
                 .addResourceLocations("file:" + deepModelImgFolder);
     }
 

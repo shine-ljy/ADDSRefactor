@@ -53,7 +53,7 @@ public interface TaskMapper {
     @Select("SELECT * FROM model_evaluation_task WHERE user_id=#{userId} AND type=2")
     @Results(id = "autoSelectionTaskMap", value = {
             @Result(property = "id", column = "id"),
-            @Result(property = "taskName", column = "name"),
+            @Result(property = "taskName", column = "task_name"),
             @Result(property = "datasetId", column = "dataset_id"),
             @Result(property = "metricId", column = "metric_id"),
             @Result(property = "queryLength", column = "query_length"),
